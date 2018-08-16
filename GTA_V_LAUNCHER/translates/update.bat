@@ -1,0 +1,1 @@
+start /b /wait "" "C:\Qt5.8\5.8\msvc2015_64\bin\lupdate.exe" ..\GTA_V_LAUNCHER.pro

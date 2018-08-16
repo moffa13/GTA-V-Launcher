@@ -1,0 +1,1 @@
+start /b /wait "" "M:\QtBuilds\newqt5.5x86static\bin\lrelease.exe" fr.ts

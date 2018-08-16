@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/background.jpg</file>
+    <file>images/downArrow.png</file>
+    <file>images/upArrow.png</file>
+    <file>images/favicon.png</file>
+    <file>translates/fr.qm</file>
+</qresource>
+</RCC>

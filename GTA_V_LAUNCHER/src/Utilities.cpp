@@ -1,0 +1,130 @@
+#include "Utilities.h"
+#include "Windows.h"
+#include "TlHelp32.h"
+#include "Psapi.h"
+#include "Winbase.h"
+#include <QDebug>
+#include <QSettings>
+QString Utilities::getFileVersion(const QString &filename){
+
+	DWORD dwHandle;
+	DWORD dwLen = GetFileVersionInfoSize(filename.toStdWString().c_str(), &dwHandle);
+
+	LPVOID lpData = new BYTE[dwLen];
+	if(!GetFileVersionInfo(filename.toStdWString().c_str(), dwHandle, dwLen, lpData))
+	{
+		qDebug() << "error in GetFileVersionInfo";
+		delete[] lpData;
+		return "";
+	}
+
+	// VerQueryValue
+	VS_FIXEDFILEINFO *lpBuffer = NULL;
+	UINT uLen;
+
+	if(!VerQueryValue(lpData, QString("\\").toStdWString().c_str(), (LPVOID*)&lpBuffer, &uLen))
+	{
+		return "";
+	}
+
+	QString version;
+
+	version += QString::number((lpBuffer->dwFileVersionMS >> 16) & 0xffff) + '.';
+	version += QString::number((lpBuffer->dwFileVersionMS) & 0xffff) + '.';
+	version += QString::number((lpBuffer->dwFileVersionLS >> 16) & 0xffff) + '.';
+	version += QString::number((lpBuffer->dwFileVersionLS) & 0xffff);
+
+	return version;
+}
+
+QString Utilities::checkProcessRunning(QString const &name){
+	PROCESSENTRY32 entry;
+	entry.dwSize = sizeof(PROCESSENTRY32);
+
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+
+	if (Process32First(snapshot, &entry) == TRUE){
+		while (Process32Next(snapshot, &entry) == TRUE){
+			if (wcscmp(entry.szExeFile,	name.toStdWString().c_str()) == 0){
+				HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, entry.th32ProcessID);
+
+				WCHAR filename[MAX_PATH];
+				GetModuleFileNameEx(hProcess, NULL, filename, MAX_PATH);
+
+//				wchar_t buf[256];
+//				FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
+//							  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, 256, NULL);
+
+				CloseHandle(hProcess);
+				return QString::fromWCharArray(filename);
+			}
+		}
+	}
+	CloseHandle(snapshot);
+	return NULL;
+}
+
+std::unique_ptr<QSettings> Utilities::getSettings(){
+	return std::make_unique<QSettings>("Bigcoding", "GTA V Launcher");
+}
+
+QMap<QString, QVariant> Utilities::loadFromConfig(QString const &key){
+	auto settings = getSettings();
+	QMap<QString, QVariant> map;
+	settings->beginGroup(key);
+	foreach(QString const &child, settings->childKeys()){
+		map.insert(child, settings->value(child));
+	}
+	settings->endGroup();
+	return map;
+}
+
+QVariant Utilities::loadFromConfig(QString const &key, QString const &childKey){
+	auto settings = getSettings();
+	settings->beginGroup(key);
+	foreach(QString const &child, settings->childKeys()){
+		if(child == childKey){
+			return settings->value(child);
+		}
+	}
+	return NULL;
+}
+
+QStringList Utilities::removeValues(QMap<QString, QVariant> const &map){
+	QStringList list;
+	QMapIterator<QString, QVariant> i(map);
+	while(i.hasNext()){
+		i.next();
+		list << i.key();
+	}
+	qDebug() << list;
+	return list;
+}
+
+void Utilities::setToConfig(QString const &key, const QStringList &data){
+	auto settings = getSettings();
+	settings->beginGroup(key);
+	foreach(QString const &key, data){
+		settings->setValue(key, QVariant(1));
+	}
+	settings->endGroup();
+	settings->sync();
+}
+
+void Utilities::setToConfig(QString const &key, const QMap<QString, QVariant> &data){
+	auto settings = getSettings();
+	settings->beginGroup(key);
+	QMapIterator<QString, QVariant> i(data);
+	while(i.hasNext()){
+		i.next();
+		settings->setValue(i.key(), i.value());
+	}
+	settings->endGroup();
+	settings->sync();
+}
+
+bool Utilities::launcherCracked(){
+	int checked = Utilities::loadFromConfig("General", "LauncherCrack").toInt();
+	return checked == 1 ? true : false;
+}
+
