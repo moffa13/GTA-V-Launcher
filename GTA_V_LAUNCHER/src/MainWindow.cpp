@@ -211,14 +211,14 @@ void MainWindow::setFavicon(){
 void MainWindow::setButtons(){
 
 	QString css("QPushButton{"
-					"background-color: rgb(51, 185, 54);"
-					"border:1px solid black;"
-					"font-size:15px;"
-					"font-family:Consolas, Arial; "
+					"background-color: #55955c;"
+					"border: 1px solid black;"
+					"font-size: 15px;"
+					"font-family: Consolas, Arial; "
 				"}"
 
 				"QPushButton:hover{"
-					"border:1px solid #cecece;"
+					"border: 2px solid #cecece;"
 				"}");
 
 
@@ -366,9 +366,8 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 	QDomElement build = versioningNode.toElement();
 	QDomNode buildNode = build.elementsByTagName("Game").at(0);
 	Version gameVersionNow = buildNode.toElement().attribute("version", "0.0.0.0");
-	Version userGameVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/GTA5.exe");
-	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/ScriptHookV.dll");
-	if(userGameVersion == gameVersionNow && scriptHookVVersion < gameVersionNow){
+	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr + "/ScriptHookV.dll");
+	if(scriptHookVVersion < gameVersionNow){
 		int rep = QMessageBox::information(
 					this,
 					tr("ScriptHookV out-of-date"),
@@ -377,7 +376,7 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 					QMessageBox::Yes | QMessageBox::No
 		);
 		if(rep == QMessageBox::Yes){
-			Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{userGameVersion.getVersionStr().c_str()} + ".zip"};
+			Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{gameVersionNow.getVersionStr().c_str()} + ".zip"};
 			downloader->addRawHeader("Referer", "http://www.dev-c.com/gtav/scripthookv/");
 			connect(downloader, &Downloader::downloaded, [this, downloader](QByteArray const &resp){
 
@@ -443,7 +442,7 @@ void MainWindow::checkSoftwareUpdatesSlot(QByteArray const &resp, bool messageBo
 		int resp = QMessageBox::information(this, tr("Launcher released"), tr("New version of GTA V Launcher has been released (v%n), would you like to download it ?", "", newVersion.getVersionInt()),
 				QMessageBox::Yes | QMessageBox::No);
 		if(resp == QMessageBox::Yes){
-			QString updater = qApp->applicationDirPath()+"/updater.exe";
+			QString updater = qApp->applicationDirPath() + "/updater.exe";
 			Downloader *d = new Downloader("https://moffa13.com/GTAVLauncher/getUpdater");
 			d->download();
 			QObject::connect(d, &Downloader::downloaded, [this, updater, newVersionStr](QByteArray const &resp){

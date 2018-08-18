@@ -201,38 +201,38 @@
         <translation>Vous utilisez une version crackée, le mode en ligne n&apos;est donc pas disponible</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="374"/>
+        <location filename="../src/MainWindow.cpp" line="373"/>
         <source>ScriptHookV out-of-date</source>
         <translation>ScriptHookV n&apos;est plus à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="375"/>
+        <location filename="../src/MainWindow.cpp" line="374"/>
         <source>Your ScriptHookV version is apparently out-of-date or you don&apos;t have it, would you like to update/install it (V %1) ?</source>
-        <translation>Votre version de ScriptHookV est obsolète ou vous ne l&apos;avez pas, voulez-vous l&apos;installer/ le mettre à jour (V %1) ?</translation>
+        <translation>Votre version de ScriptHookV est obsolète ou vous ne l&apos;avez pas, voulez-vous l&apos;installer/le mettre à jour (V %1) ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="385"/>
-        <location filename="../src/MainWindow.cpp" line="415"/>
+        <location filename="../src/MainWindow.cpp" line="384"/>
+        <location filename="../src/MainWindow.cpp" line="414"/>
         <source>Update</source>
         <translation>Mise à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="385"/>
+        <location filename="../src/MainWindow.cpp" line="384"/>
         <source>Please close GTA V in order to update ScriptHookV</source>
         <translation>Veuillez quitter GTA V pour procéder à la mise à jour de ScriptHookV</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="415"/>
+        <location filename="../src/MainWindow.cpp" line="414"/>
         <source>ScriptHookV has successfully been updated/installed !</source>
         <translation>ScriptHookV a bien été mis à jour/installé !</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="419"/>
+        <location filename="../src/MainWindow.cpp" line="418"/>
         <source>ScriptHookV Not Found</source>
         <translation>ScriptHookV introuvable</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="419"/>
+        <location filename="../src/MainWindow.cpp" line="418"/>
         <source>Could not find ScriptHookV in http://www.dev-c.com</source>
         <translation>Impossible de trouver ScriptHookV sur http://www.dev-c.com</translation>
     </message>
@@ -245,12 +245,12 @@
         <translation type="vanished">Votre version de GTA V semble ne plus être à jour, voulez-vous mettre à jour ScriptHookV ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="443"/>
+        <location filename="../src/MainWindow.cpp" line="442"/>
         <source>Launcher released</source>
         <translation>Nouvelle version du launcher</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="443"/>
+        <location filename="../src/MainWindow.cpp" line="442"/>
         <source>New version of GTA V Launcher has been released (v%n), would you like to download it ?</source>
         <translation>
             <numerusform>Une nouvelle version du launcher est sortie (v%n), voulez-vous la télécharger ?</numerusform>
@@ -258,17 +258,17 @@
         </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="461"/>
+        <location filename="../src/MainWindow.cpp" line="460"/>
         <source>Up-to-date</source>
         <translation>À jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="461"/>
+        <location filename="../src/MainWindow.cpp" line="460"/>
         <source>You have the last version of the launcher</source>
         <translation>Vous possédez la dernière version du launcher</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="471"/>
+        <location filename="../src/MainWindow.cpp" line="470"/>
         <source>Play offline</source>
         <translation>Jouer hors-ligne</translation>
     </message>
@@ -319,8 +319,12 @@
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="27"/>
-        <source>Change GTA Game Directory</source>
+        <source>Change GTA V Game Directory</source>
         <translation>Changer le répertoire de GTA V</translation>
+    </message>
+    <message>
+        <source>Change GTA Game Directory</source>
+        <translation type="vanished">Changer le répertoire de GTA V</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="88"/>
