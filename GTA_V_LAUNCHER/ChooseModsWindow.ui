@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>ChooseModsWindow</class>
+ <widget class="QWidget" name="ChooseModsWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>ChooseModsWindow</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -85,13 +85,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="setToConfigButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="resetConfigButton">

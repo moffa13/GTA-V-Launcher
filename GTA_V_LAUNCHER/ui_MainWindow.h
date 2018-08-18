@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'MainWindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,10 +10,7 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
@@ -59,12 +56,12 @@ public:
 
     void retranslateUi(QWidget *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Form", 0));
-        playOnline->setText(QApplication::translate("MainWindow", "PushButton", 0));
-        playMods->setText(QApplication::translate("MainWindow", "PushButton", 0));
-        chooseMods->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Form", nullptr));
+        playOnline->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
+        playMods->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
+        chooseMods->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         byLabel->setText(QString());
-        openOptionsButton->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        openOptionsButton->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
     } // retranslateUi
 
 };

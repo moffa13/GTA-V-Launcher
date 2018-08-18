@@ -5,22 +5,21 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QTimer>
+#include <QSettings>
 #include <QIcon>
 #include <QNetworkAccessManager>
 #include <QDomDocument>
+#include <QProcessEnvironment>
+#include <QFileDialog>
+#include <QStandardPaths>
 #include <QMenu>
+#include "Version.h"
 #include "ui_MainWindow.h"
 
-QString MainWindow::m_gtaDirectoryStr = "M:/GamesNotSteam/GTAV";
-QString MainWindow::m_disabledModsDirectoryStr = "M:/GamesNotSteam/GTAV/Launcher/disabledMods";
+QString MainWindow::m_gtaDirectoryStr = "";
+QString MainWindow::m_disabledModsDirectoryStr = "";
 
 MainWindow::MainWindow(QWidget* parent) : Window(), ui(new Ui::MainWindow){
-	#ifndef QT_DEBUG
-		QDir d(qApp->applicationDirPath());
-		d.cdUp();
-		m_gtaDirectoryStr = d.absolutePath();
-		m_disabledModsDirectoryStr = QDir::fromNativeSeparators(qApp->applicationDirPath()+"/disabledMods");
-	#endif
 	ui->setupUi(this);
 }
 
@@ -30,8 +29,7 @@ MainWindow::~MainWindow(){
 
 void MainWindow::init(){
 
-	if(checkOS() && getGTAExecutable() != NULL){
-		//setFixedSize(960, 600);
+	if(checkOS()){
 		setWindowTitle("Launcher GTA V "+ qApp->applicationVersion());
 		setFavicon();
 		setBackground();
@@ -39,14 +37,43 @@ void MainWindow::init(){
 		connectAll();
 		show();
 		deleteTemp();
+		if(!getGTAExecutable()){
+			closeApp();
+		}
 		getSoftwareUpdates();
-		//getGtaVersionThrewInternet();
 	}
 }
 
 void MainWindow::deleteTemp(){
-	QFile::remove(qApp->applicationDirPath()+"/unrar.exe");
-	QFile::remove(qApp->applicationDirPath()+"/updater.exe");
+	QFile::remove(qApp->applicationDirPath() + "/unrar.exe");
+	QFile::remove(qApp->applicationDirPath() + "/updater.exe");
+}
+
+QString MainWindow::findGamePath(){
+	QStringList possiblesGamePaths;
+	possiblesGamePaths << "LNK%SYSTEMDRIVE%\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Rockstar Games\\Grand Theft Auto V";
+	possiblesGamePaths << "%SYSTEMDRIVE%\\Program Files\\Rockstar Games\\Grand Theft Auto V";
+	possiblesGamePaths << "%SYSTEMDRIVE%\\Program Files (x86)\\Steam\\steamapps\\common\\Grand Theft Auto V";
+	possiblesGamePaths << "LNK" + QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+
+	QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+	// Iterate over the possibles paths
+	for(QString& path : possiblesGamePaths){
+		bool isLink = false;
+		if(path.left(3) == "LNK"){
+			isLink = true;
+			path.replace(0, 3, "");
+		}
+		QDir d{path.replace("%SYSTEMDRIVE%", env.value("SYSTEMDRIVE"))};
+		auto list = d.entryInfoList(QDir::Files | QDir::NoDot | QDir::NoDotAndDotDot);
+		for(auto const& e : list){
+				QString foundPath = isLink ? e.canonicalFilePath() : e.absoluteFilePath();
+				QString parent = QFileInfo(foundPath).absolutePath();
+				if(foundPath.right(12) == "PlayGTAV.exe") return parent;
+		}
+	}
+	return QString();
 }
 
 /**
@@ -75,6 +102,7 @@ void MainWindow::getGtaVersionThrewInternet(){
  * @param messageBox
  */
 void MainWindow::getSoftwareUpdates(bool messageBox){
+	getGtaVersionThrewInternet();
 	m_checkSoftwareUpdates = new Downloader("http://beta.bigcoding.com/GTAVLauncher/getVersionList");
 	QObject::connect(m_checkSoftwareUpdates, &Downloader::downloaded, [this, messageBox](QByteArray const &resp){
 		checkSoftwareUpdatesSlot(resp, messageBox);
@@ -103,16 +131,77 @@ void MainWindow::closeApp(){
 	QTimer::singleShot(0, this, SLOT(closeAppSlot()));
 }
 
-QString MainWindow::getGTAExecutable(){
-	QString exe = this->m_gtaDirectoryStr + "/GTAVLauncher.exe";
-	QFile f(exe);
-	if(f.exists()){
-		return exe;
+bool MainWindow::getGTAExecutable(){
+	// Check if already in config
+	QString exe = Utilities::loadFromConfig("General", "exe").toString();
+	bool alreadyFromConfig = false;
+	bool letUserSelect = false;
+	if(exe.isEmpty() || !QFile(exe + "/PlayGTAV.exe").exists()){
+		// Try to find the exe
+		exe = findGamePath();
+
+		// Could find it automatically
+		if(!exe.isEmpty()){
+			int rep = QMessageBox::information(
+						this,
+						tr("Found GTA V"),
+						tr("We found GTA V in \"%1\", is this the right path ?").arg(exe),
+						QMessageBox::Yes | QMessageBox::No
+			);
+
+			if(rep != QMessageBox::Yes){
+				letUserSelect = true;
+			}
+		}
+	}else
+		alreadyFromConfig = true;
+
+	if(!exe.isEmpty() && !letUserSelect){
+		if(!alreadyFromConfig)
+			Utilities::setToConfig("General", QMap<QString, QVariant>{{"exe", exe}});
+
+		setRelativeDirs(exe);
+		return true;
 	}else{
-		QMessageBox::critical(this, tr("Error"), tr("Unable to find GTA launcher, is the launcher in the correct directory ?"), QMessageBox::Ok);
-		closeApp();
-		return NULL;
+
+		bool fileExists = false;
+		QString dir;
+
+		do {
+			dir = QFileDialog::getExistingDirectory(
+						this,
+						tr("Select your GTA V Path"),
+						QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+						QFileDialog::ShowDirsOnly
+			);
+			fileExists = QFile(dir + "/PlayGTAV.exe").exists();
+			if(!fileExists){
+				int rep = QMessageBox::critical(
+							this,
+							tr("Wrong path"),
+							tr("This does not seem to be your GTA V folder, please select another one"),
+							QMessageBox::Yes | QMessageBox::No
+				);
+				if(rep == QMessageBox::No){
+					return false;
+				}
+			}
+		} while(!fileExists);
+
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"exe", dir}});
+		setRelativeDirs(dir);
+		return true;
 	}
+}
+
+/**
+ * Set the gta folder & disabledMods folder from base
+ * @brief MainWindow::setRelativeDirs
+ * @param base
+ */
+void MainWindow::setRelativeDirs(QString const& base){
+	m_gtaDirectoryStr = base;
+	m_disabledModsDirectoryStr = base + "/disabledMods";
 }
 
 void MainWindow::setFavicon(){
@@ -173,18 +262,16 @@ void MainWindow::closeEvent(QCloseEvent *event){
 	closeApp();
 }
 
-int MainWindow::getVersionToInt(QString version){
-	return version.replace('.', "").toInt();
-}
-
 /**
  * Removes the main scripts which disables mods and prevents to be banned
  * @brief MainWindow::removeScriptHookVDinput
  */
-void MainWindow::removeScriptHookVDinput(){
-	QFile::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll");
+void MainWindow::removeScriptHookVDinput(bool permanent){
+	if(!permanent){
+		QFile::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll");
+		QFile::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll");
+	}
 	QFile::remove(m_gtaDirectoryStr + "/dinput8.dll");
-	QFile::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll");
 	QFile::remove(m_gtaDirectoryStr + "/ScriptHookV.dll");
 }
 
@@ -212,22 +299,22 @@ void MainWindow::closeAppSlot(){
 }
 
 void MainWindow::startGtaArgsSlot(QStringList args){
-	QProcess *m_gtaProcess = new QProcess();
+	QProcess m_gtaProcess;
 	bool cracked = Utilities::launcherCracked();
 	if(cracked){
 		qDebug() << "Start as cracked";
-		m_gtaProcess->setWorkingDirectory(m_gtaDirectoryStr);
-		m_gtaProcess->start(m_gtaDirectoryStr + "/Launcher.exe", args);
+		m_gtaProcess.setWorkingDirectory(m_gtaDirectoryStr);
+		m_gtaProcess.startDetached(m_gtaDirectoryStr + "/Launcher.exe", args);
 	}else{
 		qDebug() << "Start as official";
 		if(isSteamVersion()){
 			qDebug() << "Steam version";
 			QStringList newArgs("/c");
 			newArgs << "start steam://rungameid/271590 " + args.join(" ");
-			m_gtaProcess->start("cmd", newArgs);
+			m_gtaProcess.startDetached("cmd", newArgs);
 		}else{
 			qDebug() << "Normal version";
-			m_gtaProcess->start(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
+			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
 	}
 }
@@ -250,7 +337,7 @@ void MainWindow::startGtaOnlineSlot(){
 	ChooseModsWindow::disableAllMods();
 	removeScriptHookVDinput();
 	QStringList args;
-	args << "-StraightIntoFreemode";
+	args << "-goStraightToMP";
 	startGtaArgsSlot(args);
 }
 
@@ -278,13 +365,62 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 	QDomNode versioningNode = versioning.lastChild();
 	QDomElement build = versioningNode.toElement();
 	QDomNode buildNode = build.elementsByTagName("Game").at(0);
-	int gameVersionNow = buildNode.toElement().attribute("version", "0.0.0.0").replace('.', "").toInt();
-	int userGameVersion = getVersionToInt(Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/GTA5.exe"));
-	int scriptHookVVersion = getVersionToInt(Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/ScriptHookV.dll"));
-	if(userGameVersion < gameVersionNow && scriptHookVVersion < gameVersionNow){
-		QMessageBox::information(this, tr("GTA V out-of-date"), tr("Your GTA V version is apparently out-of-date, would you like to update ScriptHookV ?"), QMessageBox::Yes);
-	}else{
-		qDebug() << "GTA up-to-date (v"+QVariant(gameVersionNow).toString()+")";
+	Version gameVersionNow = buildNode.toElement().attribute("version", "0.0.0.0");
+	Version userGameVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/GTA5.exe");
+	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr+"/ScriptHookV.dll");
+	if(userGameVersion == gameVersionNow && scriptHookVVersion < gameVersionNow){
+		int rep = QMessageBox::information(
+					this,
+					tr("ScriptHookV out-of-date"),
+					tr("Your ScriptHookV version is apparently out-of-date or you don't have it, would you like to update/install it (V %1) ?")
+						.arg(QString(gameVersionNow.getVersionStr().c_str())),
+					QMessageBox::Yes | QMessageBox::No
+		);
+		if(rep == QMessageBox::Yes){
+			Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{userGameVersion.getVersionStr().c_str()} + ".zip"};
+			downloader->addRawHeader("Referer", "http://www.dev-c.com/gtav/scripthookv/");
+			connect(downloader, &Downloader::downloaded, [this, downloader](QByteArray const &resp){
+
+				while(checkGtaAlreadyStarted(false)){
+					int rep = QMessageBox::information(this, tr("Update"), tr("Please close GTA V in order to update ScriptHookV"), QMessageBox::Ok | QMessageBox::No);
+					if(rep == QMessageBox::No){
+						downloader->deleteLater();
+						return;
+					}
+				}
+
+				// Delete ScriptHookV & dinput8 from system (disabled or not)
+				addScriptHookVDinput();
+				removeScriptHookVDinput(true);
+
+				// Copy unzip program
+				QFile::copy(":/unzip.exe", m_gtaDirectoryStr + "/unzip.exe");
+				// Remove old ScriptHookV
+				QFile::remove("ScriptHookV.zip");
+				// Create the new ScriptHookV zip file and write in it
+				QFile zip{m_gtaDirectoryStr + "/ScriptHookV.zip"};
+				zip.open(QFile::WriteOnly);
+				zip.write(resp);
+				zip.close();
+				// Unzip only ScriptHookV.dll & dinput8.dll
+				QProcess process;
+				process.setWorkingDirectory(m_gtaDirectoryStr);
+				process.start(m_gtaDirectoryStr + "/unzip.exe",
+						QStringList() << "-j" << "-o" << "ScriptHookV.zip" << "-x" << "bin/NativeTrainer.asi" << "www.dev-c.com.url" << "readme.txt"
+				);
+				process.waitForFinished();
+				// Remove unzip program & the ScriptHookV zip file to clean the folder
+				zip.remove();
+				QFile{m_gtaDirectoryStr + "/unzip.exe"}.remove();
+				QMessageBox::information(this, tr("Update"), tr("ScriptHookV has successfully been updated/installed !"), QMessageBox::Ok);
+				downloader->deleteLater();
+			});
+			connect(downloader, &Downloader::error, [this, downloader](){
+				QMessageBox::critical(this, tr("ScriptHookV Not Found"), tr("Could not find ScriptHookV in http://www.dev-c.com"));
+				downloader->deleteLater();
+			});
+			downloader->download();
+		}
 	}
 	m_checkGtaVersion->deleteLater();
 }
@@ -301,23 +437,22 @@ void MainWindow::checkSoftwareUpdatesSlot(QByteArray const &resp, bool messageBo
 	QDomNode versioningNode = versioning.firstChild();
 	QDomElement build = versioningNode.toElement();
 	QString newVersionStr = build.attribute("version", "0.0.0");
-	int newVersion = getVersionToInt(newVersionStr);
-	int version = getVersionToInt(qApp->applicationVersion());
-	qDebug() << version << newVersion;
+	Version newVersion = newVersionStr;
+	Version version = qApp->applicationVersion();
 	if(version < newVersion){
-		int resp = QMessageBox::information(this, tr("Launcher released"), tr("New version of GTA V Launcher has been released (v%n), would you like to download it ?", "", newVersion),
+		int resp = QMessageBox::information(this, tr("Launcher released"), tr("New version of GTA V Launcher has been released (v%n), would you like to download it ?", "", newVersion.getVersionInt()),
 				QMessageBox::Yes | QMessageBox::No);
 		if(resp == QMessageBox::Yes){
 			QString updater = qApp->applicationDirPath()+"/updater.exe";
-			Downloader *d = new Downloader("http://beta.bigcoding.com/GTAVLauncher/getUpdater");
+			Downloader *d = new Downloader("https://moffa13.com/GTAVLauncher/getUpdater");
 			d->download();
 			QObject::connect(d, &Downloader::downloaded, [this, updater, newVersionStr](QByteArray const &resp){
 				QFile q(updater);
 				q.open(QIODevice::WriteOnly);
 				q.write(resp);
 				q.close();
-				QProcess *process = new QProcess;
-				process->start(updater, QStringList(newVersionStr));
+				QProcess process;
+				process.startDetached(updater, QStringList(newVersionStr));
 				closeApp();
 			});
 		}
@@ -325,7 +460,7 @@ void MainWindow::checkSoftwareUpdatesSlot(QByteArray const &resp, bool messageBo
 		if(messageBox){
 			QMessageBox::information(this, tr("Up-to-date"), tr("You have the last version of the launcher"));
 		}
-		qDebug() << "Launcher up-to-date (v"+QVariant(newVersion).toString()+")";
+		qDebug() << "Launcher up-to-date (v" + QString{newVersion.getVersionStr().c_str()} + ")";
 	}
 	m_checkSoftwareUpdates->deleteLater();
 }

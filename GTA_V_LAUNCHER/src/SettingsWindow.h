@@ -22,6 +22,7 @@ class SettingsWindow : public QDialog
 		QGroupBox *m_scriptHookVGroupBox;
 		QPushButton *m_checkForUpdatesSoftware;
 		QPushButton *m_openGTAVGameDirectory;
+		QPushButton *m_changeGTAVGameDirectory;
 		QPushButton *m_forceGTAQuitButton;
 		QHBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
@@ -29,8 +30,9 @@ class SettingsWindow : public QDialog
 	signals:
 
 	public slots:
-		void openGTAVGameDirectory() const;
-		void forceKillGTA() const;
+		void openGTAVGameDirectorySlot() const;
+		void changeGTAVGameDirectorySlot() const;
+		void forceKillGTASlot() const;
 		void launchGTAVMethodSlot(int state);
 };
 

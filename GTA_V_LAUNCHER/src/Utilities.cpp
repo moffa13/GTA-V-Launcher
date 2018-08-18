@@ -5,7 +5,8 @@
 #include "Winbase.h"
 #include <QDebug>
 #include <QSettings>
-QString Utilities::getFileVersion(const QString &filename){
+
+Version Utilities::getFileVersion(const QString &filename){
 
 	DWORD dwHandle;
 	DWORD dwLen = GetFileVersionInfoSize(filename.toStdWString().c_str(), &dwHandle);

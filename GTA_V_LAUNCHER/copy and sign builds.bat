@@ -1,12 +1,11 @@
 @ECHO OFF
 
 del Release.rar
+mkdir ToRelease\Launcher
 
 set x86PATH=ToRelease\Launcher\GTA V Launcher.exe
-::set x64PATH=ToRelease\Launcher\GTA V Launcher.exe
 
-copy "x86\release\GTA_V_Launcher.exe" "%x86PATH%"
-::copy "x64\release\GTA_V_Launcher.exe" "%x64PATH%"
+copy "release\GTA_V_LAUNCHER.exe" "%x86PATH%"
 
 ..\share\upx.exe --best "%x86PATH%"
 

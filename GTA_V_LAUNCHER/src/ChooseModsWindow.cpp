@@ -45,7 +45,6 @@ void ChooseModsWindow::init(){
 	ui->setDisabledButton->setIcon(QIcon(":/images/downArrow.png"));
 	ui->setDisabledButton->setEnabled(false);
 
-	ui->setToConfigButton->setText(tr("Save to config"));
 	ui->resetConfigButton->setText(tr("Reset from config"));
 	ui->validateButton->setText(tr("Confirm"));
 }
@@ -86,7 +85,6 @@ void ChooseModsWindow::connectAll(){
 	});
 
 	QObject::connect(ui->deleteModButton, SIGNAL(clicked()), this, SLOT(deleteModSlot()));
-	QObject::connect(ui->setToConfigButton, SIGNAL(clicked()), this, SLOT(setConfigSlot()));
 	QObject::connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
 }
 
@@ -97,10 +95,7 @@ void ChooseModsWindow::closeEvent(QCloseEvent *event){
 
 void ChooseModsWindow::getFromFiles(){
 
-	#ifndef Q_DEBUG
-		QDir d(qApp->applicationDirPath());
-		d.mkdir("disabledMods");
-	#endif
+	QDir(MainWindow::m_gtaDirectoryStr).mkdir(MainWindow::m_disabledModsDirectoryStr);
 
 	// Get from files
 	QStringList enabledMods = getEnabledModsFromFiles();
@@ -122,7 +117,7 @@ void ChooseModsWindow::getFromFiles(){
  * @brief ChooseModsWindow::setEnabledModsToList
  * @param enabledMods
  */
-void ChooseModsWindow::setEnabledModsToList(const QList<QPair<QString, QString>> &enabledMods){
+void ChooseModsWindow::setEnabledModsToList(const QList<QPair<QString, Version>> &enabledMods){
 	m_modele1 = new QStringListModel(toQStringList(enabledMods, true), this);
 	m_modele1->setObjectName("enabled");
 	ui->listViewEnabled->setModel(m_modele1);
@@ -134,7 +129,7 @@ void ChooseModsWindow::setEnabledModsToList(const QList<QPair<QString, QString>>
  * @brief ChooseModsWindow::setDisabledModsToList
  * @param disabledMods
  */
-void ChooseModsWindow::setDisabledModsToList(const QList<QPair<QString, QString>> &disabledMods){
+void ChooseModsWindow::setDisabledModsToList(const QList<QPair<QString, Version>> &disabledMods){
 	m_modele2 = new QStringListModel(toQStringList(disabledMods, true), this);
 	m_modele2->setObjectName("disabled");
 	ui->listViewDisabled->setModel(m_modele2);
@@ -162,21 +157,21 @@ QStringList ChooseModsWindow::getDisabledModsFromFiles(){
  * @param list
  * @return
  */
-QList<QPair<QString, QString>> ChooseModsWindow::addVersionToElements(QString const& base, QStringList const& list) const{
-	QList<QPair<QString, QString>> listWithVersions;
+QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& base, QStringList const& list) const{
+	QList<QPair<QString, Version>> listWithVersions;
 	for(QString const& elem : list){
-		QString v = Utilities::getFileVersion(base + "/" + elem);
-		listWithVersions.append(QPair<QString, QString>(elem, v));
+		Version v = Utilities::getFileVersion(base + "/" + elem);
+		listWithVersions.append(QPair<QString, Version>(elem, v));
 	}
 	return listWithVersions;
 }
 
-QStringList ChooseModsWindow::toQStringList(const QList<QPair<QString, QString>> &list, bool addVersion){
+QStringList ChooseModsWindow::toQStringList(const QList<QPair<QString, Version>> &list, bool addVersion){
 	QStringList ret;
-	for(QPair<QString, QString> const& elem : list){
+	for(QPair<QString, Version> const& elem : list){
 		QString val = elem.first;
-		if(addVersion && !elem.second.isEmpty())
-			val += " V" + elem.second;
+		if(addVersion && elem.second.getVersionInt() != 0)
+			val += " V" + QString{elem.second.getVersionStr().c_str()};
 		ret.append(val);
 	}
 	return ret;
@@ -282,6 +277,7 @@ QStringList ChooseModsWindow::checkModsExists(QStringList &list){
 
 void ChooseModsWindow::setModsSlot(){
 	int resp = QMessageBox::information(this, tr("Sure ?"), tr("Are you sure ?"), QMessageBox::Yes | QMessageBox::No);
+	setConfigSlot();
 	if(resp == QMessageBox::Yes){
 		saveMods(m_enabledModsAndVersions, m_disabledModsAndVersions);
 	}else{
@@ -338,19 +334,16 @@ void ChooseModsWindow::loadConfigSlot(){
 }
 
 void ChooseModsWindow::setConfigSlot(){
-	int resp = QMessageBox::information(this, tr("Sure ?"), tr("Are you sure ?"), QMessageBox::Yes | QMessageBox::No);
-	if(resp == QMessageBox::Yes){
-		QSettings settings("Bigcoding", "GTA V Launcher");
-		settings.beginGroup("DisabledMods");
-		settings.remove("");
-		settings.endGroup();
-		settings.beginGroup("EnabledMods");
-		settings.remove("");
-		settings.endGroup();
-		qDebug() << getDisabledModsFromList();
-		Utilities::setToConfig("EnabledMods", getEnabledModsFromList());
-		Utilities::setToConfig("DisabledMods", getDisabledModsFromList());
-	}
+	QSettings settings("Bigcoding", "GTA V Launcher");
+	settings.beginGroup("DisabledMods");
+	settings.remove("");
+	settings.endGroup();
+	settings.beginGroup("EnabledMods");
+	settings.remove("");
+	settings.endGroup();
+	qDebug() << getDisabledModsFromList();
+	Utilities::setToConfig("EnabledMods", getEnabledModsFromList());
+	Utilities::setToConfig("DisabledMods", getDisabledModsFromList());
 }
 
 void ChooseModsWindow::setButtonUpDownSlot(QModelIndex index){
@@ -359,7 +352,7 @@ void ChooseModsWindow::setButtonUpDownSlot(QModelIndex index){
 	m_lastIndex = index;
 }
 
-void ChooseModsWindow::saveMods(QList<QPair<QString, QString>> const& enabledModsAndVersions, QList<QPair<QString, QString>> const& disabledModsAndVersions){
+void ChooseModsWindow::saveMods(QList<QPair<QString, Version>> const& enabledModsAndVersions, const QList<QPair<QString, Version> > &disabledModsAndVersions){
 	saveMods(toQStringList(disabledModsAndVersions), toQStringList(enabledModsAndVersions));
 }
 
@@ -382,8 +375,10 @@ void ChooseModsWindow::deleteModSlot(){
 		const QString *path = m_lastIndex.model()->objectName() == "enabled" ? &MainWindow::m_gtaDirectoryStr : &MainWindow::m_disabledModsDirectoryStr;
 		QStringListModel *model = m_lastIndex.model()->objectName() == "enabled" ? m_modele1 : m_modele2;
 		QFile::remove(*path+"/"+filename);
-		delete path;
 		model->removeRow(m_lastIndex.row());
+		if(m_lastIndex.model()->objectName() == "enabled"){
+			m_enabledModsAndVersions.removeAt(m_lastIndex.row());
+		}
 		setEnableDisableAllButtons();
 	}
 }

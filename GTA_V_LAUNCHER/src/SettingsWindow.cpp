@@ -24,6 +24,7 @@ void SettingsWindow::setButtons(){
 	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"));
 	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"));
 	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"));
+	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"));
 
 
 	bool cracked = Utilities::launcherCracked();
@@ -38,15 +39,24 @@ void SettingsWindow::setButtons(){
 	m_categoriesLayout = new QVBoxLayout;
 	m_categoriesLayout->addWidget(m_scriptHookVGroupBox);
 	m_categoriesLayout->addWidget(m_openGTAVGameDirectory);
+	m_categoriesLayout->addWidget(m_changeGTAVGameDirectory);
 	m_categoriesLayout->addWidget(m_forceGTAQuitButton);
 	setLayout(m_categoriesLayout);
 }
 
-void SettingsWindow::openGTAVGameDirectory() const{
+void SettingsWindow::openGTAVGameDirectorySlot() const{
 	QDesktopServices::openUrl(QUrl::fromLocalFile(MainWindow::m_gtaDirectoryStr));
 }
 
-void SettingsWindow::forceKillGTA() const{
+void SettingsWindow::changeGTAVGameDirectorySlot() const{
+	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
+	Utilities::setToConfig("General", QMap<QString, QVariant>{{"exe", ""}});
+	if(!parent->getGTAExecutable()){
+		parent->closeApp();
+	}
+}
+
+void SettingsWindow::forceKillGTASlot() const{
 	QProcess::execute("taskkill /im GTA5.exe /f");
 	QProcess::execute("taskkill /im GTAVLauncher.exe /f");
 }
@@ -56,8 +66,10 @@ void SettingsWindow::connectAll(){
 		MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
 		parent->getSoftwareUpdates(true);
 	});
-	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTA()));
-	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectory()));
+	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTASlot()));
+	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectorySlot()));
+	connect(m_changeGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(changeGTAVGameDirectorySlot()));
+
 	QObject::connect(m_startCrackedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(launchGTAVMethodSlot(int)));
 }
 

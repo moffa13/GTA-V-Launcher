@@ -22,6 +22,8 @@ class MainWindow : public Window{
 		explicit MainWindow(QWidget* parent = 0);
 		~MainWindow();
 		void init();
+		void closeApp();
+		bool getGTAExecutable();
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
@@ -35,18 +37,17 @@ class MainWindow : public Window{
 		void getGtaVersionThrewInternet();
 		bool checkOS();
 		void setBackground();
-		void closeApp();
-		QString getGTAExecutable();
 		void setFavicon();
 		void setButtons();
 		void connectAll();
 		void closeEvent(QCloseEvent *event);
-		static int getVersionToInt(QString version);
-		void removeScriptHookVDinput();
+		void removeScriptHookVDinput(bool permanent = false);
 		void addScriptHookVDinput();
 		bool checkNeedSteamAndOk();
 		bool checkGtaAlreadyStarted(bool showMessage = true);
 		Ui::MainWindow* ui;
+		QString findGamePath();
+		void setRelativeDirs(const QString &base);
 	public slots:
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());

@@ -1,5 +1,5 @@
 @ECHO OFF
-RMDIR /S /Q x86
-RMDIR /S /Q x64
+RMDIR /S /Q debug
+RMDIR /S /Q release
 DEL "ToRelease\Launcher\GTA V Launcher.exe"
 del Release.rar

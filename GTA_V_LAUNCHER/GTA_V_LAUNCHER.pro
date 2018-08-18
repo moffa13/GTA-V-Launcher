@@ -17,7 +17,8 @@ SOURCES += \
 	ChooseModsWindow.cpp \
 	Utilities.cpp \
 	SettingsWindow.cpp \
-	network/Downloader.cpp
+	network/Downloader.cpp \
+    src/Version.cpp
 
 HEADERS += \
 	Window.h \
@@ -25,7 +26,8 @@ HEADERS += \
 	ChooseModsWindow.h \
 	Utilities.h \
 	SettingsWindow.h \
-	network/Downloader.h
+	network/Downloader.h \
+    src/Version.h
 
 RESOURCES += \
 	GTA_V_LAUNCHER.qrc

@@ -12,6 +12,7 @@
 #include <QList>
 #include <QPair>
 #include <QSettings>
+#include "Version.h"
 
 namespace Ui{
 class ChooseModsWindow;
@@ -31,29 +32,29 @@ class ChooseModsWindow : public QDialog{
 	private:
 		QStringListModel *m_modele1;
 		QStringListModel *m_modele2;
-		QList<QPair<QString, QString>> m_enabledModsAndVersions;
-		QList<QPair<QString, QString>> m_disabledModsAndVersions;
+		QList<QPair<QString, Version>> m_enabledModsAndVersions;
+		QList<QPair<QString, Version>> m_disabledModsAndVersions;
 		static const QString m_gtaDirectoryStr;
 		static const QString m_disabledModsDirectoryStr;
 		QModelIndex m_lastIndex;
 		void connectAll();
 		void closeEvent(QCloseEvent *event);
 		void getFromFiles();
-		void setEnabledModsToList(const QList<QPair<QString, QString>> &enabledMods);
-		void setDisabledModsToList(const QList<QPair<QString, QString>> &enabledMods);
+		void setEnabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
+		void setDisabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
 		static QStringList getEnabledModsFromFiles();
 		static QStringList getDisabledModsFromFiles();
 		static void noConflicts(QStringList &enableMods, QStringList &disabledMods);
 		static void noConflicts(QStringList &enableMods, QStringList &disabledMods, QSet<QString> const& conflicts);
 		void enableButton(QString btn);
 		void enableDisableMod(QStringListModel *model);
-		static void saveMods(QList<QPair<QString, QString>> const& enabledModsAndVersions, QList<QPair<QString, QString>> const& disabledModsAndVersions);
+		static void saveMods(QList<QPair<QString, Version>> const& enabledModsAndVersions, QList<QPair<QString, Version>> const& disabledModsAndVersions);
 		static void saveMods(QStringList const& disable, QStringList const& enable = QStringList());
 		QStringList getEnabledModsFromList();
 		QStringList getDisabledModsFromList();
 		static QStringList checkModsExists(QStringList &list);
-		QList<QPair<QString, QString>> addVersionToElements(QString const& base, QStringList const& list) const;
-		static QStringList toQStringList(const QList<QPair<QString, QString> > &list, bool addVersion = false);
+		QList<QPair<QString, Version>> addVersionToElements(QString const& base, QStringList const& list) const;
+		static QStringList toQStringList(const QList<QPair<QString, Version> > &list, bool addVersion = false);
 		Ui::ChooseModsWindow* ui;
 		static QPair<QStringList, QStringList> getModsConfig();
 		void setEnableDisableAllButtons();

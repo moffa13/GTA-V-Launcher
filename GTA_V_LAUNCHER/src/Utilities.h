@@ -5,12 +5,13 @@
 #include <memory>
 #include <QSettings>
 #include <QVariant>
+#include <Version.h>
 
 class Utilities
 {
 	public:
 		Utilities();
-		static QString getFileVersion(const QString &filename);
+		static Version getFileVersion(const QString &filename);
 		static QString checkProcessRunning(const QString &name);
 		static std::unique_ptr<QSettings> getSettings();
 		static QMap<QString, QVariant> loadFromConfig(QString const &key);
