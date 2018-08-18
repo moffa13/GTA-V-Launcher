@@ -1,0 +1,8 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource>
+		<file alias="unrar.exe">../share/UnRAR.exe</file>
+		<file>translates/fr.qm</file>
+		<file>translates/qt_fr.qm</file>
+	</qresource>
+</RCC>
