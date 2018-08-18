@@ -9,28 +9,28 @@
         <translation>Sélectionner les mods</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="32"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="37"/>
         <source>Enable all</source>
         <translation>Tout activer</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="34"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="39"/>
         <source>Disable all</source>
         <translation>Tout désactiver</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="37"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="42"/>
         <source>Set enabled</source>
         <translation>Activer</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="41"/>
-        <location filename="../src/ChooseModsWindow.cpp" line="372"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="46"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="377"/>
         <source>Delete mod</source>
         <translation>Supprimer le mod</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="44"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="49"/>
         <source>Set disabled</source>
         <translation>Désactiver</translation>
     </message>
@@ -39,53 +39,53 @@
         <translation type="vanished">Savegarder</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="48"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="53"/>
         <source>Reset from config</source>
         <translation>Lire la configuration</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="49"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="54"/>
         <source>Confirm</source>
         <translation>Confirmer</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="192"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="197"/>
         <source>Conflict</source>
         <translation>Conflit</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="193"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="198"/>
         <source>There is a conflict with </source>
         <translation>Il y a un conflit avec </translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="194"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="199"/>
         <source>Keep mod in enabled mods</source>
         <translation>Garder dans les mods activés</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="195"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="200"/>
         <source>Keep mod in disabled mods</source>
         <translation>Garder dans les mods désactivés</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="279"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="284"/>
         <source>Sure ?</source>
         <translation>Confirmer ?</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="279"/>
-        <location filename="../src/ChooseModsWindow.cpp" line="372"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="284"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="377"/>
         <source>Are you sure ?</source>
         <translation>Êtes-vous sûr ?</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="286"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="291"/>
         <source>Play</source>
         <translation>Jouer</translation>
     </message>
     <message>
-        <location filename="../src/ChooseModsWindow.cpp" line="286"/>
+        <location filename="../src/ChooseModsWindow.cpp" line="291"/>
         <source>Do you want to play now ?</source>
         <translation>Voulez-vous jouer ?</translation>
     </message>
@@ -100,8 +100,8 @@
         <location filename="../ChooseModsWindow.ui" line="45"/>
         <location filename="../ChooseModsWindow.ui" line="54"/>
         <location filename="../ChooseModsWindow.ui" line="61"/>
-        <location filename="../ChooseModsWindow.ui" line="92"/>
-        <location filename="../ChooseModsWindow.ui" line="99"/>
+        <location filename="../ChooseModsWindow.ui" line="98"/>
+        <location filename="../ChooseModsWindow.ui" line="105"/>
         <source>PushButton</source>
         <translation></translation>
     </message>
@@ -109,14 +109,14 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="116"/>
-        <location filename="../src/MainWindow.cpp" line="292"/>
-        <location filename="../src/MainWindow.cpp" line="332"/>
+        <location filename="../src/MainWindow.cpp" line="105"/>
+        <location filename="../src/MainWindow.cpp" line="281"/>
+        <location filename="../src/MainWindow.cpp" line="321"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="116"/>
+        <location filename="../src/MainWindow.cpp" line="105"/>
         <source>This launcher is actually just made for windows</source>
         <translation>Ce launcher est actuellement fait pour Windows uniquement</translation>
     </message>
@@ -125,19 +125,19 @@
         <translation type="vanished">Impossible de trouver le launcher de GTA, le launcher est-il dans le bon dossier ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="225"/>
+        <location filename="../src/MainWindow.cpp" line="214"/>
         <source>Play GTA V Online
  (Mods disabled)</source>
         <translation>Jouer à GTA V Online
  (Mods désactivés)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="229"/>
+        <location filename="../src/MainWindow.cpp" line="218"/>
         <source>Play GTA V</source>
         <translation>Jouer à GTA V</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="234"/>
+        <location filename="../src/MainWindow.cpp" line="223"/>
         <source>Choose mods</source>
         <translation>Choisir les mods</translation>
     </message>
@@ -146,93 +146,93 @@
         <translation type="vanished">Crée par Moffa13 @ Bigcoding</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="147"/>
+        <location filename="../src/MainWindow.cpp" line="136"/>
         <source>Found GTA V</source>
         <translation>Répertoire de GTA V trouvé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="148"/>
+        <location filename="../src/MainWindow.cpp" line="137"/>
         <source>We found GTA V in &quot;%1&quot;, is this the right path ?</source>
         <translation>Nous avons trouvé un GTA V dans %1, est-ce le bon dossier ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="173"/>
+        <location filename="../src/MainWindow.cpp" line="162"/>
         <source>Select your GTA V Path</source>
         <translation>Sélectionner le dossier contenant GTA V</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="181"/>
+        <location filename="../src/MainWindow.cpp" line="170"/>
         <source>Wrong path</source>
         <translation>Mauvais chemin</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="182"/>
+        <location filename="../src/MainWindow.cpp" line="171"/>
         <source>This does not seem to be your GTA V folder, please select another one</source>
         <translation>Il ne semble pas que ça soit un répertoire contenant GTA V, veuillez en sélectionner un autre</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="238"/>
+        <location filename="../src/MainWindow.cpp" line="227"/>
         <source>Created By Moffa13 @ moffa13.com</source>
-        <translation>Crée par Moffa13 @ moffa13.com</translation>
+        <translation>Créé par Moffa13 @ moffa13.com</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="245"/>
+        <location filename="../src/MainWindow.cpp" line="234"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="292"/>
+        <location filename="../src/MainWindow.cpp" line="281"/>
         <source>Please start steam, log in and try again</source>
         <translation>Lancez steam, connectez-vous et essayez à nouveau</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="326"/>
+        <location filename="../src/MainWindow.cpp" line="315"/>
         <source>GTA V Running</source>
         <translation>GTA V Lancé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="326"/>
+        <location filename="../src/MainWindow.cpp" line="315"/>
         <source>GTA V is already running</source>
         <translation>GTA V est déjà en cours d&apos;exécution</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="332"/>
+        <location filename="../src/MainWindow.cpp" line="321"/>
         <source>You are using a cracked version, online mode is not available</source>
         <translation>Vous utilisez une version crackée, le mode en ligne n&apos;est donc pas disponible</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="373"/>
+        <location filename="../src/MainWindow.cpp" line="362"/>
         <source>ScriptHookV out-of-date</source>
         <translation>ScriptHookV n&apos;est plus à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="374"/>
+        <location filename="../src/MainWindow.cpp" line="363"/>
         <source>Your ScriptHookV version is apparently out-of-date or you don&apos;t have it, would you like to update/install it (V %1) ?</source>
         <translation>Votre version de ScriptHookV est obsolète ou vous ne l&apos;avez pas, voulez-vous l&apos;installer/le mettre à jour (V %1) ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="384"/>
-        <location filename="../src/MainWindow.cpp" line="414"/>
+        <location filename="../src/MainWindow.cpp" line="373"/>
+        <location filename="../src/MainWindow.cpp" line="403"/>
         <source>Update</source>
         <translation>Mise à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="384"/>
+        <location filename="../src/MainWindow.cpp" line="373"/>
         <source>Please close GTA V in order to update ScriptHookV</source>
         <translation>Veuillez quitter GTA V pour procéder à la mise à jour de ScriptHookV</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="414"/>
+        <location filename="../src/MainWindow.cpp" line="403"/>
         <source>ScriptHookV has successfully been updated/installed !</source>
         <translation>ScriptHookV a bien été mis à jour/installé !</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="418"/>
+        <location filename="../src/MainWindow.cpp" line="407"/>
         <source>ScriptHookV Not Found</source>
         <translation>ScriptHookV introuvable</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="418"/>
+        <location filename="../src/MainWindow.cpp" line="407"/>
         <source>Could not find ScriptHookV in http://www.dev-c.com</source>
         <translation>Impossible de trouver ScriptHookV sur http://www.dev-c.com</translation>
     </message>
@@ -245,30 +245,26 @@
         <translation type="vanished">Votre version de GTA V semble ne plus être à jour, voulez-vous mettre à jour ScriptHookV ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="442"/>
         <source>Launcher released</source>
-        <translation>Nouvelle version du launcher</translation>
+        <translation type="vanished">Nouvelle version du launcher</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/MainWindow.cpp" line="442"/>
         <source>New version of GTA V Launcher has been released (v%n), would you like to download it ?</source>
-        <translation>
+        <translation type="vanished">
             <numerusform>Une nouvelle version du launcher est sortie (v%n), voulez-vous la télécharger ?</numerusform>
             <numerusform>Une nouvelle version du launcher est sortie (v%n), voulez-vous la télécharger ?</numerusform>
         </translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="460"/>
         <source>Up-to-date</source>
-        <translation>À jour</translation>
+        <translation type="vanished">À jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="460"/>
         <source>You have the last version of the launcher</source>
-        <translation>Vous possédez la dernière version du launcher</translation>
+        <translation type="vanished">Vous possédez la dernière version du launcher</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="470"/>
+        <location filename="../src/MainWindow.cpp" line="424"/>
         <source>Play offline</source>
         <translation>Jouer hors-ligne</translation>
     </message>
@@ -298,9 +294,13 @@
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="23"/>
         <source>Check for updates</source>
-        <translation>Vérifier les mises à jour</translation>
+        <translation type="vanished">Vérifier les mises à jour</translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="23"/>
+        <source>Check for updates of ScriptHookV</source>
+        <translation>Rechercher les mises à jour de ScriptHookV</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="24"/>
