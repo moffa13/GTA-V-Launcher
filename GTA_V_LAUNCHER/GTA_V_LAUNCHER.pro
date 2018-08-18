@@ -18,7 +18,7 @@ SOURCES += \
 	Utilities.cpp \
 	SettingsWindow.cpp \
 	network/Downloader.cpp \
-    src/Version.cpp
+	src/Version.cpp
 
 HEADERS += \
 	Window.h \
@@ -27,15 +27,16 @@ HEADERS += \
 	Utilities.h \
 	SettingsWindow.h \
 	network/Downloader.h \
-    src/Version.h
+	src/Version.h
 
 RESOURCES += \
 	GTA_V_LAUNCHER.qrc
 
-VERSION = 1.0.7
 
+VERSION = 1.0.7
+DEFINES += APP_VERSION_COMMA=1,0,7
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 FORMS += \
-    MainWindow.ui \
-    ChooseModsWindow.ui
+	MainWindow.ui \
+	ChooseModsWindow.ui
