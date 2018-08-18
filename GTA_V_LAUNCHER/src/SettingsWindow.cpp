@@ -20,7 +20,7 @@ void SettingsWindow::setButtons(){
 	m_scriptHookVGroupBox = new QGroupBox("GTA V Launcher", this);
 	m_scripthookVLayout = new QHBoxLayout(m_scriptHookVGroupBox);
 
-	m_checkForUpdatesSoftware = new QPushButton(tr("Check for updates"));
+	m_checkForUpdatesSoftware = new QPushButton(tr("Check for updates of ScriptHookV"));
 	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"));
 	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"));
 	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"));
@@ -64,7 +64,7 @@ void SettingsWindow::forceKillGTASlot() const{
 void SettingsWindow::connectAll(){
 	QObject::connect(m_checkForUpdatesSoftware, &QPushButton::clicked, [this](){
 		MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-		parent->getSoftwareUpdates(true);
+		parent->getSoftwareUpdates();
 	});
 	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTASlot()));
 	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectorySlot()));

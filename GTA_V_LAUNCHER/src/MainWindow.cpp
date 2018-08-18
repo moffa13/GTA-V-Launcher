@@ -36,17 +36,11 @@ void MainWindow::init(){
 		setButtons();
 		connectAll();
 		show();
-		deleteTemp();
 		if(!getGTAExecutable()){
 			closeApp();
 		}
 		getSoftwareUpdates();
 	}
-}
-
-void MainWindow::deleteTemp(){
-	QFile::remove(qApp->applicationDirPath() + "/unrar.exe");
-	QFile::remove(qApp->applicationDirPath() + "/updater.exe");
 }
 
 QString MainWindow::findGamePath(){
@@ -101,13 +95,8 @@ void MainWindow::getGtaVersionThrewInternet(){
  * @brief MainWindow::getSoftwareUpdates
  * @param messageBox
  */
-void MainWindow::getSoftwareUpdates(bool messageBox){
+void MainWindow::getSoftwareUpdates(){
 	getGtaVersionThrewInternet();
-	m_checkSoftwareUpdates = new Downloader("http://beta.bigcoding.com/GTAVLauncher/getVersionList");
-	QObject::connect(m_checkSoftwareUpdates, &Downloader::downloaded, [this, messageBox](QByteArray const &resp){
-		checkSoftwareUpdatesSlot(resp, messageBox);
-	});
-	m_checkSoftwareUpdates->download();
 }
 
 bool MainWindow::checkOS(){
@@ -427,41 +416,6 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 void MainWindow::showSettingsWindowSlot(){
 	m_settingsWindow = new SettingsWindow(this);
 	m_settingsWindow->exec();
-}
-
-void MainWindow::checkSoftwareUpdatesSlot(QByteArray const &resp, bool messageBox){
-	QDomDocument q("update");
-	q.setContent(resp);
-	QDomElement versioning = q.documentElement();
-	QDomNode versioningNode = versioning.firstChild();
-	QDomElement build = versioningNode.toElement();
-	QString newVersionStr = build.attribute("version", "0.0.0");
-	Version newVersion = newVersionStr;
-	Version version = qApp->applicationVersion();
-	if(version < newVersion){
-		int resp = QMessageBox::information(this, tr("Launcher released"), tr("New version of GTA V Launcher has been released (v%n), would you like to download it ?", "", newVersion.getVersionInt()),
-				QMessageBox::Yes | QMessageBox::No);
-		if(resp == QMessageBox::Yes){
-			QString updater = qApp->applicationDirPath() + "/updater.exe";
-			Downloader *d = new Downloader("https://moffa13.com/GTAVLauncher/getUpdater");
-			d->download();
-			QObject::connect(d, &Downloader::downloaded, [this, updater, newVersionStr](QByteArray const &resp){
-				QFile q(updater);
-				q.open(QIODevice::WriteOnly);
-				q.write(resp);
-				q.close();
-				QProcess process;
-				process.startDetached(updater, QStringList(newVersionStr));
-				closeApp();
-			});
-		}
-	}else{
-		if(messageBox){
-			QMessageBox::information(this, tr("Up-to-date"), tr("You have the last version of the launcher"));
-		}
-		qDebug() << "Launcher up-to-date (v" + QString{newVersion.getVersionStr().c_str()} + ")";
-	}
-	m_checkSoftwareUpdates->deleteLater();
 }
 
 void MainWindow::showPlayContextualMenuSlot(const QPoint &pos){

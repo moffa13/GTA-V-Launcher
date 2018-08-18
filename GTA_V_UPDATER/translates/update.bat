@@ -1,1 +1,0 @@
-start /b /wait "" "M:\QtBuilds\newqt5.5x86static\bin\lupdate.exe" ..\GTA_V_UPDATER.pro

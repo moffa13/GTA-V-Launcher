@@ -26,6 +26,11 @@ void ChooseModsWindow::init(){
 	setWindowTitle(tr("Select active mods"));
 	setFixedSize(600, 500);
 
+	setStyleSheet("#ChooseModsWindow>QPushButton{"
+					"padding: 10px;"
+					"font-size: 12px;"
+				  "}");
+
 	ui->listViewEnabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->listViewDisabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 

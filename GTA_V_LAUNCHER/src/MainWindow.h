@@ -32,7 +32,6 @@ class MainWindow : public Window{
 		SettingsWindow *m_settingsWindow = NULL;
 		Downloader *m_checkGtaVersion;
 		Downloader *m_checkSoftwareUpdates;
-		void deleteTemp();
 		bool isSteamVersion();
 		void getGtaVersionThrewInternet();
 		bool checkOS();
@@ -56,8 +55,7 @@ class MainWindow : public Window{
 		void showChooseModsWindowSlot();
 		void downloadFinishedSlot(QByteArray resp);
 		void showSettingsWindowSlot();
-		void checkSoftwareUpdatesSlot(QByteArray const &resp, bool messageBox = false);
-		void getSoftwareUpdates(bool messageBox = false);
+		void getSoftwareUpdates();
 		void showPlayContextualMenuSlot(const QPoint &pos);
 };
 

@@ -14,7 +14,6 @@ int main(int argc, char *argv[]){
 	translator.load(":/translates/" + locale);
 
 	QTranslator translator2;
-	std::cout << QLibraryInfo::location(QLibraryInfo::TranslationsPath).toStdString().c_str() << std::endl;
 	translator2.load("qt_fr", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
 
