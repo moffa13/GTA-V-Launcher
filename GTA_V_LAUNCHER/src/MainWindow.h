@@ -31,8 +31,7 @@ class MainWindow : public Window{
 		ChooseModsWindow *m_chooseModsWindow = NULL;
 		SettingsWindow *m_settingsWindow = NULL;
 		Downloader *m_checkGtaVersion;
-		Downloader *m_checkSoftwareUpdates;
-		bool isSteamVersion();
+		bool isSteamVersion() const;
 		void getGtaVersionThrewInternet();
 		bool checkOS();
 		void setBackground();

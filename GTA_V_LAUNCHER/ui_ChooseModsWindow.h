@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'ChooseModsWindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.8.0
+** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,11 +10,8 @@
 #define UI_CHOOSEMODSWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QListView>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
@@ -137,14 +134,14 @@ public:
 
     void retranslateUi(QWidget *ChooseModsWindow)
     {
-        ChooseModsWindow->setWindowTitle(QApplication::translate("ChooseModsWindow", "ChooseModsWindow", Q_NULLPTR));
-        setEnabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        enableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        deleteModButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        disableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        setDisabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        resetConfigButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
-        validateButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", Q_NULLPTR));
+        ChooseModsWindow->setWindowTitle(QApplication::translate("ChooseModsWindow", "ChooseModsWindow", nullptr));
+        setEnabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        enableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        deleteModButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        disableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        setDisabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        resetConfigButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        validateButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
     } // retranslateUi
 
 };

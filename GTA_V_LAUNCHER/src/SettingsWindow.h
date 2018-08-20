@@ -27,6 +27,8 @@ class SettingsWindow : public QDialog
 		QHBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
 		QVBoxLayout *m_categoriesLayout;
+	protected:
+		void hideEvent(QHideEvent *e) override;
 	signals:
 
 	public slots:

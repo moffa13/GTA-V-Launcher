@@ -44,7 +44,7 @@ public:
         chooseMods->setGeometry(QRect(481, 519, 200, 29));
         byLabel = new QLabel(MainWindow);
         byLabel->setObjectName(QStringLiteral("byLabel"));
-        byLabel->setGeometry(QRect(10, 580, 47, 13));
+        byLabel->setGeometry(QRect(10, 580, 471, 16));
         openOptionsButton = new QPushButton(MainWindow);
         openOptionsButton->setObjectName(QStringLiteral("openOptionsButton"));
         openOptionsButton->setGeometry(QRect(15, 15, 153, 57));

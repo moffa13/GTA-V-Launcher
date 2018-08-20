@@ -20,6 +20,7 @@ QString MainWindow::m_gtaDirectoryStr = "";
 QString MainWindow::m_disabledModsDirectoryStr = "";
 
 MainWindow::MainWindow(QWidget* parent) : Window(), ui(new Ui::MainWindow){
+	Q_UNUSED(parent);
 	ui->setupUi(this);
 }
 
@@ -74,7 +75,7 @@ QString MainWindow::findGamePath(){
  * @brief MainWindow::isSteamVersion
  * @return true or false if it's gta's steam version
  */
-bool MainWindow::isSteamVersion(){
+bool MainWindow::isSteamVersion() const{
 	QFileInfo f(this->m_gtaDirectoryStr+"/steam_api.dll");
 	QFileInfo f2(this->m_gtaDirectoryStr+"/steam_api64.dll");
 	return f.exists() || f2.exists();
@@ -87,6 +88,9 @@ bool MainWindow::isSteamVersion(){
 void MainWindow::getGtaVersionThrewInternet(){
 	m_checkGtaVersion = new Downloader("http://patches.rockstargames.com/prod/gtav/versioning.xml");
 	QObject::connect(m_checkGtaVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(downloadFinishedSlot(QByteArray)));
+	QObject::connect(m_checkGtaVersion, &Downloader::error, [this](){
+		m_checkGtaVersion->deleteLater();
+	});
 	m_checkGtaVersion->download();
 }
 
@@ -200,8 +204,8 @@ void MainWindow::setFavicon(){
 void MainWindow::setButtons(){
 
 	QString css("QPushButton{"
-					"background-color: #55955c;"
-					"border: 1px solid black;"
+					"background-color: #407f93;"
+					"border: 1px solid #35393b;"
 					"font-size: 15px;"
 					"font-family: Consolas, Arial; "
 				"}"
@@ -215,23 +219,23 @@ void MainWindow::setButtons(){
 	ui->playOnline->setStyleSheet(css);
 	ui->playOnline->update();
 
-	ui->playMods = new QPushButton(tr("Play GTA V"), this);
+	ui->playMods->setText(tr("Play GTA V"));
 	ui->playMods->setStyleSheet(css);
 	ui->playMods->setGeometry(481, 438, 200, 80);
 	ui->playMods->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	ui->chooseMods = new QPushButton(tr("Choose mods"), this);
+	ui->chooseMods->setText(tr("Choose mods"));
 	ui->chooseMods->setStyleSheet(css);
 	ui->chooseMods->setGeometry(481, 519, 200, 29);
 
-	ui->byLabel = new QLabel(tr("Created By Moffa13 @ moffa13.com"), this);
+	ui->byLabel->setText(tr("Created By Moffa13 @ moffa13.com"));
 	QPalette byPalette = ui->byLabel->palette();
 	byPalette.setColor(QPalette::WindowText, QColor(Qt::white));
 	ui->byLabel->setFont(QFont("Arial", 10));
 	ui->byLabel->setPalette(byPalette);
 	ui->byLabel->move(10, 580);
 
-	ui->openOptionsButton = new QPushButton(tr("Settings"), this);
+	ui->openOptionsButton->setText(tr("Settings"));
 	ui->openOptionsButton->setStyleSheet(css);
 	ui->openOptionsButton->setGeometry(15, 15, 153, 57);
 
@@ -421,7 +425,7 @@ void MainWindow::showSettingsWindowSlot(){
 void MainWindow::showPlayContextualMenuSlot(const QPoint &pos){
 	QMenu menu;
 	QPoint globalPos = ui->playMods->mapToGlobal(pos);
-	QAction *act = new QAction(tr("Play offline"), ui->playMods);
+	QAction *act = new QAction(tr("Play offline"), &menu);
 	QObject::connect(act, &QAction::triggered, [this](){
 		startGtaWithModsSlot(true);
 	});

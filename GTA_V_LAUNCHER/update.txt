@@ -29,3 +29,5 @@ V 1.0.7
 - Resets the old mods state when getting back to offline (no need to re-enable the mods)
 - The launcher can auto update ScriptHookV & dinput8.dll
 - Fixed many bugs
+V 1.0.8
+- Fixed bugs (memory leaks, yes-no buttons not translated, ...)

@@ -20,11 +20,11 @@ void SettingsWindow::setButtons(){
 	m_scriptHookVGroupBox = new QGroupBox("GTA V Launcher", this);
 	m_scripthookVLayout = new QHBoxLayout(m_scriptHookVGroupBox);
 
-	m_checkForUpdatesSoftware = new QPushButton(tr("Check for updates of ScriptHookV"));
-	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"));
-	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"));
-	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"));
-	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"));
+	m_checkForUpdatesSoftware = new QPushButton(tr("Check for updates of ScriptHookV"), this);
+	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"), this);
+	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"), this);
+	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"), this);
+	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"), this);
 
 
 	bool cracked = Utilities::launcherCracked();
@@ -36,7 +36,7 @@ void SettingsWindow::setButtons(){
 
 	m_scriptHookVGroupBox->setLayout(m_scripthookVLayout);
 
-	m_categoriesLayout = new QVBoxLayout;
+	m_categoriesLayout = new QVBoxLayout(this);
 	m_categoriesLayout->addWidget(m_scriptHookVGroupBox);
 	m_categoriesLayout->addWidget(m_openGTAVGameDirectory);
 	m_categoriesLayout->addWidget(m_changeGTAVGameDirectory);
@@ -71,6 +71,11 @@ void SettingsWindow::connectAll(){
 	connect(m_changeGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(changeGTAVGameDirectorySlot()));
 
 	QObject::connect(m_startCrackedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(launchGTAVMethodSlot(int)));
+}
+
+void SettingsWindow::hideEvent(QHideEvent *e){
+	e->accept();
+	deleteLater();
 }
 
 void SettingsWindow::launchGTAVMethodSlot(int state){

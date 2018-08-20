@@ -38,7 +38,7 @@ class ChooseModsWindow : public QDialog{
 		static const QString m_disabledModsDirectoryStr;
 		QModelIndex m_lastIndex;
 		void connectAll();
-		void closeEvent(QCloseEvent *event);
+		void hideEvent(QHideEvent *event) override;
 		void getFromFiles();
 		void setEnabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
 		void setDisabledModsToList(const QList<QPair<QString, Version>> &enabledMods);

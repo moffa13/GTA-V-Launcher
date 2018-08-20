@@ -93,9 +93,9 @@ void ChooseModsWindow::connectAll(){
 	QObject::connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
 }
 
-void ChooseModsWindow::closeEvent(QCloseEvent *event){
-	event->accept();
-	delete this;
+void ChooseModsWindow::hideEvent(QHideEvent *e){
+	e->accept();
+	deleteLater();
 }
 
 void ChooseModsWindow::getFromFiles(){
