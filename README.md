@@ -12,29 +12,36 @@ If you downloaded 1.0.7, there is a bug with steam version. To quick fix this, c
 Changelog :
 
 V 1.0.3
-	- Added compatibility for cracked launchers (set it in settings)
-	- Added auto updater (Launcher can update itself) and added a check for updates button
-	- Reduced executable size (~5MB)
-	- Fixed some bugs
+- Added compatibility for cracked launchers (set it in settings)
+- Added auto updater (Launcher can update itself) and added a check for updates button
+- Reduced executable size (~5MB)
+- Fixed some bugs
+
 V 1.0.4 
-	- Added play offline contextual menu (by right-clicking in the play gta button) 
-	- Fixed some bugs 
-	- Translated "yes" and "no" buttons 
-V 1.0.5 
-	- Full steam support 
-	- Full Online mode support, mods are completly disabled so NO RISK to be banned 
-V 1.0.6 
-	- Fixed a bug that you can't start gta v steam version 
-V 1.0.7
-	- Translations
-	- Added useful buttons in settings (kill gta process, open/change gta directory)
-	- Added button to enable/disable all mods directly
-	- Launcher now automatically finds your game
-	- Show mods versions after the name if any
-	- Resets the old mods state when getting back to offline (no need to re-enable the mods)
-	- The launcher can auto update ScriptHookV & dinput8.dll
-	- Fixed many bugs
+- Added play offline contextual menu (by right-clicking in the play gta button)
+- Fixed some bugs
+- Translated "yes" and "no" buttons
+
+V 1.0.5
+- Full steam support
+- Full Online mode support, mods are completly disabled so NO RISK to be banned
+
+V 1.0.6
+- Fixed a bug that you can't start gta v steam version
+
+V [1.0.7]
+- Translations
+- Added useful buttons in settings (kill gta process, open/change gta directory)
+- Added button to enable/disable all mods directly
+- Launcher now automatically finds your game
+- Show mods versions after the name if any
+- Resets the old mods state when getting back to offline (no need to re-enable the mods)
+- The launcher can auto update ScriptHookV & dinput8.dll
+- Fixed many bugs
+
 V 1.0.8
-	- Fixed bugs (memory leaks, yes-no buttons not translated, ...)
-	- Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
-	- Added an option to close the launcher when game starts
+- Fixed bugs (memory leaks, yes-no buttons not translated, ...)
+- Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
+- Added an option to close the launcher when game starts
+
+[1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
