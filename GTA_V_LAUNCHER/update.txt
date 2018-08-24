@@ -4,6 +4,8 @@ Then go to Launcher\disabledMods. Copy all the files in this directory then go b
 Get in the launcher and go to "Choose Mods" > Reset from config > Confirm > Yes > No
 Then, you can delete the Launcher directory.
 
+If you downloaded 1.0.7, there is a bug with steam version. To quick fix this, create an empty PlayGTAV.exe file in your GTAV directory then start the launcher
+
 Changelog :
 
 V 1.0.3
@@ -31,3 +33,5 @@ V 1.0.7
 - Fixed many bugs
 V 1.0.8
 - Fixed bugs (memory leaks, yes-no buttons not translated, ...)
+- Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
+- Added an option to close the launcher when game starts

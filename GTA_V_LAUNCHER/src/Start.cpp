@@ -3,7 +3,6 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QDebug>
-#include <iostream>
 
 int main(int argc, char *argv[]){
 	QApplication app(argc, argv);
@@ -14,8 +13,7 @@ int main(int argc, char *argv[]){
 	translator.load(":/translates/" + locale);
 
 	QTranslator translator2;
-	translator2.load("qt_fr", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-
+	translator2.load("qt_" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
 	qApp->installTranslator(&translator2);
 	qApp->installTranslator(&translator);

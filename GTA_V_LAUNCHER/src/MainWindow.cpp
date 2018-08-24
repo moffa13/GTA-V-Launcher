@@ -19,7 +19,7 @@
 QString MainWindow::m_gtaDirectoryStr = "";
 QString MainWindow::m_disabledModsDirectoryStr = "";
 
-MainWindow::MainWindow(QWidget* parent) : Window(), ui(new Ui::MainWindow){
+MainWindow::MainWindow(QWidget* parent) : Window{parent}, ui(new Ui::MainWindow){
 	Q_UNUSED(parent);
 	ui->setupUi(this);
 }
@@ -65,7 +65,7 @@ QString MainWindow::findGamePath(){
 		for(auto const& e : list){
 				QString foundPath = isLink ? e.canonicalFilePath() : e.absoluteFilePath();
 				QString parent = QFileInfo(foundPath).absolutePath();
-				if(foundPath.right(12) == "PlayGTAV.exe") return parent;
+				if(foundPath.right(12) == "PlayGTAV.exe" || foundPath.right(8) == "GTA5.exe") return parent;
 		}
 	}
 	return QString();
@@ -129,7 +129,7 @@ bool MainWindow::getGTAExecutable(){
 	QString exe = Utilities::loadFromConfig("General", "exe").toString();
 	bool alreadyFromConfig = false;
 	bool letUserSelect = false;
-	if(exe.isEmpty() || !QFile(exe + "/PlayGTAV.exe").exists()){
+	if(exe.isEmpty() || !QFile(exe + "/GTA5.exe").exists()){
 		// Try to find the exe
 		exe = findGamePath();
 
@@ -167,7 +167,7 @@ bool MainWindow::getGTAExecutable(){
 						QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
 						QFileDialog::ShowDirsOnly
 			);
-			fileExists = QFile(dir + "/PlayGTAV.exe").exists();
+			fileExists = QFile(dir + "/GTA5.exe").exists();
 			if(!fileExists){
 				int rep = QMessageBox::critical(
 							this,
@@ -309,6 +309,9 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 			qDebug() << "Normal version";
 			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
+	}
+	if(Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart").toBool()){
+		closeApp();
 	}
 }
 

@@ -14,7 +14,6 @@ Version Utilities::getFileVersion(const QString &filename){
 	LPVOID lpData = new BYTE[dwLen];
 	if(!GetFileVersionInfo(filename.toStdWString().c_str(), dwHandle, dwLen, lpData))
 	{
-		qDebug() << "error in GetFileVersionInfo";
 		delete[] lpData;
 		return "";
 	}

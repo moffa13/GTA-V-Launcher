@@ -24,8 +24,9 @@ class SettingsWindow : public QDialog
 		QPushButton *m_openGTAVGameDirectory;
 		QPushButton *m_changeGTAVGameDirectory;
 		QPushButton *m_forceGTAQuitButton;
-		QHBoxLayout *m_scripthookVLayout;
+		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
+		QCheckBox *m_exitLauncherAfterGameStart;
 		QVBoxLayout *m_categoriesLayout;
 	protected:
 		void hideEvent(QHideEvent *e) override;
