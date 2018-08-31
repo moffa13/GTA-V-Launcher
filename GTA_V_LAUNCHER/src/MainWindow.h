@@ -28,9 +28,9 @@ class MainWindow : public Window{
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
 	private:
-		ChooseModsWindow *m_chooseModsWindow = NULL;
-		SettingsWindow *m_settingsWindow = NULL;
-		Downloader *m_checkGtaVersion;
+		ChooseModsWindow *m_chooseModsWindow = nullptr;
+		SettingsWindow *m_settingsWindow = nullptr;
+		Downloader *m_checkGtaVersion = nullptr;
 		bool isSteamVersion() const;
 		void getGtaVersionThrewInternet();
 		bool checkOS();

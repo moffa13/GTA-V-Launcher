@@ -43,5 +43,6 @@ V 1.0.8
 - Fixed bugs (memory leaks, yes-no buttons not translated, ...)
 - Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
 - Added an option to close the launcher when game starts
+- Added functionality to install a mod from asi or zip also copying its config files by detecting them
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7

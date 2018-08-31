@@ -39,6 +39,8 @@ void ChooseModsWindow::init(){
 	ui->disableAllButton->setText(tr("Disable all"));
 	ui->disableAllButton->setEnabled(false);
 
+	ui->installModButton->setText(tr("Install a mod"));
+
 	ui->setEnabledButton->setText(tr("Set enabled"));
 	ui->setEnabledButton->setIcon(QIcon(":/images/upArrow.png"));
 	ui->setEnabledButton->setEnabled(false);
@@ -55,17 +57,22 @@ void ChooseModsWindow::init(){
 }
 
 void ChooseModsWindow::connectAll(){
-	QObject::connect(ui->validateButton, SIGNAL(clicked()), this, SLOT(setModsSlot()));
-	QObject::connect(ui->listViewEnabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
-	QObject::connect(ui->listViewDisabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
-	QObject::connect(ui->setEnabledButton, &QPushButton::clicked, [this](){
+	connect(ui->validateButton, SIGNAL(clicked()), this, SLOT(setModsSlot()));
+	connect(ui->listViewEnabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
+	connect(ui->listViewDisabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
+	connect(ui->setEnabledButton, &QPushButton::clicked, [this](){
 		enableDisableMod(m_modele1);
 	});
-	QObject::connect(ui->setDisabledButton, &QPushButton::clicked, [this](){
+	connect(ui->setDisabledButton, &QPushButton::clicked, [this](){
 		enableDisableMod(m_modele2);
 	});
 
-	QObject::connect(ui->enableAllButton, &QPushButton::clicked, [this](){
+	connect(ui->installModButton, &QPushButton::clicked, [this](){
+		m_installModWindow = new InstallModWindow(MainWindow::m_gtaDirectoryStr + "/installMod", MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", this);
+		m_installModWindow->exec();
+	});
+
+	connect(ui->enableAllButton, &QPushButton::clicked, [this](){
 		QStringList all = toQStringList(m_enabledModsAndVersions);
 		all.append(toQStringList(m_disabledModsAndVersions));
 
@@ -77,7 +84,7 @@ void ChooseModsWindow::connectAll(){
 		setEnableDisableAllButtons();
 	});
 
-	QObject::connect(ui->disableAllButton, &QPushButton::clicked, [this](){
+	connect(ui->disableAllButton, &QPushButton::clicked, [this](){
 		QStringList all = toQStringList(m_enabledModsAndVersions);
 		all.append(toQStringList(m_disabledModsAndVersions));
 
@@ -89,8 +96,8 @@ void ChooseModsWindow::connectAll(){
 		setEnableDisableAllButtons();
 	});
 
-	QObject::connect(ui->deleteModButton, SIGNAL(clicked()), this, SLOT(deleteModSlot()));
-	QObject::connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
+	connect(ui->deleteModButton, SIGNAL(clicked()), this, SLOT(deleteModSlot()));
+	connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
 }
 
 void ChooseModsWindow::hideEvent(QHideEvent *e){

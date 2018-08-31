@@ -2,6 +2,7 @@
 #define CHOOSEMODSWINDOW_H
 
 #include "Window.h"
+#include "InstallModWindow.h"
 #include <QDialog>
 #include <QLabel>
 #include <QListView>
@@ -30,8 +31,9 @@ class ChooseModsWindow : public QDialog{
 		static void disableAllMods();
 		static void enableOldConfig();
 	private:
-		QStringListModel *m_modele1;
-		QStringListModel *m_modele2;
+		QStringListModel *m_modele1 = nullptr;
+		QStringListModel *m_modele2 = nullptr;
+		InstallModWindow *m_installModWindow = nullptr;
 		QList<QPair<QString, Version>> m_enabledModsAndVersions;
 		QList<QPair<QString, Version>> m_disabledModsAndVersions;
 		static const QString m_gtaDirectoryStr;

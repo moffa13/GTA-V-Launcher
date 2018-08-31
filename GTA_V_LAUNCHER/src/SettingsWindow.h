@@ -37,6 +37,8 @@ class SettingsWindow : public QDialog
 		void changeGTAVGameDirectorySlot() const;
 		void forceKillGTASlot() const;
 		void launchGTAVMethodSlot(int state);
+	private slots:
+		void checkSoftwareUpdatesSlot() const;
 };
 
 #endif // SETTINGSWINDOW_H

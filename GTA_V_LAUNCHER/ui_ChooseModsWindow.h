@@ -30,6 +30,7 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QPushButton *setEnabledButton;
     QPushButton *enableAllButton;
+    QPushButton *installModButton;
     QPushButton *deleteModButton;
     QHBoxLayout *horizontalLayout_3;
     QPushButton *disableAllButton;
@@ -70,6 +71,11 @@ public:
 
 
         horizontalLayout_2->addLayout(horizontalLayout_4);
+
+        installModButton = new QPushButton(ChooseModsWindow);
+        installModButton->setObjectName(QStringLiteral("installModButton"));
+
+        horizontalLayout_2->addWidget(installModButton);
 
         deleteModButton = new QPushButton(ChooseModsWindow);
         deleteModButton->setObjectName(QStringLiteral("deleteModButton"));
@@ -137,6 +143,7 @@ public:
         ChooseModsWindow->setWindowTitle(QApplication::translate("ChooseModsWindow", "ChooseModsWindow", nullptr));
         setEnabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
         enableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
+        installModButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
         deleteModButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
         disableAllButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));
         setDisabledButton->setText(QApplication::translate("ChooseModsWindow", "PushButton", nullptr));

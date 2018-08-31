@@ -60,7 +60,8 @@ void SettingsWindow::changeGTAVGameDirectorySlot() const{
 	Utilities::setToConfig("General", QMap<QString, QVariant>{{"exe", ""}});
 	if(!parent->getGTAExecutable()){
 		parent->closeApp();
-	}
+	}else
+		checkSoftwareUpdatesSlot();
 }
 
 void SettingsWindow::forceKillGTASlot() const{
@@ -69,10 +70,7 @@ void SettingsWindow::forceKillGTASlot() const{
 }
 
 void SettingsWindow::connectAll(){
-	QObject::connect(m_checkForUpdatesSoftware, &QPushButton::clicked, [this](){
-		MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-		parent->getSoftwareUpdates();
-	});
+	QObject::connect(m_checkForUpdatesSoftware, SIGNAL(clicked(bool)), this, SLOT(checkSoftwareUpdatesSlot()));
 	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTASlot()));
 	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectorySlot()));
 	connect(m_changeGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(changeGTAVGameDirectorySlot()));
@@ -81,6 +79,11 @@ void SettingsWindow::connectAll(){
 	connect(m_exitLauncherAfterGameStart, &QCheckBox::stateChanged, [](int state){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldExitLauncherAfterGameStart", state}});
 	});
+}
+
+void SettingsWindow::checkSoftwareUpdatesSlot() const{
+	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
+	parent->getSoftwareUpdates();
 }
 
 void SettingsWindow::hideEvent(QHideEvent *e){
