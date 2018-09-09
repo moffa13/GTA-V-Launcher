@@ -6,5 +6,6 @@
     <file>images/favicon.png</file>
     <file>translates/fr.qm</file>
 	<file alias="unzip.exe">../share/unzip.exe</file>
+	<file alias="unrar.exe">../share/UnRAR.exe</file>
 </qresource>
 </RCC>

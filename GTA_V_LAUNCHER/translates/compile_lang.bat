@@ -1,1 +1,1 @@
-start /b /wait "" "C:\Qt5.8\5.8\msvc2015_64\bin\lrelease.exe" fr.ts
+start /b /wait "" "C:\Qt-5.11.1-static-x64\bin\lrelease.exe" fr.ts

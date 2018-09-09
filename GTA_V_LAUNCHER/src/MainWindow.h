@@ -9,6 +9,7 @@
 #include <QCloseEvent>
 #include <QNetworkReply>
 #include <network/Downloader.h>
+//#include <QWebView>
 
 namespace Ui{
 class MainWindow;
@@ -19,7 +20,7 @@ class MainWindow : public Window{
 	Q_OBJECT
 
 	public:
-		explicit MainWindow(QWidget* parent = 0);
+		explicit MainWindow(QWidget* parent = nullptr);
 		~MainWindow();
 		void init();
 		void closeApp();
@@ -31,6 +32,8 @@ class MainWindow : public Window{
 		ChooseModsWindow *m_chooseModsWindow = nullptr;
 		SettingsWindow *m_settingsWindow = nullptr;
 		Downloader *m_checkGtaVersion = nullptr;
+		//QWebView *m_adView;
+		//void loadAd();
 		bool isSteamVersion() const;
 		void getGtaVersionThrewInternet();
 		bool checkOS();
@@ -47,6 +50,7 @@ class MainWindow : public Window{
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
 	public slots:
+		void uninstallLauncherSlot();
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
 		void startGtaOnlineSlot();

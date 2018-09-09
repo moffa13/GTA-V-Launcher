@@ -25,10 +25,11 @@ class ChooseModsWindow : public QDialog{
 	Q_OBJECT
 
 	public:
-		ChooseModsWindow(QWidget *parent = 0);
+		ChooseModsWindow(QWidget *parent = nullptr);
 		~ChooseModsWindow();
 		void init();
 		static void disableAllMods();
+		static void enableAllMods();
 		static void enableOldConfig();
 	private:
 		QStringListModel *m_modele1 = nullptr;
@@ -55,11 +56,13 @@ class ChooseModsWindow : public QDialog{
 		QStringList getEnabledModsFromList();
 		QStringList getDisabledModsFromList();
 		static QStringList checkModsExists(QStringList &list);
-		QList<QPair<QString, Version>> addVersionToElements(QString const& base, QStringList const& list) const;
+		QList<QPair<QString, Version>> addVersionToElements(QString const& baseAsi, QString const& baseDll, QStringList const& list) const;
+		QList<QPair<QString, Version> > addVersionToElements(const QString &base, const QStringList &list) const;
 		static QStringList toQStringList(const QList<QPair<QString, Version> > &list, bool addVersion = false);
 		Ui::ChooseModsWindow* ui;
 		static QPair<QStringList, QStringList> getModsConfig();
 		void setEnableDisableAllButtons();
+		static QString basePathFromModType(const QString &mod);
 	public slots:
 		void setModsSlot();
 		void loadConfigSlot();

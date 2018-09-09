@@ -26,6 +26,7 @@ void SettingsWindow::setButtons(){
 	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"), this);
 	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"), this);
 	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"), this);
+	m_uninstallLauncher = new QPushButton(tr("Uninstall this launcher"), this);
 
 
 	bool cracked = Utilities::launcherCracked();
@@ -42,6 +43,8 @@ void SettingsWindow::setButtons(){
 	m_scripthookVLayout->addWidget(m_openGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_changeGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_forceGTAQuitButton);
+	m_scripthookVLayout->addWidget(m_uninstallLauncher);
+
 
 
 	m_scriptHookVGroupBox->setLayout(m_scripthookVLayout);
@@ -79,6 +82,11 @@ void SettingsWindow::connectAll(){
 	connect(m_exitLauncherAfterGameStart, &QCheckBox::stateChanged, [](int state){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldExitLauncherAfterGameStart", state}});
 	});
+	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));
+}
+
+MainWindow *SettingsWindow::getParent() const{
+	return qobject_cast<MainWindow*>(parentWidget());
 }
 
 void SettingsWindow::checkSoftwareUpdatesSlot() const{

@@ -2,7 +2,9 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QtWebView/QtWebView>
 #include <QDebug>
+
 
 int main(int argc, char *argv[]){
 	QApplication app(argc, argv);

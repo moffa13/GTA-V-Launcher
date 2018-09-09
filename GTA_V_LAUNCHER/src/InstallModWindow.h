@@ -26,13 +26,13 @@ class InstallModWindow : public QDialog
 		Q_OBJECT
 
 	public:
-		explicit InstallModWindow(QString installDir, QString modsDir, QString scriptsDir, QWidget *parent = 0);
+		explicit InstallModWindow(QString installDir, QString modsDir, QString scriptsDir, QWidget *parent = nullptr);
 		~InstallModWindow();
 	protected:
 		void hideEvent(QHideEvent *event) override;
 	private slots:
 		void validateEdit(const QString &text);
-		void addMod() const;
+		void addMod();
 	Q_SIGNALS:
 		void modAdded(QString const& name) const;
 	private:
@@ -42,7 +42,7 @@ class InstallModWindow : public QDialog
 		QDir _scriptsDir;
 		QDir _currentDir;
 		ModType _type;
-		void clearInstallDirectory();
+		void clearInstallDirectory(bool mk = true);
 		void copyAndExtractZip(const QString &zip) const;
 		modsStruct detectModFiles() const;
 		QMap<QString, bool> detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles);

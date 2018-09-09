@@ -1,5 +1,6 @@
 #include "InstallModWindow.h"
 #include "ui_InstallModWindow.h"
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QtDebug>
@@ -16,7 +17,7 @@ InstallModWindow::InstallModWindow(QString installDir, QString modsDir, QString 
 	ui->setupUi(this);
 
 	setWindowTitle(tr("Install a mod"));
-	ui->selectFileButton->setText(tr("Select a mod file (*.asi, *.dll, *.zip)"));
+	ui->selectFileButton->setText(tr("Select a mod file (*.asi, *.dll, *.zip, *.rar)"));
 	ui->validateButton->setText(tr("Confirm"));
 
 	connect(ui->selectFileButton, &QPushButton::clicked, [this](){
@@ -24,27 +25,32 @@ InstallModWindow::InstallModWindow(QString installDir, QString modsDir, QString 
 				this,
 				tr("Select your mod file"),
 				QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
-				"ASI mod files (*.asi *.dll *.zip)"
+				"ASI mod files (*.asi *.dll *.zip *.rar)"
 		);
 		ui->modFileEdit->setText(file);
 	});
+
+	QDir{_scriptsDir}.mkdir(".");
 
 	connect(ui->validateButton, SIGNAL(clicked(bool)), this, SLOT(addMod()));
 
 	connect(ui->modFileEdit, SIGNAL(textChanged(QString)), this, SLOT(validateEdit(QString)));
 
+	ui->validateButton->setVisible(false);
+	ui->filesInZipList->setVisible(false);
 	ui->modFileEdit->setMinimumWidth(300);
+	ui->filesInZipList->setMaximumHeight(600);
 
 	setFixedSize(sizeHint());
 
 }
 
-void InstallModWindow::clearInstallDirectory(){
+void InstallModWindow::clearInstallDirectory(bool mk){
 	_installDir.removeRecursively();
-	_installDir.mkdir(".");
+	if(mk) _installDir.mkdir(".");
 }
 
-void InstallModWindow::addMod() const{
+void InstallModWindow::addMod(){
 	for(int i = 0; i < ui->filesInZipList->count(); ++i){
 		QListWidgetItem* itemP = ui->filesInZipList->item(i);
 		if(itemP->checkState() == Qt::Unchecked) continue;
@@ -52,18 +58,23 @@ void InstallModWindow::addMod() const{
 
 		QFileInfo fInfo{_currentDir.absoluteFilePath(item)};
 		if(fInfo.isFile() && (item.endsWith(".asi") || _type == ASI)){
+			QFile::copy(_currentDir.absoluteFilePath(item), _modsDir.absoluteFilePath(item));
 			if(item.endsWith(".asi")){
 				emit modAdded(item);
 			}
-			QFile::copy(_currentDir.absoluteFilePath(item), _modsDir.absoluteFilePath(item));
 		}else if(fInfo.isFile() && (item.endsWith(".dll") || _type == DLL)){
 			QFile::copy(_currentDir.absoluteFilePath(item), _scriptsDir.absoluteFilePath(item));
+			if(item.endsWith(".dll")){
+				emit modAdded(item);
+			}
 		}else if(fInfo.isDir()){ // Config Files which we don't know where to copy
 			copyDir(QDir{_currentDir.absoluteFilePath(item)}, _scriptsDir.absoluteFilePath(item));
 		}else{
 
 		}
 	}
+	QMessageBox::information(this, tr("Success"), tr("Your mod has been installed with success"), QMessageBox::Ok);
+	hide();
 }
 
 void InstallModWindow::addToList(QMap<QString, bool> elements) const{
@@ -77,7 +88,7 @@ void InstallModWindow::addToList(QMap<QString, bool> elements) const{
 
 void InstallModWindow::copyDir(const QDir &from, const QDir &to){
 	to.mkpath(".");
-	QFileInfoList files = from.entryInfoList(QStringList() <<"*", QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+	QFileInfoList files = from.entryInfoList(QStringList() << "*", QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 	QStack<QFileInfo> stack;
 	for(auto const& file : files){
 		stack.push(file);
@@ -99,14 +110,21 @@ void InstallModWindow::copyDir(const QDir &from, const QDir &to){
  * @param zip
  */
 void InstallModWindow::copyAndExtractZip(QString const& zip) const{
-	QFile::copy(":/unzip.exe", _installDir.absolutePath() + "/unzip.exe");
-	QFile::copy(zip, _installDir.absolutePath() + "/mod.zip");
-	// Extract all the files in a single directory
 	QProcess process;
 	process.setWorkingDirectory(_installDir.absolutePath());
-	process.start(_installDir.absolutePath() + "/unzip.exe",
-			QStringList() << "-o" << "mod.zip"
-	);
+	if(zip.endsWith(".rar")){
+		QFile::copy(":/unrar.exe", _installDir.absolutePath() + "/unrar.exe");
+		QFile::copy(zip, _installDir.absolutePath() + "/mod.rar");
+		process.start(_installDir.absolutePath() + "/unrar.exe",
+				QStringList() << "x" << "-o+" << "mod.rar"
+		);
+	}else{
+		QFile::copy(":/unzip.exe", _installDir.absolutePath() + "/unzip.exe");
+		QFile::copy(zip, _installDir.absolutePath() + "/mod.zip");
+		process.start(_installDir.absolutePath() + "/unzip.exe",
+				QStringList() << "-o" << "mod.zip"
+		);
+	}
 	process.waitForFinished();
 }
 
@@ -162,7 +180,7 @@ QMap<QString, bool> InstallModWindow::detectNeededFiles(QDir _installDir, modsSt
 		QString const file = fileInfos.fileName();
 		bool isFile = fileInfos.isFile();
 		// No need of these files
-		if(isFile && file == "unzip.exe" || file == "mod.zip") continue;
+		if(isFile && (file == "unzip.exe" || file == "unrar.exe" || file == "mod.zip" || file == "mod.rar")) continue;
 
 		if(takeAllConfigFiles)
 			files[file] = false;
@@ -192,7 +210,7 @@ void InstallModWindow::validateEdit(QString const& text){
 
 	QMap<QString, bool> neededFiles;
 
-	if(text.endsWith(".zip")){
+	if(text.endsWith(".zip") || text.endsWith(".rar")){
 		_currentDir = _installDir;
 		// Remove the install dir & re-create it
 		clearInstallDirectory();
@@ -222,10 +240,14 @@ void InstallModWindow::validateEdit(QString const& text){
 	}
 
 	addToList(neededFiles);
+	ui->filesInZipList->setVisible(true);
+	ui->validateButton->setVisible(true);
+	setFixedSize(sizeHint());
 }
 
 void InstallModWindow::hideEvent(QHideEvent *e){
 	e->accept();
+	clearInstallDirectory(false);
 	deleteLater();
 }
 

@@ -9,21 +9,25 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 
+class MainWindow;
+
 class SettingsWindow : public QDialog
 {
 	Q_OBJECT
 
 	public:
-		explicit SettingsWindow(QWidget *parent = 0);
+		explicit SettingsWindow(QWidget *parent = nullptr);
 	private:
 		void init();
 		void setButtons();
 		void connectAll();
+		MainWindow *getParent() const;
 		QGroupBox *m_scriptHookVGroupBox;
 		QPushButton *m_checkForUpdatesSoftware;
 		QPushButton *m_openGTAVGameDirectory;
 		QPushButton *m_changeGTAVGameDirectory;
 		QPushButton *m_forceGTAQuitButton;
+		QPushButton *m_uninstallLauncher;
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
 		QCheckBox *m_exitLauncherAfterGameStart;

@@ -16,10 +16,11 @@
 #include "Version.h"
 #include "ui_MainWindow.h"
 
+
 QString MainWindow::m_gtaDirectoryStr = "";
 QString MainWindow::m_disabledModsDirectoryStr = "";
 
-MainWindow::MainWindow(QWidget* parent) : Window{parent}, ui(new Ui::MainWindow){
+MainWindow::MainWindow(QWidget* parent) : Window{parent}, ui(new Ui::MainWindow)/*, m_adView(new QWebEngineView(this))*/ {
 	Q_UNUSED(parent);
 	ui->setupUi(this);
 }
@@ -31,11 +32,13 @@ MainWindow::~MainWindow(){
 void MainWindow::init(){
 
 	if(checkOS()){
+		//m_adView->hide();
 		setWindowTitle("Launcher GTA V "+ qApp->applicationVersion());
 		setFavicon();
 		setBackground();
 		setButtons();
 		connectAll();
+		//loadAd();
 		show();
 		if(!getGTAExecutable()){
 			closeApp();
@@ -43,6 +46,19 @@ void MainWindow::init(){
 		getSoftwareUpdates();
 	}
 }
+
+void MainWindow::uninstallLauncherSlot(){
+	int resp = QMessageBox::question(this, tr("Uninstall"), tr("Are you sure you do want to uninstall this launcher ? This will re-enable all your mods"));
+	if(resp == QMessageBox::Yes){
+		addScriptHookVDinput();
+		ChooseModsWindow::enableAllMods();
+		QDir{m_gtaDirectoryStr}.rmdir("disabledMods");
+		QDir{m_gtaDirectoryStr + "/installMod"}.removeRecursively();
+		QMessageBox::information(this, tr("Launcher uninstalled"), tr("Successfully uninstalled"), QMessageBox::Ok);
+		closeApp();
+	}
+}
+
 
 QString MainWindow::findGamePath(){
 	QStringList possiblesGamePaths;
@@ -76,8 +92,8 @@ QString MainWindow::findGamePath(){
  * @return true or false if it's gta's steam version
  */
 bool MainWindow::isSteamVersion() const{
-	QFileInfo f(this->m_gtaDirectoryStr+"/steam_api.dll");
-	QFileInfo f2(this->m_gtaDirectoryStr+"/steam_api64.dll");
+	QFileInfo f(this->m_gtaDirectoryStr + "/steam_api.dll");
+	QFileInfo f2(this->m_gtaDirectoryStr + "/steam_api64.dll");
 	return f.exists() || f2.exists();
 }
 
@@ -187,6 +203,27 @@ bool MainWindow::getGTAExecutable(){
 	}
 }
 
+//void MainWindow::loadAd(){
+//	QString const adUrl{"https://moffa13.com/gtavlauncher.html"};
+//	Downloader *testWebsite = new Downloader(adUrl);
+//	connect(testWebsite, &Downloader::downloaded, [this, adUrl, testWebsite](){
+//		m_adView->resize(468, 60);
+//		m_adView->move(width() - 468, 0);
+//		m_adView->setUrl(QUrl(adUrl));
+//		m_adView->show();
+//		QTimer::singleShot(45000, [this](){
+//			m_adView->hide();
+//		});
+//		testWebsite->deleteLater();
+//	});
+
+//	connect(testWebsite, &Downloader::downloaded, [testWebsite](){
+//		testWebsite->deleteLater();
+//	});
+
+//	testWebsite->download();
+//}
+
 /**
  * Set the gta folder & disabledMods folder from base
  * @brief MainWindow::setRelativeDirs
@@ -195,6 +232,7 @@ bool MainWindow::getGTAExecutable(){
 void MainWindow::setRelativeDirs(QString const& base){
 	m_gtaDirectoryStr = base;
 	m_disabledModsDirectoryStr = base + "/disabledMods";
+	QDir(MainWindow::m_disabledModsDirectoryStr).mkdir(".");
 }
 
 void MainWindow::setFavicon(){
@@ -221,33 +259,29 @@ void MainWindow::setButtons(){
 
 	ui->playMods->setText(tr("Play GTA V"));
 	ui->playMods->setStyleSheet(css);
-	ui->playMods->setGeometry(481, 438, 200, 80);
 	ui->playMods->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	ui->chooseMods->setText(tr("Choose mods"));
 	ui->chooseMods->setStyleSheet(css);
-	ui->chooseMods->setGeometry(481, 519, 200, 29);
 
 	ui->byLabel->setText(tr("Created By Moffa13 @ moffa13.com"));
 	QPalette byPalette = ui->byLabel->palette();
 	byPalette.setColor(QPalette::WindowText, QColor(Qt::white));
 	ui->byLabel->setFont(QFont("Arial", 10));
 	ui->byLabel->setPalette(byPalette);
-	ui->byLabel->move(10, 580);
 
 	ui->openOptionsButton->setText(tr("Settings"));
 	ui->openOptionsButton->setStyleSheet(css);
-	ui->openOptionsButton->setGeometry(15, 15, 153, 57);
+
 
 }
 
 void MainWindow::connectAll(){
-	QObject::connect(ui->playOnline, SIGNAL(clicked()), this, SLOT(startGtaOnlineSlot()));
-	QObject::connect(ui->playMods, SIGNAL(clicked()), this, SLOT(startGtaWithModsSlot()));
-	QObject::connect(ui->chooseMods, SIGNAL(clicked()), this, SLOT(showChooseModsWindowSlot()));
-	QObject::connect(ui->openOptionsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindowSlot()));
-	QObject::connect(ui->playMods, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showPlayContextualMenuSlot(QPoint)));
-
+	connect(ui->playOnline, SIGNAL(clicked()), this, SLOT(startGtaOnlineSlot()));
+	connect(ui->playMods, SIGNAL(clicked()), this, SLOT(startGtaWithModsSlot()));
+	connect(ui->chooseMods, SIGNAL(clicked()), this, SLOT(showChooseModsWindowSlot()));
+	connect(ui->openOptionsButton, SIGNAL(clicked()), this, SLOT(showSettingsWindowSlot()));
+	connect(ui->playMods, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showPlayContextualMenuSlot(QPoint)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -280,7 +314,7 @@ void MainWindow::addScriptHookVDinput(){
 }
 
 bool MainWindow::checkNeedSteamAndOk(){
-	bool ok = !isSteamVersion() || Utilities::checkProcessRunning("Steam.exe") != NULL;
+	bool ok = !isSteamVersion() || Utilities::checkProcessRunning("Steam.exe") != nullptr;
 	if(!ok){
 		QMessageBox::critical(this, tr("Error"), tr("Please start steam, log in and try again"));
 	}
@@ -316,8 +350,8 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 }
 
 bool MainWindow::checkGtaAlreadyStarted(bool showMessage){
-	bool launcherRunning = Utilities::checkProcessRunning("GTAVLauncher.exe") != NULL;
-	bool gameRunning = Utilities::checkProcessRunning("GTA5.exe") != NULL;
+	bool launcherRunning = Utilities::checkProcessRunning("GTAVLauncher.exe") != nullptr;
+	bool gameRunning = Utilities::checkProcessRunning("GTA5.exe") != nullptr;
 
 	if(showMessage && (gameRunning || launcherRunning)) QMessageBox::information(this, tr("GTA V Running"), tr("GTA V is already running"), QMessageBox::Ok);
 	return gameRunning || launcherRunning;
@@ -333,7 +367,7 @@ void MainWindow::startGtaOnlineSlot(){
 	ChooseModsWindow::disableAllMods();
 	removeScriptHookVDinput();
 	QStringList args;
-	args << "-goStraightToMP";
+	args << "-StraightIntoFreemode";
 	startGtaArgsSlot(args);
 }
 
@@ -363,7 +397,8 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 	QDomNode buildNode = build.elementsByTagName("Game").at(0);
 	Version gameVersionNow = buildNode.toElement().attribute("version", "0.0.0.0");
 	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr + "/ScriptHookV.dll");
-	if(scriptHookVVersion < gameVersionNow){
+	Version scriptHookVVersionD = Utilities::getFileVersion(MainWindow::m_disabledModsDirectoryStr + "/ScriptHookV.dll");
+	if(scriptHookVVersion < gameVersionNow && scriptHookVVersionD < gameVersionNow){
 		int rep = QMessageBox::information(
 					this,
 					tr("ScriptHookV out-of-date"),

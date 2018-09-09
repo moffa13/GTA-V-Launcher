@@ -24,12 +24,13 @@ ChooseModsWindow::~ChooseModsWindow(){
 void ChooseModsWindow::init(){
 
 	setWindowTitle(tr("Select active mods"));
-	setFixedSize(600, 500);
+	setFixedSize(690, 500);
 
 	setStyleSheet("#ChooseModsWindow>QPushButton{"
 					"padding: 10px;"
 					"font-size: 12px;"
-				  "}");
+				  "}"
+	);
 
 	ui->listViewEnabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->listViewDisabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -69,6 +70,13 @@ void ChooseModsWindow::connectAll(){
 
 	connect(ui->installModButton, &QPushButton::clicked, [this](){
 		m_installModWindow = new InstallModWindow(MainWindow::m_gtaDirectoryStr + "/installMod", MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", this);
+		connect(m_installModWindow, &InstallModWindow::modAdded, [this](QString const& file){
+			QStringList elem{file};
+			auto v = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", elem);
+			m_enabledModsAndVersions.append(v.first());
+			m_modele1->insertRow(m_modele1->rowCount());
+			m_modele1->setData(m_modele1->index(m_modele1->rowCount() - 1), toQStringList(v, true).first());
+		});
 		m_installModWindow->exec();
 	});
 
@@ -76,7 +84,7 @@ void ChooseModsWindow::connectAll(){
 		QStringList all = toQStringList(m_enabledModsAndVersions);
 		all.append(toQStringList(m_disabledModsAndVersions));
 
-		m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, all);
+		m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", all);
 		m_disabledModsAndVersions.clear();
 
 		setEnabledModsToList(m_enabledModsAndVersions);
@@ -100,14 +108,21 @@ void ChooseModsWindow::connectAll(){
 	connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
 }
 
+QString ChooseModsWindow::basePathFromModType(QString const& mod){
+	if(mod.endsWith(".dll")){
+		return MainWindow::m_gtaDirectoryStr + "/scripts";
+	}else if(mod.endsWith(".asi")){
+		return MainWindow::m_gtaDirectoryStr;
+	}
+	return QString{};
+}
+
 void ChooseModsWindow::hideEvent(QHideEvent *e){
 	e->accept();
 	deleteLater();
 }
 
 void ChooseModsWindow::getFromFiles(){
-
-	QDir(MainWindow::m_gtaDirectoryStr).mkdir(MainWindow::m_disabledModsDirectoryStr);
 
 	// Get from files
 	QStringList enabledMods = getEnabledModsFromFiles();
@@ -116,7 +131,7 @@ void ChooseModsWindow::getFromFiles(){
 	// Remove files Conflicts between disabled and enabled mods
 	noConflicts(enabledMods, disabledMods);
 
-	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, enabledMods);
+	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", enabledMods);
 	m_disabledModsAndVersions = addVersionToElements(MainWindow::m_disabledModsDirectoryStr, disabledMods);
 
 	// Set to list
@@ -150,15 +165,19 @@ void ChooseModsWindow::setDisabledModsToList(const QList<QPair<QString, Version>
 
 QStringList ChooseModsWindow::getEnabledModsFromFiles(){
 	QStringList asiFilter("*.asi");
+	QStringList dllFilter("*.dll");
 	QDir enabledModsDirectory(MainWindow::m_gtaDirectoryStr);
-	QStringList enabledMods = enabledModsDirectory.entryList(asiFilter);
+	QDir enabledDllModsDirectory(MainWindow::m_gtaDirectoryStr + "/scripts");
+	QStringList enabledMods = enabledModsDirectory.entryList(asiFilter, QDir::Files);
+	enabledMods.append(enabledDllModsDirectory.entryList(dllFilter, QDir::Files));
 	return enabledMods;
 }
 
 QStringList ChooseModsWindow::getDisabledModsFromFiles(){
-	QStringList asiFilter("*.asi");
+	QStringList disabledModsFilter{};
+	disabledModsFilter << "*.asi" << "*.dll";
 	QDir disabledModsDirectory(MainWindow::m_disabledModsDirectoryStr);
-	QStringList disabledMods = disabledModsDirectory.entryList(asiFilter);
+	QStringList disabledMods = disabledModsDirectory.entryList(disabledModsFilter, QDir::Files);
 	return disabledMods;
 }
 
@@ -169,13 +188,22 @@ QStringList ChooseModsWindow::getDisabledModsFromFiles(){
  * @param list
  * @return
  */
-QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& base, QStringList const& list) const{
+QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& baseAsi, QString const& baseDll, QStringList const& list) const{
 	QList<QPair<QString, Version>> listWithVersions;
 	for(QString const& elem : list){
-		Version v = Utilities::getFileVersion(base + "/" + elem);
+		Version v;
+		if(elem.endsWith(".dll")){
+			v = Utilities::getFileVersion(baseDll + "/" + elem);
+		}else{
+			v = Utilities::getFileVersion(baseAsi + "/" + elem);
+		}
 		listWithVersions.append(QPair<QString, Version>(elem, v));
 	}
 	return listWithVersions;
+}
+
+QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& base, QStringList const& list) const{
+	return addVersionToElements(base, base, list);
 }
 
 QStringList ChooseModsWindow::toQStringList(const QList<QPair<QString, Version>> &list, bool addVersion){
@@ -259,6 +287,13 @@ void ChooseModsWindow::disableAllMods(){
 	saveMods(en);
 }
 
+void ChooseModsWindow::enableAllMods(){
+	QStringList en = getEnabledModsFromFiles();
+	QStringList di = getDisabledModsFromFiles();
+	noConflicts(en, di);
+	saveMods(QStringList(), di);
+}
+
 void ChooseModsWindow::enableOldConfig(){
 	auto pair = getModsConfig();
 	saveMods(pair.second, pair.first);
@@ -338,7 +373,7 @@ void ChooseModsWindow::loadConfigSlot(){
 
 	auto pair = getModsConfig();
 
-	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, pair.first);
+	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", pair.first);
 	m_disabledModsAndVersions = addVersionToElements(MainWindow::m_disabledModsDirectoryStr, pair.second);
 
 	setEnabledModsToList(m_enabledModsAndVersions);
@@ -370,12 +405,12 @@ void ChooseModsWindow::saveMods(QList<QPair<QString, Version>> const& enabledMod
 
 void ChooseModsWindow::saveMods(QStringList const& disable, QStringList const& enable){
 	for(const QString &file : disable){
-		QFile::copy(MainWindow::m_gtaDirectoryStr + "/" + file, MainWindow::m_disabledModsDirectoryStr + "/" + file);
-		QFile::remove(MainWindow::m_gtaDirectoryStr + "/" + file);
+		QFile::copy(basePathFromModType(file) + "/" + file, MainWindow::m_disabledModsDirectoryStr + "/" + file);
+		QFile::remove(basePathFromModType(file) + "/" + file);
 	}
 	for(const QString &file : enable){
-		QFile::copy(MainWindow::m_disabledModsDirectoryStr + "/"+ file, MainWindow::m_gtaDirectoryStr + "/" + file);
-		QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/"+ file);
+		QFile::copy(MainWindow::m_disabledModsDirectoryStr + "/" + file, basePathFromModType(file) + "/" + file);
+		QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + file);
 	}
 }
 
@@ -383,13 +418,18 @@ void ChooseModsWindow::deleteModSlot(){
 	if(m_lastIndex.data().toString().isEmpty()) return;
 	int resp = QMessageBox::information(this, tr("Delete mod"), tr("Are you sure ?"), QMessageBox::Yes | QMessageBox::No);
 	if(resp == QMessageBox::Yes){
-		QString filename = m_lastIndex.data().toString();
-		const QString *path = m_lastIndex.model()->objectName() == "enabled" ? &MainWindow::m_gtaDirectoryStr : &MainWindow::m_disabledModsDirectoryStr;
+		QString filename =  m_lastIndex.model()->objectName() == "enabled"
+				? m_enabledModsAndVersions.at(m_lastIndex.row()).first
+				: m_disabledModsAndVersions.at(m_lastIndex.row()).first;
+		QString const path = basePathFromModType(filename);
 		QStringListModel *model = m_lastIndex.model()->objectName() == "enabled" ? m_modele1 : m_modele2;
-		QFile::remove(*path+"/"+filename);
+		QFile::remove(path + "/" + filename);
+		QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + filename);
 		model->removeRow(m_lastIndex.row());
 		if(m_lastIndex.model()->objectName() == "enabled"){
 			m_enabledModsAndVersions.removeAt(m_lastIndex.row());
+		}else{
+			m_disabledModsAndVersions.removeAt(m_lastIndex.row());
 		}
 		setEnableDisableAllButtons();
 	}
