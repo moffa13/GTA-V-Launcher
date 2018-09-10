@@ -294,12 +294,15 @@ void MainWindow::closeEvent(QCloseEvent *event){
  * @brief MainWindow::removeScriptHookVDinput
  */
 void MainWindow::removeScriptHookVDinput(bool permanent){
+	bool ok = true;
 	if(!permanent){
-		QFile::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll");
-		QFile::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll");
+		ok &= QFile::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll");
+		ok &= QFile::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll");
 	}
-	QFile::remove(m_gtaDirectoryStr + "/dinput8.dll");
-	QFile::remove(m_gtaDirectoryStr + "/ScriptHookV.dll");
+	if(ok){
+		QFile::remove(m_gtaDirectoryStr + "/dinput8.dll");
+		QFile::remove(m_gtaDirectoryStr + "/ScriptHookV.dll");
+	}
 }
 
 /**
@@ -307,9 +310,9 @@ void MainWindow::removeScriptHookVDinput(bool permanent){
  * @brief MainWindow::addScriptHookVDinput
  */
 void MainWindow::addScriptHookVDinput(){
-	QFile::copy(m_disabledModsDirectoryStr + "/dinput8.dll", m_gtaDirectoryStr + "/dinput8.dll");
+	if(QFile::copy(m_disabledModsDirectoryStr + "/dinput8.dll", m_gtaDirectoryStr + "/dinput8.dll"))
 	QFile::remove(m_disabledModsDirectoryStr + "/dinput8.dll");
-	QFile::copy(m_disabledModsDirectoryStr + "/ScriptHookV.dll", m_gtaDirectoryStr + "/ScriptHookV.dll");
+	if(QFile::copy(m_disabledModsDirectoryStr + "/ScriptHookV.dll", m_gtaDirectoryStr + "/ScriptHookV.dll"))
 	QFile::remove(m_disabledModsDirectoryStr+ "/ScriptHookV.dll");
 }
 

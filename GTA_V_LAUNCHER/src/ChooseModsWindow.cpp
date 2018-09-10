@@ -405,12 +405,14 @@ void ChooseModsWindow::saveMods(QList<QPair<QString, Version>> const& enabledMod
 
 void ChooseModsWindow::saveMods(QStringList const& disable, QStringList const& enable){
 	for(const QString &file : disable){
-		QFile::copy(basePathFromModType(file) + "/" + file, MainWindow::m_disabledModsDirectoryStr + "/" + file);
-		QFile::remove(basePathFromModType(file) + "/" + file);
+		bool copied = QFile::copy(basePathFromModType(file) + "/" + file, MainWindow::m_disabledModsDirectoryStr + "/" + file);
+		// Ensure mod has been copied to avoid something we don't want
+		if(copied) QFile::remove(basePathFromModType(file) + "/" + file);
 	}
 	for(const QString &file : enable){
-		QFile::copy(MainWindow::m_disabledModsDirectoryStr + "/" + file, basePathFromModType(file) + "/" + file);
-		QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + file);
+		bool copied = QFile::copy(MainWindow::m_disabledModsDirectoryStr + "/" + file, basePathFromModType(file) + "/" + file);
+		// Ensure mod has been copied to avoid something we don't want
+		if(copied) QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + file);
 	}
 }
 

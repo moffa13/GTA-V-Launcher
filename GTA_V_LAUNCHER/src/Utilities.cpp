@@ -15,16 +15,16 @@ Version Utilities::getFileVersion(const QString &filename){
 	if(!GetFileVersionInfo(filename.toStdWString().c_str(), dwHandle, dwLen, lpData))
 	{
 		delete[] lpData;
-		return "";
+		return Version();
 	}
 
 	// VerQueryValue
-	VS_FIXEDFILEINFO *lpBuffer = NULL;
+	VS_FIXEDFILEINFO *lpBuffer = nullptr;
 	UINT uLen;
 
 	if(!VerQueryValue(lpData, QString("\\").toStdWString().c_str(), (LPVOID*)&lpBuffer, &uLen))
 	{
-		return "";
+		return Version();
 	}
 
 	QString version;
@@ -49,7 +49,7 @@ QString Utilities::checkProcessRunning(QString const &name){
 				HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, entry.th32ProcessID);
 
 				WCHAR filename[MAX_PATH];
-				GetModuleFileNameEx(hProcess, NULL, filename, MAX_PATH);
+				GetModuleFileNameEx(hProcess, nullptr, filename, MAX_PATH);
 
 //				wchar_t buf[256];
 //				FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(),
@@ -61,7 +61,7 @@ QString Utilities::checkProcessRunning(QString const &name){
 		}
 	}
 	CloseHandle(snapshot);
-	return NULL;
+	return nullptr;
 }
 
 std::unique_ptr<QSettings> Utilities::getSettings(){
