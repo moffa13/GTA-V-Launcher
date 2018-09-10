@@ -342,7 +342,7 @@ QPair<QStringList, QStringList> ChooseModsWindow::getModsConfig(){
 
 	// Add Current mods to the list
 	QStringList list = getEnabledModsFromFiles();
-	QStringList list2 = getEnabledModsFromFiles();
+	QStringList list2 = getDisabledModsFromFiles();
 
 	// Fetch from config
 	QStringList enabledFromConfig = Utilities::removeValues(Utilities::loadFromConfig("EnabledMods"));
