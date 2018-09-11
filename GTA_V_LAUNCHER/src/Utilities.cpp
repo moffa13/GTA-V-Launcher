@@ -5,6 +5,7 @@
 #include "Winbase.h"
 #include <QDebug>
 #include <QSettings>
+#include <QFile>
 
 Version Utilities::getFileVersion(const QString &filename){
 
@@ -126,5 +127,21 @@ void Utilities::setToConfig(QString const &key, const QMap<QString, QVariant> &d
 bool Utilities::launcherCracked(){
 	int checked = Utilities::loadFromConfig("General", "LauncherCrack").toInt();
 	return checked == 1 ? true : false;
+}
+
+/**
+ * Copies a file returns true if success, returns false if <from> do not exists
+ * Returns true if <to> already exists
+ * @brief Utilities::copy
+ * @param from
+ * @param to
+ * @return
+ */
+bool Utilities::copy(QString const& from, QString const& to){
+	QFile f{from};
+	QFile f2{to};
+	if(!f.exists()) return false;
+	if(f2.exists()) return true;
+	return QFile::copy(from, to);
 }
 

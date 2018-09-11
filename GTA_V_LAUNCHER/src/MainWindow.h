@@ -42,7 +42,7 @@ class MainWindow : public Window{
 		void setButtons();
 		void connectAll();
 		void closeEvent(QCloseEvent *event);
-		void removeScriptHookVDinput(bool permanent = false);
+		bool removeScriptHookVDinput(bool permanent = false);
 		void addScriptHookVDinput();
 		bool checkNeedSteamAndOk();
 		bool checkGtaAlreadyStarted(bool showMessage = true);

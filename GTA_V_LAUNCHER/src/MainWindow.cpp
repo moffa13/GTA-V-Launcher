@@ -33,7 +33,7 @@ void MainWindow::init(){
 
 	if(checkOS()){
 		//m_adView->hide();
-		setWindowTitle("Launcher GTA V "+ qApp->applicationVersion());
+		setWindowTitle(tr("GTA V Launcher V") + qApp->applicationVersion());
 		setFavicon();
 		setBackground();
 		setButtons();
@@ -290,19 +290,19 @@ void MainWindow::closeEvent(QCloseEvent *event){
 }
 
 /**
- * Removes the main scripts which disables mods and prevents to be banned
+ * Removes the main scripts which disables mods and prevents from being banned
+ * Returns false if one of the dlls have not been deleted
  * @brief MainWindow::removeScriptHookVDinput
  */
-void MainWindow::removeScriptHookVDinput(bool permanent){
-	bool ok = true;
-	if(!permanent){
-		ok &= QFile::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll");
-		ok &= QFile::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll");
-	}
-	if(ok){
-		QFile::remove(m_gtaDirectoryStr + "/dinput8.dll");
-		QFile::remove(m_gtaDirectoryStr + "/ScriptHookV.dll");
-	}
+bool MainWindow::removeScriptHookVDinput(bool permanent){
+	bool okDelete = true;
+
+	if(permanent || Utilities::copy(m_gtaDirectoryStr + "/dinput8.dll", m_disabledModsDirectoryStr + "/dinput8.dll"))
+		okDelete &= QFile::remove(m_gtaDirectoryStr + "/dinput8.dll");
+	if(permanent || Utilities::copy(m_gtaDirectoryStr + "/ScriptHookV.dll", m_disabledModsDirectoryStr + "/ScriptHookV.dll"))
+		okDelete &= QFile::remove(m_gtaDirectoryStr + "/ScriptHookV.dll");
+
+	return okDelete;
 }
 
 /**
@@ -310,9 +310,9 @@ void MainWindow::removeScriptHookVDinput(bool permanent){
  * @brief MainWindow::addScriptHookVDinput
  */
 void MainWindow::addScriptHookVDinput(){
-	if(QFile::copy(m_disabledModsDirectoryStr + "/dinput8.dll", m_gtaDirectoryStr + "/dinput8.dll"))
+	if(Utilities::copy(m_disabledModsDirectoryStr + "/dinput8.dll", m_gtaDirectoryStr + "/dinput8.dll"))
 	QFile::remove(m_disabledModsDirectoryStr + "/dinput8.dll");
-	if(QFile::copy(m_disabledModsDirectoryStr + "/ScriptHookV.dll", m_gtaDirectoryStr + "/ScriptHookV.dll"))
+	if(Utilities::copy(m_disabledModsDirectoryStr + "/ScriptHookV.dll", m_gtaDirectoryStr + "/ScriptHookV.dll"))
 	QFile::remove(m_disabledModsDirectoryStr+ "/ScriptHookV.dll");
 }
 
@@ -368,7 +368,15 @@ void MainWindow::startGtaOnlineSlot(){
 	if(checkGtaAlreadyStarted()) return;
 	if(!checkNeedSteamAndOk()) return;
 	ChooseModsWindow::disableAllMods();
-	removeScriptHookVDinput();
+	if(!removeScriptHookVDinput()){
+		int resp = QMessageBox::critical(
+			this,
+			tr("Error"),
+			tr("Could not remove ScriptHookV, this might be dangerous in online mode, would you still like to play ?"),
+			QMessageBox::Yes | QMessageBox::No
+		);
+		if(resp == QMessageBox::No) return;
+	}
 	QStringList args;
 	args << "-StraightIntoFreemode";
 	startGtaArgsSlot(args);
