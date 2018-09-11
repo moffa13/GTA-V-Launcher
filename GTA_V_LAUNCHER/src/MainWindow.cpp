@@ -264,7 +264,7 @@ void MainWindow::setButtons(){
 	ui->chooseMods->setText(tr("Choose mods"));
 	ui->chooseMods->setStyleSheet(css);
 
-	ui->byLabel->setText(tr("Created By Moffa13 @ moffa13.com"));
+	ui->byLabel->setText(tr("Made By Moffa13 @ moffa13.com"));
 	QPalette byPalette = ui->byLabel->palette();
 	byPalette.setColor(QPalette::WindowText, QColor(Qt::white));
 	ui->byLabel->setFont(QFont("Arial", 10));

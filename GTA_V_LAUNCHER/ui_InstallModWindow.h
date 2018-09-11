@@ -12,10 +12,11 @@
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -29,7 +30,7 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QLineEdit *modFileEdit;
     QPushButton *selectFileButton;
-    QListWidget *filesInZipList;
+    QTreeWidget *filesInZipList;
     QHBoxLayout *horizontalLayout_5;
     QSpacerItem *horizontalSpacer;
     QPushButton *validateButton;
@@ -58,13 +59,16 @@ public:
 
         verticalLayout_3->addLayout(horizontalLayout_4);
 
-        filesInZipList = new QListWidget(InstallModWindow);
-        filesInZipList->setObjectName(QStringLiteral("filesInZipList"));
-
-        verticalLayout_3->addWidget(filesInZipList);
-
 
         verticalLayout_4->addLayout(verticalLayout_3);
+
+        filesInZipList = new QTreeWidget(InstallModWindow);
+        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
+        __qtreewidgetitem->setText(0, QStringLiteral("1"));
+        filesInZipList->setHeaderItem(__qtreewidgetitem);
+        filesInZipList->setObjectName(QStringLiteral("filesInZipList"));
+
+        verticalLayout_4->addWidget(filesInZipList);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));

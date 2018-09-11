@@ -152,6 +152,38 @@ modsStruct InstallModWindow::detectModFiles() const{
 	};
 }
 
+dirInfos InstallModWindow::getFilesFromDirRecursive(QDir const& dir){
+	QDir::Filters entryFlags{QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden};
+	QFileInfoList objects = dir.entryInfoList(entryFlags);
+	QStringList files;
+	QStack<QFileInfo> stack;
+
+	for(QFileInfo const& fInfo : objects){
+		stack.push(fInfo);
+	}
+
+	dirInfos baseDir;
+
+	while(!stack.isEmpty()){
+		QFileInfo info{stack.pop()};
+		if(!info.isDir()){
+			baseDir._files.append(info.fileName());
+		}else{
+			baseDir._dirs.append({info.fileName(), ?, ?});
+			QFileInfoList newFiles{QDir{info.absoluteFilePath()}.entryInfoList(entryFlags)};
+			for(QFileInfo const& file : newFiles){
+				stack.push(file);
+			}
+		}
+	}
+
+	FilesAndSize f;
+	f.size = size;
+	f.files = files;
+
+	return f;
+}
+
 QMap<QString, bool> InstallModWindow::detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles){
 	bool hasAsi = !detectedMods._detectedAsi.empty();
 	bool hasDll = !detectedMods._detectedDll.empty();
@@ -174,6 +206,8 @@ QMap<QString, bool> InstallModWindow::detectNeededFiles(QDir _installDir, modsSt
 		files[mod + ".dll"] = true;
 	}
 
+
+	dirInfos baseDir;
 
 	QFileInfoList filesInfos = _installDir.entryInfoList(QStringList() << "*", QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
 	for(QFileInfo const& fileInfos : filesInfos){

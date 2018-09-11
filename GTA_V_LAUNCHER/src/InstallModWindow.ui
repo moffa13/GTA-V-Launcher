@@ -30,10 +30,16 @@
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="QListWidget" name="filesInZipList"/>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QTreeWidget" name="filesInZipList">
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5">

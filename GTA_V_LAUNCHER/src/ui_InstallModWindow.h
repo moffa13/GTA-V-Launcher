@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'InstallModWindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.8.0
+** Created by: Qt User Interface Compiler version 5.11.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,15 +10,13 @@
 #define UI_INSTALLMODWINDOW_H
 
 #include <QtCore/QVariant>
-#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QTreeWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -32,7 +30,7 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QLineEdit *modFileEdit;
     QPushButton *selectFileButton;
-    QListWidget *filesInZipList;
+    QTreeWidget *filesInZipList;
     QHBoxLayout *horizontalLayout_5;
     QSpacerItem *horizontalSpacer;
     QPushButton *validateButton;
@@ -61,13 +59,16 @@ public:
 
         verticalLayout_3->addLayout(horizontalLayout_4);
 
-        filesInZipList = new QListWidget(InstallModWindow);
-        filesInZipList->setObjectName(QStringLiteral("filesInZipList"));
-
-        verticalLayout_3->addWidget(filesInZipList);
-
 
         verticalLayout_4->addLayout(verticalLayout_3);
+
+        filesInZipList = new QTreeWidget(InstallModWindow);
+        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
+        __qtreewidgetitem->setText(0, QStringLiteral("1"));
+        filesInZipList->setHeaderItem(__qtreewidgetitem);
+        filesInZipList->setObjectName(QStringLiteral("filesInZipList"));
+
+        verticalLayout_4->addWidget(filesInZipList);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
@@ -91,9 +92,9 @@ public:
 
     void retranslateUi(QWidget *InstallModWindow)
     {
-        InstallModWindow->setWindowTitle(QApplication::translate("InstallModWindow", "Form", Q_NULLPTR));
-        selectFileButton->setText(QApplication::translate("InstallModWindow", "PushButton", Q_NULLPTR));
-        validateButton->setText(QApplication::translate("InstallModWindow", "PushButton", Q_NULLPTR));
+        InstallModWindow->setWindowTitle(QApplication::translate("InstallModWindow", "Form", nullptr));
+        selectFileButton->setText(QApplication::translate("InstallModWindow", "PushButton", nullptr));
+        validateButton->setText(QApplication::translate("InstallModWindow", "PushButton", nullptr));
     } // retranslateUi
 
 };

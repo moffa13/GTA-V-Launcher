@@ -41,9 +41,10 @@ V [1.0.7]
 
 V 1.0.8
 - Fixed bugs (memory leaks, scripthookv says out-of-date, yes-no buttons not translated, can't remove a mod with pe version, ...)
+- More security to prevent mods from being accidentally enabled in online mode
 - Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
 - Added an option to close the launcher when game starts
-- Added functionality to install a mod from asi or zip also copying its config files by detecting them
+- Added functionality to install a mod from asi, dll, zip, rar also copying its config files by detecting them
 - Added button in settings to uninstall the launcher
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
