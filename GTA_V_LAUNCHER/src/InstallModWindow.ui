@@ -33,12 +33,10 @@
     </layout>
    </item>
    <item>
-    <widget class="QTreeWidget" name="filesInZipList">
-     <column>
-      <property name="text">
-       <string notr="true">1</string>
-      </property>
-     </column>
+    <widget class="QTreeView" name="filesInZipList">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item>

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'InstallModWindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.11.1
+** Created by: Qt User Interface Compiler version 5.9.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,13 +10,15 @@
 #define UI_INSTALLMODWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
-#include <QtWidgets/QTreeWidget>
+#include <QtWidgets/QTreeView>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -30,7 +32,7 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QLineEdit *modFileEdit;
     QPushButton *selectFileButton;
-    QTreeWidget *filesInZipList;
+    QTreeView *filesInZipList;
     QHBoxLayout *horizontalLayout_5;
     QSpacerItem *horizontalSpacer;
     QPushButton *validateButton;
@@ -62,11 +64,9 @@ public:
 
         verticalLayout_4->addLayout(verticalLayout_3);
 
-        filesInZipList = new QTreeWidget(InstallModWindow);
-        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
-        __qtreewidgetitem->setText(0, QStringLiteral("1"));
-        filesInZipList->setHeaderItem(__qtreewidgetitem);
+        filesInZipList = new QTreeView(InstallModWindow);
         filesInZipList->setObjectName(QStringLiteral("filesInZipList"));
+        filesInZipList->setEnabled(true);
 
         verticalLayout_4->addWidget(filesInZipList);
 
@@ -92,9 +92,9 @@ public:
 
     void retranslateUi(QWidget *InstallModWindow)
     {
-        InstallModWindow->setWindowTitle(QApplication::translate("InstallModWindow", "Form", nullptr));
-        selectFileButton->setText(QApplication::translate("InstallModWindow", "PushButton", nullptr));
-        validateButton->setText(QApplication::translate("InstallModWindow", "PushButton", nullptr));
+        InstallModWindow->setWindowTitle(QApplication::translate("InstallModWindow", "Form", Q_NULLPTR));
+        selectFileButton->setText(QApplication::translate("InstallModWindow", "PushButton", Q_NULLPTR));
+        validateButton->setText(QApplication::translate("InstallModWindow", "PushButton", Q_NULLPTR));
     } // retranslateUi
 
 };

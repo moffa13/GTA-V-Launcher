@@ -6,6 +6,7 @@
 #include <QtDebug>
 #include <QProcess>
 #include <QStack>
+#include <QFileSystemModel>
 
 InstallModWindow::InstallModWindow(QString installDir, QString modsDir, QString scriptsDir, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
@@ -51,38 +52,38 @@ void InstallModWindow::clearInstallDirectory(bool mk){
 }
 
 void InstallModWindow::addMod(){
-	for(int i = 0; i < ui->filesInZipList->count(); ++i){
-		QListWidgetItem* itemP = ui->filesInZipList->item(i);
-		if(itemP->checkState() == Qt::Unchecked) continue;
-		QString item = itemP->text();
+//TODO	for(int i = 0; i < ui->filesInZipList->count(); ++i){
+//		QListWidgetItem* itemP = ui->filesInZipList->item(i);
+//		if(itemP->checkState() == Qt::Unchecked) continue;
+//		QString item = itemP->text();
 
-		QFileInfo fInfo{_currentDir.absoluteFilePath(item)};
-		if(fInfo.isFile() && (item.endsWith(".asi") || _type == ASI)){
-			QFile::copy(_currentDir.absoluteFilePath(item), _modsDir.absoluteFilePath(item));
-			if(item.endsWith(".asi")){
-				emit modAdded(item);
-			}
-		}else if(fInfo.isFile() && (item.endsWith(".dll") || _type == DLL)){
-			QFile::copy(_currentDir.absoluteFilePath(item), _scriptsDir.absoluteFilePath(item));
-			if(item.endsWith(".dll")){
-				emit modAdded(item);
-			}
-		}else if(fInfo.isDir()){ // Config Files which we don't know where to copy
-			copyDir(QDir{_currentDir.absoluteFilePath(item)}, _scriptsDir.absoluteFilePath(item));
-		}else{
+//		QFileInfo fInfo{_currentDir.absoluteFilePath(item)};
+//		if(fInfo.isFile() && (item.endsWith(".asi") || _type == ASI)){
+//			QFile::copy(_currentDir.absoluteFilePath(item), _modsDir.absoluteFilePath(item));
+//			if(item.endsWith(".asi")){
+//				emit modAdded(item);
+//			}
+//		}else if(fInfo.isFile() && (item.endsWith(".dll") || _type == DLL)){
+//			QFile::copy(_currentDir.absoluteFilePath(item), _scriptsDir.absoluteFilePath(item));
+//			if(item.endsWith(".dll")){
+//				emit modAdded(item);
+//			}
+//		}else if(fInfo.isDir()){ // Config Files which we don't know where to copy
+//			copyDir(QDir{_currentDir.absoluteFilePath(item)}, _scriptsDir.absoluteFilePath(item));
+//		}else{
 
-		}
-	}
+//		}
+//	}
 	QMessageBox::information(this, tr("Success"), tr("Your mod has been installed with success"), QMessageBox::Ok);
 	hide();
 }
 
 void InstallModWindow::addToList(QMap<QString, bool> elements) const{
 	for(auto e : elements.toStdMap()){
-		QListWidgetItem* item = new QListWidgetItem(e.first, ui->filesInZipList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setCheckState(e.second ? Qt::Checked : Qt::Unchecked);
-		ui->filesInZipList->addItem(item);
+//	TODO	QListWidgetItem* item = new QListWidgetItem(e.first, ui->filesInZipList);
+//		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+//		item->setCheckState(e.second ? Qt::Checked : Qt::Unchecked);
+//		ui->filesInZipList->addItem(item);
 	}
 }
 
@@ -152,38 +153,6 @@ modsStruct InstallModWindow::detectModFiles() const{
 	};
 }
 
-dirInfos InstallModWindow::getFilesFromDirRecursive(QDir const& dir){
-	QDir::Filters entryFlags{QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs | QDir::Hidden};
-	QFileInfoList objects = dir.entryInfoList(entryFlags);
-	QStringList files;
-	QStack<QFileInfo> stack;
-
-	for(QFileInfo const& fInfo : objects){
-		stack.push(fInfo);
-	}
-
-	dirInfos baseDir;
-
-	while(!stack.isEmpty()){
-		QFileInfo info{stack.pop()};
-		if(!info.isDir()){
-			baseDir._files.append(info.fileName());
-		}else{
-			baseDir._dirs.append({info.fileName(), ?, ?});
-			QFileInfoList newFiles{QDir{info.absoluteFilePath()}.entryInfoList(entryFlags)};
-			for(QFileInfo const& file : newFiles){
-				stack.push(file);
-			}
-		}
-	}
-
-	FilesAndSize f;
-	f.size = size;
-	f.files = files;
-
-	return f;
-}
-
 QMap<QString, bool> InstallModWindow::detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles){
 	bool hasAsi = !detectedMods._detectedAsi.empty();
 	bool hasDll = !detectedMods._detectedDll.empty();
@@ -205,9 +174,6 @@ QMap<QString, bool> InstallModWindow::detectNeededFiles(QDir _installDir, modsSt
 	for(QString const& mod : detectedMods._detectedDll){
 		files[mod + ".dll"] = true;
 	}
-
-
-	dirInfos baseDir;
 
 	QFileInfoList filesInfos = _installDir.entryInfoList(QStringList() << "*", QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
 	for(QFileInfo const& fileInfos : filesInfos){
@@ -240,7 +206,7 @@ void InstallModWindow::validateEdit(QString const& text){
 	QFile f{text};
 	if(!f.exists()) return;
 
-	ui->filesInZipList->clear();
+	//TODOui->filesInZipList->model()->set
 
 	QMap<QString, bool> neededFiles;
 
@@ -252,6 +218,17 @@ void InstallModWindow::validateEdit(QString const& text){
 		copyAndExtractZip(text);
 
 		modsStruct detectedMods{detectModFiles()};
+
+
+		QFileSystemModel *model = new QFileSystemModel;
+		model->setRootPath(_installDir.absolutePath());
+		model->setReadOnly(true);
+		ui->filesInZipList->setModel(model);
+		ui->filesInZipList->setRootIndex(model->index(_installDir.absolutePath()));
+
+
+
+
 
 		neededFiles = detectNeededFiles(_installDir, detectedMods, true);
 

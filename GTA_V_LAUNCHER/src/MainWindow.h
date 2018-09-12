@@ -8,7 +8,7 @@
 #include "SettingsWindow.h"
 #include <QCloseEvent>
 #include <QNetworkReply>
-#include <network/Downloader.h>
+#include <Downloader.h>
 //#include <QWebView>
 
 namespace Ui{

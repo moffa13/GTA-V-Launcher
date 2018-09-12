@@ -14,14 +14,6 @@ typedef struct{
 		QStringList _detectedDll;
 } modsStruct;
 
-struct dirInfos_t;
-
-typedef struct{
-		QString _name;
-		QStringList _files;
-		QList<dirInfos_t> _dirs;
-} dirInfos;
-
 enum ModType{
 	NONE,
 	ASI,
