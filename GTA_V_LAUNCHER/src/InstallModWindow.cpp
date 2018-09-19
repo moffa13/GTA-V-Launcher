@@ -7,6 +7,7 @@
 #include <QProcess>
 #include <QStack>
 #include "QCheckableFileSystemModel.h"
+#include <QTimer>
 
 InstallModWindow::InstallModWindow(QString const& installDir, QString const& modsDir, QString const& scriptsDir, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
@@ -271,18 +272,26 @@ void InstallModWindow::validateEdit(QString const& text){
 
 		while(!toProcess.empty()){
 			QPersistentModelIndex toTreat = toProcess.pop();
-			if(_model->isDir(_sortModel->mapToSource(toTreat)) && _sortModel->rowCount(toTreat) > 0){
+			if(_model->isDir(_sortModel->mapToSource(toTreat)) ){
 				QSet<QString> neededFiles = detectNeededFiles(
 							_model->filePath(_sortModel->mapToSource(toTreat)),
 							detectedMods,
 							true
 				);
+				qDebug() << _model->filePath(_sortModel->mapToSource(toTreat));
+				qDebug() << _sortModel->rowCount(toTreat);
 				for(int i = 0; i < _sortModel->rowCount(toTreat); ++i){
 					QPersistentModelIndex child{_sortModel->index(i, 0, toTreat)};
+					qDebug() << "---" << _model->filePath(_sortModel->mapToSource(child));
 					if(neededFiles.contains(_model->filePath(_sortModel->mapToSource(child)))){
-						qDebug() << _model->filePath(_sortModel->mapToSource(child));
-						_sortModel->setData(child, Qt::Checked, Qt::CheckStateRole);
-						_model->setData(_sortModel->mapToSource(child), Qt::Checked, Qt::CheckStateRole);
+						//_sortModel->setData(child, Qt::Checked, Qt::CheckStateRole);
+						QEventLoop loop;
+						connect(_model, &QCheckableFileSystemModel::dataChanged, &loop, &QEventLoop::quit);
+						QTimer::singleShot(0, [this, child](){
+							_model->setData(_sortModel->mapToSource(child), Qt::Checked, Qt::CheckStateRole);
+						});
+						loop.exec();
+
 					}
 					if(_model->isDir(_sortModel->mapToSource(child))){
 						_model->discover(_sortModel->mapToSource(child));
@@ -318,6 +327,7 @@ void InstallModWindow::validateEdit(QString const& text){
 			allAcceptedDirs << (acceptedDir + ".asi");
 		}
 		_sortModel->setAcceptedDirs(allAcceptedDirs);
+		_model->setNameFilters(QStringList{});
 		QPersistentModelIndex rootIndex = _sortModel->mapFromSource(_model->setRootPath(_currentDir.absolutePath()));
 
 		// Wait for model to load

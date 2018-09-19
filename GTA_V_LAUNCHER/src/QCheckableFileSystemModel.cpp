@@ -26,58 +26,58 @@ bool QCheckableFileSystemModel::setData(const QModelIndex &index, const QVariant
 
 		_indexesCheckedStates[index] = value.toInt();
 
-//		// Parent to parent order check
-//		QModelIndex current = index;
+		// Parent to parent order check
+		QModelIndex current = index;
 
-//		while(current.parent().isValid()){
-//			bool parentChecked = true;
-//			bool atLeastOneIsChecked = false;
-//			for(int i = 0; i < rowCount(current.parent()); ++i){
-//				Qt::CheckState chkst = static_cast<Qt::CheckState>(data(current.siblingAtRow(i), Qt::CheckStateRole).toInt());
-//				if(chkst == Qt::PartiallyChecked){
-//					parentChecked = false;
-//					atLeastOneIsChecked = true;
-//					break;
-//				}
-//				bool st = chkst == Qt::Checked ? true : false;
-//				parentChecked &= st;
-//				atLeastOneIsChecked |= st;
-//			}
-//			if(parentChecked){
-//				_indexesCheckedStates[current.parent()] = Qt::Checked;
-//			}else if(atLeastOneIsChecked){
-//				_indexesCheckedStates[current.parent()] = Qt::PartiallyChecked;
-//			}else{
-//				_indexesCheckedStates[current.parent()] = Qt::Unchecked;
-//			}
-//			emit dataChanged(current.parent(), current.parent());
-//			current = current.parent();
-//		}
+		while(current.parent().isValid()){
+			bool parentChecked = true;
+			bool atLeastOneIsChecked = false;
+			for(int i = 0; i < rowCount(current.parent()); ++i){
+				Qt::CheckState chkst = static_cast<Qt::CheckState>(data(this->index(i, 0, current.parent()), Qt::CheckStateRole).toInt());
+				if(chkst == Qt::PartiallyChecked){
+					parentChecked = false;
+					atLeastOneIsChecked = true;
+					break;
+				}
+				bool st = chkst == Qt::Checked ? true : false;
+				parentChecked &= st;
+				atLeastOneIsChecked |= st;
+			}
+			if(parentChecked){
+				_indexesCheckedStates[current.parent()] = Qt::Checked;
+			}else if(atLeastOneIsChecked){
+				_indexesCheckedStates[current.parent()] = Qt::PartiallyChecked;
+			}else{
+				_indexesCheckedStates[current.parent()] = Qt::Unchecked;
+			}
+			emit dataChanged(current.parent(), current.parent());
+			current = current.parent();
+		}
 
-		// Parent to child
+		//Parent to child
 
-//		// If it is not a dir, no need to check for children
-//		if(isDir(index)){
-//			Qt::CheckState state = static_cast<Qt::CheckState>(data(index, Qt::CheckStateRole).toInt());
-//			QStack<QModelIndex> toProcess;
-//			toProcess.push(index);
-//			while(!toProcess.empty()){
-//				QModelIndex toTreat = toProcess.pop();
+		// If it is not a dir, no need to check for children
+		if(isDir(index)){
+			Qt::CheckState state = static_cast<Qt::CheckState>(data(index, Qt::CheckStateRole).toInt());
+			QStack<QModelIndex> toProcess;
+			toProcess.push(index);
+			while(!toProcess.empty()){
+				QModelIndex toTreat = toProcess.pop();
 
-//				discover(toTreat);
+				discover(toTreat);
 
-//				if(isDir(toTreat) && hasChildren(toTreat)){
-//					for(int i = 0; i < rowCount(toTreat); ++i){
-//						QModelIndex child = this->index(i, 0, toTreat);
-//						if(isDir(child)){
-//							toProcess.push(child);
-//						}
-//						_indexesCheckedStates[child] = state;
-//						emit dataChanged(child, child);
-//					}
-//				}
-//			}
-//		}
+				if(isDir(toTreat) && hasChildren(toTreat)){
+					for(int i = 0; i < rowCount(toTreat); ++i){
+						QModelIndex child = this->index(i, 0, toTreat);
+						if(isDir(child)){
+							toProcess.push(child);
+						}
+						_indexesCheckedStates[child] = state;
+						emit dataChanged(child, child);
+					}
+				}
+			}
+		}
 
 
 		emit dataChanged(index, index);
