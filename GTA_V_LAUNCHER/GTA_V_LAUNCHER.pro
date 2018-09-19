@@ -20,7 +20,8 @@ SOURCES += \
 	Downloader.cpp \
 	Version.cpp \
 	InstallModWindow.cpp \
-	DirsInfos.cpp
+	src/QCheckableFileSystemModel.cpp \
+    src/QFileSystemModelDirectorySortProxy.cpp
 
 HEADERS += \
 	Window.h \
@@ -31,7 +32,8 @@ HEADERS += \
 	Downloader.h \
 	Version.h \
 	InstallModWindow.h \
-	DirsInfos.h
+	src/QCheckableFileSystemModel.h \
+    src/QFileSystemModelDirectorySortProxy.h
 
 RESOURCES += \
 	GTA_V_LAUNCHER.qrc

@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QDir>
 #include <QHideEvent>
+#include "QCheckableFileSystemModel.h"
+#include "QFileSystemModelDirectorySortProxy.h"
 
 namespace Ui {
 class InstallModWindow;
@@ -26,8 +28,8 @@ class InstallModWindow : public QDialog
 		Q_OBJECT
 
 	public:
-		explicit InstallModWindow(QString installDir, QString modsDir, QString scriptsDir, QWidget *parent = nullptr);
-		~InstallModWindow();
+		explicit InstallModWindow(QString const& installDir, QString const& modsDir, QString const& scriptsDir, QWidget *parent = nullptr);
+		~InstallModWindow() override;
 	protected:
 		void hideEvent(QHideEvent *event) override;
 	private slots:
@@ -37,17 +39,19 @@ class InstallModWindow : public QDialog
 		void modAdded(QString const& name) const;
 	private:
 		Ui::InstallModWindow *ui;
+		QDir const _modsDir;
+		QDir const _scriptsDir;
 		QDir _installDir;
-		QDir _modsDir;
-		QDir _scriptsDir;
 		QDir _currentDir;
+		QCheckableFileSystemModel *_model = nullptr;
+		QFileSystemModelDirectorySortProxy *_sortModel = nullptr;
 		ModType _type;
 		void clearInstallDirectory(bool mk = true);
 		void copyAndExtractZip(const QString &zip) const;
 		modsStruct detectModFiles() const;
-		QMap<QString, bool> detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles);
-		void addToList(QMap<QString, bool> elements) const;
+		QSet<QString> detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles);
 		static void copyDir(QDir const& from, QDir const& to);
+		void initFileSystemModel();
 };
 
 #endif // INSTALLMODWINDOW_H
