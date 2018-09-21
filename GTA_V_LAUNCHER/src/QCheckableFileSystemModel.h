@@ -12,7 +12,7 @@ class QCheckableFileSystemModel : public QFileSystemModel
 		QCheckableFileSystemModel(QObject* parent = nullptr);
 		Qt::ItemFlags flags(const QModelIndex &index) const;
 		bool setData(const QModelIndex &index, const QVariant &value, int role);
-		QVariant data(const QModelIndex &index, int role) const;
+		QVariant data(const QModelIndex &index, int role) const override;
 		void discover(QModelIndex const& index);
 	private:
 		QMap<QPersistentModelIndex, int> _indexesCheckedStates;

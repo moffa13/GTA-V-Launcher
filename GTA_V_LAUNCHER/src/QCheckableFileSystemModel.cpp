@@ -14,7 +14,14 @@ QVariant QCheckableFileSystemModel::data(const QModelIndex &index, int role) con
 	}
 
 	if(role == Qt::CheckStateRole && index.column() == 0){ // We need to return if item is checked or not
-		int checked = _indexesCheckedStates.contains(index) ? _indexesCheckedStates[index] : Qt::Unchecked;
+		int checked = Qt::Unchecked;
+		QMap<QPersistentModelIndex, int>::const_iterator it;
+		for(it = _indexesCheckedStates.constBegin(); it != _indexesCheckedStates.constEnd(); ++it){
+			if(it.key() == index){
+				checked = it.value();
+				break;
+			}
+		}
 		return checked;
 	}
 	return QFileSystemModel::data(index, role); // Default behavior
@@ -24,7 +31,17 @@ bool QCheckableFileSystemModel::setData(const QModelIndex &index, const QVariant
 
 	if(role == Qt::CheckStateRole && index.column() == 0 && index.isValid()){
 
-		_indexesCheckedStates[index] = value.toInt();
+		bool exists = false;
+		QMap<QPersistentModelIndex, int>::iterator it;
+		for(it = _indexesCheckedStates.begin(); it != _indexesCheckedStates.end(); ++it){
+			if(it.key() == index){
+				exists = true;
+				it.value() = value.toInt();
+				break;
+			}
+		}
+		if(!exists)
+			_indexesCheckedStates[index] = value.toInt();
 
 		// Parent to parent order check
 		QModelIndex current = index;
