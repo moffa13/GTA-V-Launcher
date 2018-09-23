@@ -17,11 +17,20 @@ typedef struct{
 } modsStruct;
 
 enum ModType{
-	NONE,
-	ASI,
-	DLL,
-	BOTH
+	NONE = 0,
+	ASI = 2,
+	DLL = 4,
+	BOTH = 6
 };
+
+inline ModType operator|(ModType a, ModType b){
+	return static_cast<ModType>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline ModType& operator|=(ModType& a, ModType b){
+	a = a|b;
+	return a;
+}
 
 class InstallModWindow : public QDialog
 {
@@ -45,10 +54,10 @@ class InstallModWindow : public QDialog
 		QDir _currentDir;
 		QCheckableFileSystemModel *_model = nullptr;
 		QFileSystemModelDirectorySortProxy *_sortModel = nullptr;
-		ModType _type;
+		QHash<QString, ModType> _type;
 		void clearInstallDirectory(bool mk = true);
 		void copyAndExtractZip(const QString &zip) const;
-		modsStruct detectModFiles() const;
+		modsStruct detectModFiles(const QDir &dir) const;
 		QSet<QString> detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles);
 		static void copyDir(QDir const& from, QDir const& to);
 		void initFileSystemModel();

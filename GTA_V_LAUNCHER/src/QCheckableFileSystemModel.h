@@ -15,7 +15,7 @@ class QCheckableFileSystemModel : public QFileSystemModel
 		QVariant data(const QModelIndex &index, int role) const override;
 		void discover(QModelIndex const& index);
 	private:
-		QMap<QPersistentModelIndex, int> _indexesCheckedStates;
+		QHash<QPersistentModelIndex, int> _indexesCheckedStates;
 };
 
 #endif // QCHECKABLEFILESYSTEMMODEL_H

@@ -14,14 +14,7 @@ QVariant QCheckableFileSystemModel::data(const QModelIndex &index, int role) con
 	}
 
 	if(role == Qt::CheckStateRole && index.column() == 0){ // We need to return if item is checked or not
-		int checked = Qt::Unchecked;
-		QMap<QPersistentModelIndex, int>::const_iterator it;
-		for(it = _indexesCheckedStates.constBegin(); it != _indexesCheckedStates.constEnd(); ++it){
-			if(it.key() == index){
-				checked = it.value();
-				break;
-			}
-		}
+		int checked = _indexesCheckedStates.contains(index) ? _indexesCheckedStates[index] : Qt::Unchecked;
 		return checked;
 	}
 	return QFileSystemModel::data(index, role); // Default behavior
@@ -31,17 +24,10 @@ bool QCheckableFileSystemModel::setData(const QModelIndex &index, const QVariant
 
 	if(role == Qt::CheckStateRole && index.column() == 0 && index.isValid()){
 
-		bool exists = false;
-		QMap<QPersistentModelIndex, int>::iterator it;
-		for(it = _indexesCheckedStates.begin(); it != _indexesCheckedStates.end(); ++it){
-			if(it.key() == index){
-				exists = true;
-				it.value() = value.toInt();
-				break;
-			}
-		}
-		if(!exists)
-			_indexesCheckedStates[index] = value.toInt();
+		QVector<int> roles{Qt::CheckStateRole};
+
+		_indexesCheckedStates[index] = value.toInt(); // set data for the requested index
+		emit dataChanged(index, index, roles); // emit the signal for this index
 
 		// Parent to parent order check
 		QModelIndex current = index;
@@ -60,15 +46,16 @@ bool QCheckableFileSystemModel::setData(const QModelIndex &index, const QVariant
 				parentChecked &= st;
 				atLeastOneIsChecked |= st;
 			}
-			if(parentChecked){
-				_indexesCheckedStates[current.parent()] = Qt::Checked;
-			}else if(atLeastOneIsChecked){
-				_indexesCheckedStates[current.parent()] = Qt::PartiallyChecked;
-			}else{
-				_indexesCheckedStates[current.parent()] = Qt::Unchecked;
-			}
-			emit dataChanged(current.parent(), current.parent());
 			current = current.parent();
+			if(parentChecked){
+				_indexesCheckedStates[current] = Qt::Checked;
+			}else if(atLeastOneIsChecked){
+				_indexesCheckedStates[current] = Qt::PartiallyChecked;
+			}else{
+				_indexesCheckedStates[current] = Qt::Unchecked;
+			}
+
+			emit dataChanged(current, current, roles);
 		}
 
 		//Parent to child
@@ -82,22 +69,22 @@ bool QCheckableFileSystemModel::setData(const QModelIndex &index, const QVariant
 				QModelIndex toTreat = toProcess.pop();
 
 				discover(toTreat);
+				int rc = rowCount(toTreat);
 
-				if(isDir(toTreat) && hasChildren(toTreat)){
-					for(int i = 0; i < rowCount(toTreat); ++i){
+				if(rc > 0){
+					for(int i = 0; i < rc; ++i){
 						QModelIndex child = this->index(i, 0, toTreat);
 						if(isDir(child)){
 							toProcess.push(child);
 						}
 						_indexesCheckedStates[child] = state;
-						emit dataChanged(child, child);
 					}
+
+					emit dataChanged(this->index(0, 0, toTreat), this->index(rc - 1, 0, toTreat), roles);
 				}
 			}
 		}
 
-
-		emit dataChanged(index, index);
 		return true;
 	}
 	return QFileSystemModel::setData(index, value, role);

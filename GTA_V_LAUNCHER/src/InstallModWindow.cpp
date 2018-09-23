@@ -24,7 +24,7 @@ InstallModWindow::InstallModWindow(QString const& installDir, QString const& mod
 
 	connect(ui->selectFileButton, &QPushButton::clicked, [this](){
 		ui->modFileEdit->clear();
-		QString file = QFileDialog::getOpenFileName(
+		QString const file = QFileDialog::getOpenFileName(
 				this,
 				tr("Select your mod file"),
 				QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
@@ -50,11 +50,41 @@ void InstallModWindow::initFileSystemModel(){
 
 	// QTBUG-52470 can't delete folder because of QFileSystemWatcher so I have to delete the model then renew it
 	delete _model;
+	delete _sortModel;
 	_model = nullptr;
+	_sortModel = nullptr;
 	ui->filesInZipList->setModel(nullptr);
 
 
 	_model = new QCheckableFileSystemModel(this);
+
+	connect(_model, &QCheckableFileSystemModel::dataChanged, [this](const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles = QVector<int>()){
+		if(!roles.isEmpty() && !roles.contains(Qt::CheckStateRole)) return; // no checkboxes modified
+
+		QModelIndex toTreat = topLeft;
+		if(topLeft != bottomRight){ // one element, treat only if a dir
+			 toTreat = topLeft.parent();
+		}
+
+		if(!_model->isDir(toTreat) || !_sortModel->mapFromSource(toTreat).isValid()) return;
+
+		ModType curDirType = NONE;
+		for(int i = 0; i < _model->rowCount(toTreat); ++i){
+			QPersistentModelIndex child{_model->index(i, 0, toTreat)};
+			if(!_sortModel->mapFromSource(child).isValid() || _model->data(child, Qt::CheckStateRole) == Qt::Unchecked) continue;
+			QFileInfo f{_model->filePath(child)};
+			if(!_model->isDir(child)){
+				if(f.fileName().endsWith(".asi")){
+					curDirType |= ASI;
+				}else if(f.fileName().endsWith(".dll")){
+					curDirType |= DLL;
+				}
+			}
+		}
+		_type[_model->filePath(toTreat)] = curDirType;
+
+	});
+
 	_model->setReadOnly(true);
 
 	_model->setNameFilters(QStringList() << "*.asi" << "*.dll" << "*.ini" << "*.xml");
@@ -80,36 +110,43 @@ void InstallModWindow::clearInstallDirectory(bool mk){
 
 void InstallModWindow::addMod(){
 
-	QPersistentModelIndex rootIndex = _sortModel->mapFromSource(_model->index(_installDir.absolutePath()));
+//	for(QHash<QString, ModType>::iterator it = _type.begin(); it != _type.end(); ++it){
+//		qDebug() << it.key() << " = " << it.value();
+//	}
 
-	if(_sortModel->data(rootIndex, Qt::CheckStateRole) == Qt::Unchecked) return;
+	QPersistentModelIndex rootIndex = _model->index(_installDir.absolutePath());
+
+	// If first element is unchecked, we can abort
+	if(!_sortModel->mapFromSource(rootIndex).isValid() || _model->data(rootIndex, Qt::CheckStateRole) == Qt::Unchecked) return;
 
 	QStack<QPersistentModelIndex> toTreat;
 	toTreat.push(rootIndex);
 
 	while(!toTreat.isEmpty()){
-		auto index = toTreat.pop();
 
-		for(int i = 0; i < _sortModel->rowCount(index); ++i){
-			QPersistentModelIndex child = _sortModel->index(i, 0, index);
-			if(_sortModel->data(child, Qt::CheckStateRole) != Qt::Unchecked){
-				bool isDir = _model->isDir(_sortModel->mapToSource(child));
-				QFileInfo const path = _model->filePath(_sortModel->mapToSource(child));
-				if(isDir && _sortModel->data(child, Qt::CheckStateRole) == Qt::Checked){
+		const auto index = toTreat.pop();
+
+		for(int i = 0; i < _model->rowCount(index); ++i){
+			if(!_sortModel->mapFromSource(index).isValid()) continue;
+			QPersistentModelIndex child = _model->index(i, 0, index);
+			if(_model->data(child, Qt::CheckStateRole) != Qt::Unchecked){
+				bool isDir = _model->isDir(child);
+				QFileInfo const path = _model->filePath(child);
+				if(isDir && _model->data(child, Qt::CheckStateRole) == Qt::Checked){
 					copyDir(path.absoluteFilePath(), _scriptsDir.absoluteFilePath(path.fileName()));
 				}else if(!isDir){
-					if(path.fileName().endsWith(".asi") || _type == ASI){
+					if(path.fileName().endsWith(".asi") || _type[_model->filePath(index)] == ASI){
 						QFile::copy(path.absoluteFilePath(),  _modsDir.absoluteFilePath(path.fileName()));
 						if(path.fileName().endsWith(".asi")){
 							emit modAdded(path.fileName());
 						}
-					}else if(path.fileName().endsWith(".dll") || _type == DLL){
+					}else if(path.fileName().endsWith(".dll") ||  _type[_model->filePath(index)] == DLL){
 						QFile::copy(path.absoluteFilePath(),  _scriptsDir.absoluteFilePath(path.fileName()));
 						if(path.fileName().endsWith(".dll")){
 							emit modAdded(path.fileName());
 						}
 					}else{
-						//TODO
+						qDebug() << path.filePath() << "Not copied";
 					}
 				}else{
 					toTreat.push(child);
@@ -177,9 +214,9 @@ void InstallModWindow::copyAndExtractZip(QString const& zip) const{
  * @brief InstallModWindow::detectModFiles
  * @return
  */
-modsStruct InstallModWindow::detectModFiles() const{
+modsStruct InstallModWindow::detectModFiles(QDir const& dir) const{
 	// Only list files
-	auto files = _installDir.entryList(QStringList() << "*.*", QDir::Files | QDir::NoDotAndDotDot);
+	auto files = dir.entryList(QStringList() << "*.*", QDir::Files | QDir::NoDotAndDotDot);
 	// List asi files in the first loop for late uses
 	QStringList detectedAsi;
 	QStringList detectedDll;
@@ -198,25 +235,13 @@ modsStruct InstallModWindow::detectModFiles() const{
 }
 
 QSet<QString> InstallModWindow::detectNeededFiles(QDir _installDir, modsStruct detectedMods, bool takeAllConfigFiles){
-	bool hasAsi = !detectedMods._detectedAsi.empty();
-	bool hasDll = !detectedMods._detectedDll.empty();
-	if(hasAsi && hasDll){
-		_type = BOTH;
-	}else if(hasAsi && !hasDll){
-		_type = ASI;
-	}else if(hasDll && !hasAsi){
-		_type = DLL;
-	}else{
-		_type = NONE;
-	}
-
 	QSet<QString> files;
 	for(QString const& mod : detectedMods._detectedAsi){
-		files.insert(mod + ".asi");
+		files.insert(_installDir.absoluteFilePath(mod + ".asi"));
 	}
 
 	for(QString const& mod : detectedMods._detectedDll){
-		files.insert(mod + ".dll");
+		files.insert(_installDir.absoluteFilePath(mod + ".dll"));
 	}
 
 	QFileInfoList filesInfos = _installDir.entryInfoList(QStringList() << "*", QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
@@ -256,9 +281,6 @@ void InstallModWindow::validateEdit(QString const& text){
 		// Copy unzip & the mod
 		copyAndExtractZip(text);
 
-		modsStruct detectedMods{detectModFiles()};
-
-
 		QPersistentModelIndex rootIndex = _model->setRootPath(_currentDir.absolutePath());
 
 		// Wait for model to load
@@ -272,6 +294,7 @@ void InstallModWindow::validateEdit(QString const& text){
 
 		while(!toProcess.empty()){
 			auto toTreat = toProcess.pop();
+			modsStruct detectedMods{detectModFiles(_model->filePath(toTreat))};
 			QSet<QString> neededFiles = detectNeededFiles(
 						_model->filePath(toTreat),
 						detectedMods,
@@ -285,7 +308,8 @@ void InstallModWindow::validateEdit(QString const& text){
 				if(neededFiles.contains(p)){
 					_model->setData(child, Qt::Checked, Qt::CheckStateRole);
 				}
-				if(_model->isDir(child)){
+				// If already checked, do not get in it because it's not necessary
+				if(_model->isDir(child) && _model->data(child, Qt::CheckStateRole) != Qt::Checked){
 					_model->discover(child);
 					toProcess.push(child);
 				}
@@ -340,13 +364,19 @@ void InstallModWindow::validateEdit(QString const& text){
 	setFixedSize(sizeHint());
 }
 
+/**
+ * removes the install dir and deletes itself
+ * @brief InstallModWindow::hideEvent
+ * @param e
+ */
 void InstallModWindow::hideEvent(QHideEvent *e){
 	e->accept();
-	delete _model;
 	clearInstallDirectory(false);
 	deleteLater();
 }
 
 InstallModWindow::~InstallModWindow(){
+	delete _model;
+	delete _sortModel;
 	delete ui;
 }
