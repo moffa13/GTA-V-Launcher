@@ -10,7 +10,7 @@
 #include "Utilities.h"
 #include "ui_ChooseModsWindow.h"
 
-ChooseModsWindow::ChooseModsWindow(QWidget *parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), ui(new Ui::ChooseModsWindow){
+ChooseModsWindow::ChooseModsWindow(QWidget *parent) : SelfDeleteDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), ui(new Ui::ChooseModsWindow){
 	ui->setupUi(this);
 	init();
 	getFromFiles();
@@ -115,11 +115,6 @@ QString ChooseModsWindow::basePathFromModType(QString const& mod){
 		return MainWindow::m_gtaDirectoryStr;
 	}
 	return QString{};
-}
-
-void ChooseModsWindow::hideEvent(QHideEvent *e){
-	e->accept();
-	deleteLater();
 }
 
 void ChooseModsWindow::getFromFiles(){

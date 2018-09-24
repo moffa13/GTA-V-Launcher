@@ -90,6 +90,22 @@
     <string>PushButton</string>
    </property>
   </widget>
+  <widget class="QLabel" name="gtaVersionLabel">
+   <property name="geometry">
+    <rect>
+     <x>606</x>
+     <y>585</y>
+     <width>351</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>GTA V</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

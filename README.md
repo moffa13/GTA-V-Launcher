@@ -46,5 +46,6 @@ V 1.0.8
 - Added an option to close the launcher when game starts
 - Added functionality to install a mod from asi, dll, zip, rar also copying its config files by detecting them
 - Added button in settings to uninstall the launcher
+- Added some ui infos (gta version, gta current directory)
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7

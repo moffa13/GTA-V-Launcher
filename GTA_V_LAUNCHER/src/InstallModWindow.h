@@ -1,7 +1,7 @@
 #ifndef INSTALLMODWINDOW_H
 #define INSTALLMODWINDOW_H
 
-#include <QDialog>
+#include "SelfDeleteDialog.h"
 #include <QDir>
 #include <QHideEvent>
 #include "QCheckableFileSystemModel.h"
@@ -32,15 +32,13 @@ inline ModType& operator|=(ModType& a, ModType b){
 	return a;
 }
 
-class InstallModWindow : public QDialog
+class InstallModWindow : public SelfDeleteDialog
 {
 		Q_OBJECT
 
 	public:
 		explicit InstallModWindow(QString const& installDir, QString const& modsDir, QString const& scriptsDir, QWidget *parent = nullptr);
 		~InstallModWindow() override;
-	protected:
-		void hideEvent(QHideEvent *event) override;
 	private slots:
 		void validateEdit(const QString &text);
 		void addMod();

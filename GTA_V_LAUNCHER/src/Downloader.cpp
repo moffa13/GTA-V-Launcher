@@ -26,18 +26,12 @@ QNetworkReply* Downloader::download(){
 	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
 	QNetworkAccessManager *q = new QNetworkAccessManager(this);
 	QObject::connect(q, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileDownloadedSlot(QNetworkReply*)));
-
-	qDebug() << "Downloading "+m_request->url().toString()+" ...";
 	rep = q->get(*m_request);
 	QObject::connect(rep, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgressSlot(qint64,qint64)));
 	return rep;
 }
 
-
-
 void Downloader::fileDownloadedSlot(QNetworkReply *reply){
-	qDebug() << "Downloaded "+m_request->url().toString()+"!, Emit";
-
 	QUrl movedUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl());
 	int responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 	if(responseCode == 404){
@@ -45,13 +39,10 @@ void Downloader::fileDownloadedSlot(QNetworkReply *reply){
 	}
 
 	if(movedUrl.isEmpty()){
-		qDebug() << reply->error();
 		QByteArray res = reply->readAll();
 		emit downloaded(res);
 		return;
 	}
-
-	qDebug() << "Redirection needed";
 
 	m_request->setUrl(movedUrl);
 	download();
@@ -63,4 +54,3 @@ void Downloader::downloadProgressSlot(qint64 read, qint64 total){
 	if(r == 200)
 		emit downloadProgress(read, total);
 }
-

@@ -25,6 +25,7 @@ public:
     QPushButton *chooseMods;
     QLabel *byLabel;
     QPushButton *openOptionsButton;
+    QLabel *gtaVersionLabel;
 
     void setupUi(QWidget *MainWindow)
     {
@@ -48,6 +49,10 @@ public:
         openOptionsButton = new QPushButton(MainWindow);
         openOptionsButton->setObjectName(QStringLiteral("openOptionsButton"));
         openOptionsButton->setGeometry(QRect(15, 15, 153, 57));
+        gtaVersionLabel = new QLabel(MainWindow);
+        gtaVersionLabel->setObjectName(QStringLiteral("gtaVersionLabel"));
+        gtaVersionLabel->setGeometry(QRect(606, 585, 351, 20));
+        gtaVersionLabel->setAlignment(Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing);
 
         retranslateUi(MainWindow);
 
@@ -62,6 +67,7 @@ public:
         chooseMods->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         byLabel->setText(QString());
         openOptionsButton->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
+        gtaVersionLabel->setText(QApplication::translate("MainWindow", "GTA V", nullptr));
     } // retranslateUi
 
 };

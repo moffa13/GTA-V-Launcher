@@ -20,7 +20,7 @@
 QString MainWindow::m_gtaDirectoryStr = "";
 QString MainWindow::m_disabledModsDirectoryStr = "";
 
-MainWindow::MainWindow(QWidget* parent) : Window{parent}, ui(new Ui::MainWindow)/*, m_adView(new QWebEngineView(this))*/ {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow{parent}, ui(new Ui::MainWindow)/*, m_adView(new QWebEngineView(this))*/ {
 	Q_UNUSED(parent);
 	ui->setupUi(this);
 }
@@ -42,6 +42,8 @@ void MainWindow::init(){
 		show();
 		if(!getGTAExecutable()){
 			closeApp();
+		}else{
+			setGtaVersion();
 		}
 		getSoftwareUpdates();
 	}
@@ -235,6 +237,11 @@ void MainWindow::setRelativeDirs(QString const& base){
 	QDir(MainWindow::m_disabledModsDirectoryStr).mkdir(".");
 }
 
+void MainWindow::setGtaVersion(){
+	ui->gtaVersionLabel->setAlignment(Qt::AlignRight);
+	ui->gtaVersionLabel->setText("GTA V " + QString{Utilities::getFileVersion(m_gtaDirectoryStr + "/GTA5.exe").getVersionStr().c_str()});
+}
+
 void MainWindow::setFavicon(){
 	qApp->setWindowIcon(QIcon(":/images/favicon.png"));
 }
@@ -242,9 +249,11 @@ void MainWindow::setFavicon(){
 void MainWindow::setButtons(){
 
 	QString css("QPushButton{"
-					"background-color: #407f93;"
+					"background-color: #1C1C1C;"
+					"color: #EAEAEA;"
 					"border: 1px solid #35393b;"
 					"font-size: 15px;"
+				"border-radius: 2px;"
 					"font-family: Consolas, Arial; "
 				"}"
 
@@ -272,7 +281,6 @@ void MainWindow::setButtons(){
 
 	ui->openOptionsButton->setText(tr("Settings"));
 	ui->openOptionsButton->setStyleSheet(css);
-
 
 }
 

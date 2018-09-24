@@ -12,7 +12,6 @@ LIBS += -lVersion
 
 SOURCES += \
 	Start.cpp \
-	Window.cpp \
 	MainWindow.cpp \
 	ChooseModsWindow.cpp \
 	Utilities.cpp \
@@ -20,8 +19,9 @@ SOURCES += \
 	Downloader.cpp \
 	Version.cpp \
 	InstallModWindow.cpp \
-	src/QCheckableFileSystemModel.cpp \
-    src/QFileSystemModelDirectorySortProxy.cpp
+	QCheckableFileSystemModel.cpp \
+	QFileSystemModelDirectorySortProxy.cpp \
+    src/SelfDeleteDialog.cpp
 
 HEADERS += \
 	Window.h \
@@ -32,8 +32,9 @@ HEADERS += \
 	Downloader.h \
 	Version.h \
 	InstallModWindow.h \
-	src/QCheckableFileSystemModel.h \
-    src/QFileSystemModelDirectorySortProxy.h
+	QCheckableFileSystemModel.h \
+	QFileSystemModelDirectorySortProxy.h \
+    src/SelfDeleteDialog.h
 
 RESOURCES += \
 	GTA_V_LAUNCHER.qrc
@@ -44,6 +45,6 @@ DEFINES += APP_VERSION_COMMA=1,0,8
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 FORMS += \
-	src/MainWindow.ui \
-	src/ChooseModsWindow.ui \
-	src/InstallModWindow.ui
+	MainWindow.ui \
+	ChooseModsWindow.ui \
+	InstallModWindow.ui

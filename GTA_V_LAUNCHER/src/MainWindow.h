@@ -3,7 +3,7 @@
 
 #include <QProcess>
 #include <QPushButton>
-#include "Window.h"
+#include <QMainWindow>
 #include "ChooseModsWindow.h"
 #include "SettingsWindow.h"
 #include <QCloseEvent>
@@ -15,7 +15,7 @@ namespace Ui{
 class MainWindow;
 }
 
-class MainWindow : public Window{
+class MainWindow : public QMainWindow{
 
 	Q_OBJECT
 
@@ -49,6 +49,7 @@ class MainWindow : public Window{
 		Ui::MainWindow* ui;
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
+		void setGtaVersion();
 	public slots:
 		void uninstallLauncherSlot();
 		void closeAppSlot();

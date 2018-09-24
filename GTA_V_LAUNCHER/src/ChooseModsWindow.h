@@ -1,9 +1,8 @@
 #ifndef CHOOSEMODSWINDOW_H
 #define CHOOSEMODSWINDOW_H
 
-#include "Window.h"
 #include "InstallModWindow.h"
-#include <QDialog>
+#include "SelfDeleteDialog.h"
 #include <QLabel>
 #include <QListView>
 #include <QPushButton>
@@ -20,7 +19,7 @@ class ChooseModsWindow;
 }
 
 
-class ChooseModsWindow : public QDialog{
+class ChooseModsWindow : public SelfDeleteDialog{
 
 	Q_OBJECT
 
@@ -41,7 +40,6 @@ class ChooseModsWindow : public QDialog{
 		static const QString m_disabledModsDirectoryStr;
 		QModelIndex m_lastIndex;
 		void connectAll();
-		void hideEvent(QHideEvent *event) override;
 		void getFromFiles();
 		void setEnabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
 		void setDisabledModsToList(const QList<QPair<QString, Version>> &enabledMods);

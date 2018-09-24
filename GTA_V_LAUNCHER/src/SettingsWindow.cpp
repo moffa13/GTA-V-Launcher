@@ -5,7 +5,7 @@
 #include <QDesktopServices>
 #include "Utilities.h"
 
-SettingsWindow::SettingsWindow(QWidget *parent) : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint){
+SettingsWindow::SettingsWindow(QWidget *parent) : SelfDeleteDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint){
 	setButtons();
 	connectAll();
 	init();
@@ -24,7 +24,10 @@ void SettingsWindow::setButtons(){
 	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"), this);
 	m_exitLauncherAfterGameStart = new QCheckBox(tr("Exit launcher after game starts"), this);
 	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"), this);
+
 	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"), this);
+	m_openGTAVGameDirectory->setToolTip(MainWindow::m_gtaDirectoryStr);
+
 	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"), this);
 	m_uninstallLauncher = new QPushButton(tr("Uninstall this launcher"), this);
 
@@ -92,11 +95,6 @@ MainWindow *SettingsWindow::getParent() const{
 void SettingsWindow::checkSoftwareUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
 	parent->getSoftwareUpdates();
-}
-
-void SettingsWindow::hideEvent(QHideEvent *e){
-	e->accept();
-	deleteLater();
 }
 
 void SettingsWindow::launchGTAVMethodSlot(int state){

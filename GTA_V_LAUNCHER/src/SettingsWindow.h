@@ -2,7 +2,7 @@
 #define SETTINGSWINDOW_H
 
 #include <QObject>
-#include <QDialog>
+#include "SelfDeleteDialog.h"
 #include <QGroupBox>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -11,7 +11,7 @@
 
 class MainWindow;
 
-class SettingsWindow : public QDialog
+class SettingsWindow : public SelfDeleteDialog
 {
 	Q_OBJECT
 
@@ -32,10 +32,6 @@ class SettingsWindow : public QDialog
 		QCheckBox *m_startCrackedCheckBox;
 		QCheckBox *m_exitLauncherAfterGameStart;
 		QVBoxLayout *m_categoriesLayout;
-	protected:
-		void hideEvent(QHideEvent *e) override;
-	signals:
-
 	public slots:
 		void openGTAVGameDirectorySlot() const;
 		void changeGTAVGameDirectorySlot() const;
