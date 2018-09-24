@@ -39,7 +39,7 @@ V [1.0.7]
 - The launcher can auto update ScriptHookV & dinput8.dll
 - Fixed many bugs
 
-V 1.0.8
+V [1.0.8]
 - Fixed bugs (memory leaks, scripthookv says out-of-date, yes-no buttons not translated, can't remove a mod with pe version, ...)
 - More security to prevent mods from being accidentally enabled in online mode
 - Problem detecting steam version of the game (PlayGTAV.exe doesn't exist with steam)
@@ -49,3 +49,4 @@ V 1.0.8
 - Added some ui infos (gta version, gta current directory)
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
+[1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
