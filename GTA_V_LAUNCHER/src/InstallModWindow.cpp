@@ -8,6 +8,7 @@
 #include <QStack>
 #include "QCheckableFileSystemModel.h"
 #include <QTimer>
+#include "ChooseModsWindow.h"
 
 InstallModWindow::InstallModWindow(QString const& installDir, QString const& modsDir, QString const& scriptsDir, QWidget *parent) :
 	SelfDeleteDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
@@ -138,15 +139,14 @@ void InstallModWindow::addMod(){
 				if(isDir && _model->data(child, Qt::CheckStateRole) == Qt::Checked && _type[_model->filePath(index)] == DLL){
 					copyDir(path.absoluteFilePath(), _scriptsDir.absoluteFilePath(path.fileName()));
 				}else if(!isDir){ // asi, dll, xml, ...
+					ChooseModsWindow *parent = qobject_cast<ChooseModsWindow*>(this->parentWidget());
 					if(path.fileName().endsWith(".asi") || _type[_model->filePath(index)] == ASI){ // It's a file and one of its sibling files is a asi
-						QFile::copy(path.absoluteFilePath(),  _modsDir.absoluteFilePath(path.fileName()));
-						if(path.fileName().endsWith(".asi")){
-							emit modAdded(path.fileName());
+						if(!path.fileName().endsWith(".asi") || parent->addMod(path.absoluteFilePath())){
+							QFile::copy(path.absoluteFilePath(),  _modsDir.absoluteFilePath(path.fileName()));
 						}
 					}else if(path.fileName().endsWith(".dll") ||  _type[_model->filePath(index)] == DLL){ // It's a file and one of its sibling files is a dll
-						QFile::copy(path.absoluteFilePath(),  _scriptsDir.absoluteFilePath(path.fileName()));
-						if(path.fileName().endsWith(".dll")){
-							emit modAdded(path.fileName());
+						if(!path.fileName().endsWith(".dll") || parent->addMod(path.absoluteFilePath())){
+							QFile::copy(path.absoluteFilePath(),  _scriptsDir.absoluteFilePath(path.fileName()));
 						}
 					}else{
 						qDebug() << path.filePath() << "Not copied";
@@ -349,7 +349,7 @@ void InstallModWindow::validateEdit(QString const& text){
 		}
 		_sortModel->setAcceptedDirs(allAcceptedDirs);
 		_model->setNameFilters(QStringList{});
-		rootIndex = _sortModel->mapFromSource(_model->setRootPath(_currentDir.absolutePath()));
+		rootIndex = _model->setRootPath(_currentDir.absolutePath());
 
 		// Wait for model to load
 		QEventLoop loop;
@@ -357,15 +357,16 @@ void InstallModWindow::validateEdit(QString const& text){
 		loop.exec();
 
 
-		for(int i = 0; i < _sortModel->rowCount(rootIndex); ++i){
-			QPersistentModelIndex child = _sortModel->index(i, 0, rootIndex);
-			_sortModel->setData(child, Qt::Checked, Qt::CheckStateRole);
+		for(int i = 0; i < _model->rowCount(rootIndex); ++i){
+			QPersistentModelIndex child = _model->index(i, 0, rootIndex);
+			if(_sortModel->mapFromSource(child).isValid())
+				_model->setData(child, Qt::Checked, Qt::CheckStateRole);
 		}
 
 	}
 
-	ui->filesInZipList->setRootIndex(_sortModel->mapFromSource(_model->index(_currentDir.absolutePath())));
-	if(_sortModel->rowCount(_sortModel->mapFromSource(rootIndex))){
+	ui->filesInZipList->setRootIndex(_sortModel->mapFromSource(rootIndex));
+	if(_model->rowCount(rootIndex)){
 		ui->filesInZipList->setVisible(true);
 		ui->validateButton->setVisible(true);
 	}else{

@@ -70,13 +70,6 @@ void ChooseModsWindow::connectAll(){
 
 	connect(ui->installModButton, &QPushButton::clicked, [this](){
 		m_installModWindow = new InstallModWindow(MainWindow::m_gtaDirectoryStr + "/installMod", MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", this);
-		connect(m_installModWindow, &InstallModWindow::modAdded, [this](QString const& file){
-			QStringList elem{file};
-			auto v = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", elem);
-			m_enabledModsAndVersions.append(v.first());
-			m_modele1->insertRow(m_modele1->rowCount());
-			m_modele1->setData(m_modele1->index(m_modele1->rowCount() - 1), toQStringList(v, true).first());
-		});
 		m_installModWindow->exec();
 	});
 
@@ -84,7 +77,7 @@ void ChooseModsWindow::connectAll(){
 		QStringList all = toQStringList(m_enabledModsAndVersions);
 		all.append(toQStringList(m_disabledModsAndVersions));
 
-		m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", all);
+		m_enabledModsAndVersions = addVersionToElements(all);
 		m_disabledModsAndVersions.clear();
 
 		setEnabledModsToList(m_enabledModsAndVersions);
@@ -108,6 +101,62 @@ void ChooseModsWindow::connectAll(){
 	connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));
 }
 
+bool ChooseModsWindow::addMod(QString const& file){
+	bool shouldAddMod = true;
+	QFileInfo fi{file};
+	auto const newElement = addVersionToElementAbsolute(file);
+
+	for(int i = 0; i < m_enabledModsAndVersions.length() + m_disabledModsAndVersions.length(); ++i){
+		QList<QPair<QString, Version>> *list;
+		QPair<QString, Version> const* element;
+		bool enabled;
+		int realIndex;
+		if(i < m_enabledModsAndVersions.length()){
+			list = &m_enabledModsAndVersions;
+			realIndex = i;
+			enabled = true;
+		}
+		else{
+			list = &m_disabledModsAndVersions;
+			realIndex = i - m_enabledModsAndVersions.length();
+			enabled = false;
+		}
+
+		element = &list->at(realIndex);
+
+		if(fi.fileName() == element->first){ // Already exists
+			int resp;
+			if(newElement.second.getVersionInt() == 0 || newElement.second == element->second){
+				resp = QMessageBox::information(this, "Erase", "Do you want to overwrite the old mod with the same name ?", QMessageBox::Yes | QMessageBox::No);
+			}else if(newElement.second > element->second){
+				resp = QMessageBox::information(this, "Erase", "Do you want to overwrite the old mod with a lower version ?", QMessageBox::Yes | QMessageBox::No);
+			}else{
+				resp = QMessageBox::information(this, "Erase", "You already have a more recent version of this mod, do you want to overwrite anyway ?", QMessageBox::Yes | QMessageBox::No);
+			}
+
+			if(resp == QMessageBox::Yes){
+				deleteMod(element->first);
+				list->removeAt(realIndex);
+				QStringListModel *fromDelete = enabled ? m_modele1 : m_modele2;
+				fromDelete->removeRow(realIndex);
+				break;
+			}else{
+				shouldAddMod = false;
+			}
+		}
+	}
+
+	if(shouldAddMod){
+		m_enabledModsAndVersions.append(newElement);
+		m_modele1->insertRow(m_modele1->rowCount());
+		m_modele1->setData(m_modele1->index(m_modele1->rowCount() - 1), elemWithVersionToString(newElement));
+	}
+
+	return shouldAddMod;
+
+
+}
+
 QString ChooseModsWindow::basePathFromModType(QString const& mod){
 	if(mod.endsWith(".dll")){
 		return MainWindow::m_gtaDirectoryStr + "/scripts";
@@ -126,7 +175,7 @@ void ChooseModsWindow::getFromFiles(){
 	// Remove files Conflicts between disabled and enabled mods
 	noConflicts(enabledMods, disabledMods);
 
-	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", enabledMods);
+	m_enabledModsAndVersions = addVersionToElements(enabledMods);
 	m_disabledModsAndVersions = addVersionToElements(MainWindow::m_disabledModsDirectoryStr, disabledMods);
 
 	// Set to list
@@ -183,22 +232,45 @@ QStringList ChooseModsWindow::getDisabledModsFromFiles(){
  * @param list
  * @return
  */
-QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& baseAsi, QString const& baseDll, QStringList const& list) const{
+QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QStringList const& list) const{
 	QList<QPair<QString, Version>> listWithVersions;
 	for(QString const& elem : list){
-		Version v;
-		if(elem.endsWith(".dll")){
-			v = Utilities::getFileVersion(baseDll + "/" + elem);
-		}else{
-			v = Utilities::getFileVersion(baseAsi + "/" + elem);
-		}
-		listWithVersions.append(QPair<QString, Version>(elem, v));
+		listWithVersions.append(addVersionToElement(elem));
 	}
 	return listWithVersions;
 }
 
-QList<QPair<QString, Version>> ChooseModsWindow::addVersionToElements(QString const& base, QStringList const& list) const{
-	return addVersionToElements(base, base, list);
+QList<QPair<QString, Version> > ChooseModsWindow::addVersionToElements(const QString &base, const QStringList &list) const{
+	QList<QPair<QString, Version>> listWithVersions;
+	for(QString const& elem : list){
+		listWithVersions.append(addVersionToElementAbsolute(base + "/" + elem));
+	}
+	return listWithVersions;
+}
+
+/**
+ * Takes a string list and return a list containing a pair (name, version)
+ * @brief ChooseModsWindow::addVersionToElements
+ * @param base
+ * @param list
+ * @return
+ */
+QPair<QString, Version> ChooseModsWindow::addVersionToElement(QString const& elem) const{
+	return addVersionToElementAbsolute(basePathFromModType(elem) + "/" + elem);
+}
+
+QPair<QString, Version> ChooseModsWindow::addVersionToElementAbsolute(QString const& elemAbsolutePath) const{
+	QList<QPair<QString, Version>> elemWithVersion;
+	QFileInfo fi{elemAbsolutePath};
+	Version v = Utilities::getFileVersion(elemAbsolutePath);
+	return QPair<QString, Version>(fi.fileName(), v);
+}
+
+QString ChooseModsWindow::elemWithVersionToString(const QPair<QString, Version> &elem){
+	if(elem.second.getVersionInt() != 0)
+		return elem.first + " V" + QString{elem.second.getVersionStr().c_str()};
+	else
+		return elem.first;
 }
 
 QStringList ChooseModsWindow::toQStringList(const QList<QPair<QString, Version>> &list, bool addVersion){
@@ -206,7 +278,7 @@ QStringList ChooseModsWindow::toQStringList(const QList<QPair<QString, Version>>
 	for(QPair<QString, Version> const& elem : list){
 		QString val = elem.first;
 		if(addVersion && elem.second.getVersionInt() != 0)
-			val += " V" + QString{elem.second.getVersionStr().c_str()};
+			val = elemWithVersionToString(elem);
 		ret.append(val);
 	}
 	return ret;
@@ -368,7 +440,7 @@ void ChooseModsWindow::loadConfigSlot(){
 
 	auto pair = getModsConfig();
 
-	m_enabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, MainWindow::m_gtaDirectoryStr + "/scripts", pair.first);
+	m_enabledModsAndVersions = addVersionToElements(pair.first);
 	m_disabledModsAndVersions = addVersionToElements(MainWindow::m_disabledModsDirectoryStr, pair.second);
 
 	setEnabledModsToList(m_enabledModsAndVersions);
@@ -418,10 +490,8 @@ void ChooseModsWindow::deleteModSlot(){
 		QString filename =  m_lastIndex.model()->objectName() == "enabled"
 				? m_enabledModsAndVersions.at(m_lastIndex.row()).first
 				: m_disabledModsAndVersions.at(m_lastIndex.row()).first;
-		QString const path = basePathFromModType(filename);
 		QStringListModel *model = m_lastIndex.model()->objectName() == "enabled" ? m_modele1 : m_modele2;
-		QFile::remove(path + "/" + filename);
-		QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + filename);
+		deleteMod(filename);
 		model->removeRow(m_lastIndex.row());
 		if(m_lastIndex.model()->objectName() == "enabled"){
 			m_enabledModsAndVersions.removeAt(m_lastIndex.row());
@@ -430,6 +500,12 @@ void ChooseModsWindow::deleteModSlot(){
 		}
 		setEnableDisableAllButtons();
 	}
+}
+
+void ChooseModsWindow::deleteMod(QString const& filename){
+	QString const path = basePathFromModType(filename);
+	QFile::remove(path + "/" + filename);
+	QFile::remove(MainWindow::m_disabledModsDirectoryStr + "/" + filename);
 }
 
 void ChooseModsWindow::setEnableDisableAllButtons(){

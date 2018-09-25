@@ -26,7 +26,7 @@ class ChooseModsWindow : public SelfDeleteDialog{
 	public:
 		ChooseModsWindow(QWidget *parent = nullptr);
 		~ChooseModsWindow();
-		void init();
+		bool addMod(const QString &file);
 		static void disableAllMods();
 		static void enableAllMods();
 		static void enableOldConfig();
@@ -43,6 +43,7 @@ class ChooseModsWindow : public SelfDeleteDialog{
 		void getFromFiles();
 		void setEnabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
 		void setDisabledModsToList(const QList<QPair<QString, Version>> &enabledMods);
+		void init();
 		static QStringList getEnabledModsFromFiles();
 		static QStringList getDisabledModsFromFiles();
 		static void noConflicts(QStringList &enableMods, QStringList &disabledMods);
@@ -54,13 +55,17 @@ class ChooseModsWindow : public SelfDeleteDialog{
 		QStringList getEnabledModsFromList();
 		QStringList getDisabledModsFromList();
 		static QStringList checkModsExists(QStringList &list);
-		QList<QPair<QString, Version>> addVersionToElements(QString const& baseAsi, QString const& baseDll, QStringList const& list) const;
-		QList<QPair<QString, Version> > addVersionToElements(const QString &base, const QStringList &list) const;
 		static QStringList toQStringList(const QList<QPair<QString, Version> > &list, bool addVersion = false);
 		Ui::ChooseModsWindow* ui;
 		static QPair<QStringList, QStringList> getModsConfig();
 		void setEnableDisableAllButtons();
 		static QString basePathFromModType(const QString &mod);
+		QList<QPair<QString, Version>> addVersionToElements(QString const& base, QStringList const& list) const;
+		QList<QPair<QString, Version>> addVersionToElements(QStringList const& list) const;
+		QPair<QString, Version> addVersionToElement(const QString &elem) const;
+		QPair<QString, Version> addVersionToElementAbsolute(const QString &elemAbsolutePath) const;
+		static QString elemWithVersionToString(const QPair<QString, Version> &elem);
+		static void deleteMod(const QString &filename);
 	public slots:
 		void setModsSlot();
 		void loadConfigSlot();

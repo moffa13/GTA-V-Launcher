@@ -21,7 +21,7 @@ SOURCES += \
 	InstallModWindow.cpp \
 	QCheckableFileSystemModel.cpp \
 	QFileSystemModelDirectorySortProxy.cpp \
-    src/SelfDeleteDialog.cpp
+	src/SelfDeleteDialog.cpp
 
 HEADERS += \
 	Window.h \
@@ -34,14 +34,14 @@ HEADERS += \
 	InstallModWindow.h \
 	QCheckableFileSystemModel.h \
 	QFileSystemModelDirectorySortProxy.h \
-    src/SelfDeleteDialog.h
+	src/SelfDeleteDialog.h
 
 RESOURCES += \
 	GTA_V_LAUNCHER.qrc
 
 
-VERSION = 1.0.8
-DEFINES += APP_VERSION_COMMA=1,0,8
+VERSION = 1.0.9
+DEFINES += APP_VERSION_COMMA=1,0,9
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 FORMS += \
