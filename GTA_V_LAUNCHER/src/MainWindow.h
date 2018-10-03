@@ -25,6 +25,7 @@ class MainWindow : public QMainWindow{
 		void init();
 		void closeApp();
 		bool getGTAExecutable();
+		void getGtaVersionThrewInternet();
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
@@ -32,10 +33,10 @@ class MainWindow : public QMainWindow{
 		ChooseModsWindow *m_chooseModsWindow = nullptr;
 		SettingsWindow *m_settingsWindow = nullptr;
 		Downloader *m_checkGtaVersion = nullptr;
+		Downloader *m_checkLauncherVersion = nullptr;
 		//QWebView *m_adView;
 		//void loadAd();
 		bool isSteamVersion() const;
-		void getGtaVersionThrewInternet();
 		bool checkOS();
 		void setBackground();
 		void setFavicon();
@@ -50,7 +51,9 @@ class MainWindow : public QMainWindow{
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
 		void setGtaVersion();
+		void getLauncherVersion();
 	public slots:
+		void gotLauncherVersionSlot(QByteArray resp);
 		void uninstallLauncherSlot();
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
@@ -59,7 +62,6 @@ class MainWindow : public QMainWindow{
 		void showChooseModsWindowSlot();
 		void downloadFinishedSlot(QByteArray resp);
 		void showSettingsWindowSlot();
-		void getSoftwareUpdates();
 		void showPlayContextualMenuSlot(const QPoint &pos);
 };
 

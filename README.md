@@ -48,5 +48,9 @@ V [1.0.8]
 - Added button in settings to uninstall the launcher
 - Added some ui infos (gta version, gta current directory)
 
+V 1.0.9
+- Fixed bugs (crash installing a mod, ...)
+- Added warning if you overwrite an existing mod
+
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8

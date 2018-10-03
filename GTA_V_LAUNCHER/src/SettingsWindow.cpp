@@ -94,7 +94,7 @@ MainWindow *SettingsWindow::getParent() const{
 
 void SettingsWindow::checkSoftwareUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-	parent->getSoftwareUpdates();
+	parent->getGtaVersionThrewInternet();
 }
 
 void SettingsWindow::launchGTAVMethodSlot(int state){

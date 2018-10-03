@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QIcon>
 #include <QNetworkAccessManager>
+#include <QDesktopServices>
 #include <QDomDocument>
 #include <QProcessEnvironment>
 #include <QFileDialog>
@@ -45,7 +46,8 @@ void MainWindow::init(){
 		}else{
 			setGtaVersion();
 		}
-		getSoftwareUpdates();
+		getLauncherVersion();
+		getGtaVersionThrewInternet();
 	}
 }
 
@@ -113,12 +115,37 @@ void MainWindow::getGtaVersionThrewInternet(){
 }
 
 /**
- * Fetches latest launcher version and calls checkSoftwareUpdatesSlot sending it the current prod version
- * @brief MainWindow::getSoftwareUpdates
- * @param messageBox
+ * Fetches latest launcher version on gta5-mods.com and call gotLauncherVersionSlot with the html as QByteArray
+ * @brief MainWindow::getGtaVersionThrewInternet
  */
-void MainWindow::getSoftwareUpdates(){
-	getGtaVersionThrewInternet();
+void MainWindow::getLauncherVersion(){
+	m_checkLauncherVersion = new Downloader("https://www.gta5-mods.com/tools/gta-v-launcher");
+	QObject::connect(m_checkLauncherVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(gotLauncherVersionSlot(QByteArray)));
+	QObject::connect(m_checkLauncherVersion, &Downloader::error, [this](){
+		m_checkLauncherVersion->deleteLater();
+	});
+	m_checkLauncherVersion->download();
+}
+
+void MainWindow::gotLauncherVersionSlot(QByteArray resp){
+	QRegExp version{QRegExp::escape("<span class=\"version\">") + "([0-9]\\.[0-9]\\.[0-9])" + QRegExp::escape("</span>")};
+	version.indexIn(resp);
+	Version internet{version.cap(1)};
+	if(internet > qApp->applicationVersion()){
+		int resp = QMessageBox::information(
+			this,
+			tr("Update"),
+			tr("There is a newer update of the launcher (V %1), would you like to be redirected to the website ?")
+				.arg(QString{internet.getVersionStr().c_str()}),
+			QMessageBox::Yes | QMessageBox::No
+		);
+
+		if(resp == QMessageBox::Yes){
+			QDesktopServices::openUrl(QUrl{"https://www.gta5-mods.com/tools/gta-v-launcher"});
+		}
+	}
+
+	m_checkLauncherVersion->deleteLater();
 }
 
 bool MainWindow::checkOS(){
