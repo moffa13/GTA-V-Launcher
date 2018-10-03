@@ -57,15 +57,15 @@ bool Version::operator <(const Version &lhs) const{
 }
 
 bool Version::operator >(const Version &lhs) const{
-	return !operator <(lhs);
+	return !operator <(lhs) && operator !=(lhs);
 }
 
 bool Version::operator >=(const Version &lhs) const{
-	return operator>(lhs) || operator ==(lhs);
+	return !operator<(lhs);
 }
 
 bool Version::operator <=(const Version &lhs) const{
-	return operator<(lhs) || operator ==(lhs);
+	return !operator>(lhs);
 }
 
 
