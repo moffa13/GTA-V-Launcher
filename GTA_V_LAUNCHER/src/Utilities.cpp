@@ -80,15 +80,10 @@ QMap<QString, QVariant> Utilities::loadFromConfig(QString const &key){
 	return map;
 }
 
-QVariant Utilities::loadFromConfig(QString const &key, QString const &childKey){
+QVariant Utilities::loadFromConfig(QString const &key, QString const &childKey, QVariant defaultKey){
 	auto settings = getSettings();
 	settings->beginGroup(key);
-	foreach(QString const &child, settings->childKeys()){
-		if(child == childKey){
-			return settings->value(child);
-		}
-	}
-	return NULL;
+	return settings->value(childKey, defaultKey);
 }
 
 QStringList Utilities::removeValues(QMap<QString, QVariant> const &map){
@@ -125,8 +120,7 @@ void Utilities::setToConfig(QString const &key, const QMap<QString, QVariant> &d
 }
 
 bool Utilities::launcherCracked(){
-	int checked = Utilities::loadFromConfig("General", "LauncherCrack").toInt();
-	return checked == 1 ? true : false;
+	return Utilities::loadFromConfig("General", "LauncherCrack", false).toBool();
 }
 
 /**

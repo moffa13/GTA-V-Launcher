@@ -46,8 +46,11 @@ void MainWindow::init(){
 		}else{
 			setGtaVersion();
 		}
-		getLauncherVersion();
-		getGtaVersionThrewInternet();
+
+		if(Utilities::loadFromConfig("General", "shouldCheckForUpdatesWhenLauncherStarts", true).toBool()){
+			getLauncherVersion();
+			getGtaVersionThrewInternet();
+		}
 	}
 }
 
@@ -106,9 +109,13 @@ bool MainWindow::isSteamVersion() const{
  * @brief MainWindow::getGtaVersionThrewInternet
  */
 void MainWindow::getGtaVersionThrewInternet(){
+	if(m_updCheckScriptHookV) return;
+	m_updCheckScriptHookV = true;
+
 	m_checkGtaVersion = new Downloader("http://patches.rockstargames.com/prod/gtav/versioning.xml");
 	QObject::connect(m_checkGtaVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(downloadFinishedSlot(QByteArray)));
 	QObject::connect(m_checkGtaVersion, &Downloader::error, [this](){
+		m_updCheckScriptHookV = false;
 		m_checkGtaVersion->deleteLater();
 	});
 	m_checkGtaVersion->download();
@@ -119,9 +126,13 @@ void MainWindow::getGtaVersionThrewInternet(){
  * @brief MainWindow::getGtaVersionThrewInternet
  */
 void MainWindow::getLauncherVersion(){
+	if(m_updCheckLauncher) return;
+	m_updCheckLauncher = true;
+
 	m_checkLauncherVersion = new Downloader("https://www.gta5-mods.com/tools/gta-v-launcher");
 	QObject::connect(m_checkLauncherVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(gotLauncherVersionSlot(QByteArray)));
 	QObject::connect(m_checkLauncherVersion, &Downloader::error, [this](){
+		m_updCheckLauncher = false;
 		m_checkLauncherVersion->deleteLater();
 	});
 	m_checkLauncherVersion->download();
@@ -145,6 +156,7 @@ void MainWindow::gotLauncherVersionSlot(QByteArray resp){
 		}
 	}
 
+	m_updCheckLauncher = false;
 	m_checkLauncherVersion->deleteLater();
 }
 
@@ -382,7 +394,7 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
 	}
-	if(Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart").toBool()){
+	if(Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart", true).toBool()){
 		closeApp();
 	}
 }
@@ -498,6 +510,7 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 			downloader->download();
 		}
 	}
+	m_updCheckScriptHookV = false;
 	m_checkGtaVersion->deleteLater();
 }
 

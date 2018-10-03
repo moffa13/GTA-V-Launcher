@@ -15,7 +15,7 @@ class Utilities
 		static QString checkProcessRunning(const QString &name);
 		static std::unique_ptr<QSettings> getSettings();
 		static QMap<QString, QVariant> loadFromConfig(QString const &key);
-		static QVariant loadFromConfig(QString const &key, QString const &childKey);
+		static QVariant loadFromConfig(QString const &key, QString const &childKey, QVariant defaultKey = QVariant{});
 		static void setToConfig(QString const &key, const QStringList &data);
 		static void setToConfig(QString const &key, const QMap<QString, QVariant> &data);
 		static QStringList removeValues(QMap<QString, QVariant> const &map);

@@ -23,6 +23,7 @@ class SettingsWindow : public SelfDeleteDialog
 		void connectAll();
 		MainWindow *getParent() const;
 		QGroupBox *m_scriptHookVGroupBox;
+		QPushButton *m_checkForLauncherUpdates;
 		QPushButton *m_checkForUpdatesSoftware;
 		QPushButton *m_openGTAVGameDirectory;
 		QPushButton *m_changeGTAVGameDirectory;
@@ -31,6 +32,7 @@ class SettingsWindow : public SelfDeleteDialog
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
 		QCheckBox *m_exitLauncherAfterGameStart;
+		QCheckBox *m_checkForUpdatesWhenLauncherStarts;
 		QVBoxLayout *m_categoriesLayout;
 	public slots:
 		void openGTAVGameDirectorySlot() const;
@@ -39,6 +41,7 @@ class SettingsWindow : public SelfDeleteDialog
 		void launchGTAVMethodSlot(int state);
 	private slots:
 		void checkSoftwareUpdatesSlot() const;
+		void checkLauncherUpdatesSlot() const;
 };
 
 #endif // SETTINGSWINDOW_H

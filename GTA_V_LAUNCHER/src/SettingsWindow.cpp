@@ -20,9 +20,14 @@ void SettingsWindow::setButtons(){
 	m_scriptHookVGroupBox = new QGroupBox("GTA V Launcher", this);
 	m_scripthookVLayout = new QVBoxLayout(m_scriptHookVGroupBox);
 
-	m_checkForUpdatesSoftware = new QPushButton(tr("Check for updates of ScriptHookV"), this);
+	m_checkForLauncherUpdates = new QPushButton(tr("Check for launcher updates"), this);
+
+	m_checkForUpdatesSoftware = new QPushButton(tr("Check for ScriptHookV updates"), this);
 	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"), this);
 	m_exitLauncherAfterGameStart = new QCheckBox(tr("Exit launcher after game starts"), this);
+
+	m_checkForUpdatesWhenLauncherStarts = new QCheckBox(tr("Check for updates when launcher starts"), this);
+
 	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"), this);
 
 	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"), this);
@@ -36,19 +41,23 @@ void SettingsWindow::setButtons(){
 	m_startCrackedCheckBox->setChecked(cracked);
 	m_startCrackedCheckBox->setCheckState(cracked ? Qt::Checked : Qt::Unchecked);
 
-	bool shouldExitLauncherAfterGameStart = Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart").toBool();
+	bool shouldExitLauncherAfterGameStart = Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart", true).toBool();
 	m_exitLauncherAfterGameStart->setChecked(shouldExitLauncherAfterGameStart);
 	m_exitLauncherAfterGameStart->setCheckState(shouldExitLauncherAfterGameStart ? Qt::Checked : Qt::Unchecked);
 
+	bool shouldCheckForUpdatesWhenLauncherStarts = Utilities::loadFromConfig("General", "shouldCheckForUpdatesWhenLauncherStarts", true).toBool();
+	m_checkForUpdatesWhenLauncherStarts->setChecked(shouldCheckForUpdatesWhenLauncherStarts);
+	m_checkForUpdatesWhenLauncherStarts->setCheckState(shouldCheckForUpdatesWhenLauncherStarts ? Qt::Checked : Qt::Unchecked);
+
 	m_scripthookVLayout->addWidget(m_startCrackedCheckBox);
 	m_scripthookVLayout->addWidget(m_exitLauncherAfterGameStart);
+	m_scripthookVLayout->addWidget(m_checkForUpdatesWhenLauncherStarts);
+	m_scripthookVLayout->addWidget(m_checkForLauncherUpdates);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesSoftware);
 	m_scripthookVLayout->addWidget(m_openGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_changeGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_forceGTAQuitButton);
 	m_scripthookVLayout->addWidget(m_uninstallLauncher);
-
-
 
 	m_scriptHookVGroupBox->setLayout(m_scripthookVLayout);
 
@@ -76,6 +85,7 @@ void SettingsWindow::forceKillGTASlot() const{
 }
 
 void SettingsWindow::connectAll(){
+	QObject::connect(m_checkForLauncherUpdates, SIGNAL(clicked(bool)), this, SLOT(checkLauncherUpdatesSlot()));
 	QObject::connect(m_checkForUpdatesSoftware, SIGNAL(clicked(bool)), this, SLOT(checkSoftwareUpdatesSlot()));
 	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTASlot()));
 	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectorySlot()));
@@ -85,6 +95,10 @@ void SettingsWindow::connectAll(){
 	connect(m_exitLauncherAfterGameStart, &QCheckBox::stateChanged, [](int state){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldExitLauncherAfterGameStart", state}});
 	});
+	connect(m_checkForUpdatesWhenLauncherStarts, &QCheckBox::stateChanged, [](int state){
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldCheckForUpdatesWhenLauncherStarts", state}});
+	});
+
 	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));
 }
 
@@ -95,6 +109,11 @@ MainWindow *SettingsWindow::getParent() const{
 void SettingsWindow::checkSoftwareUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
 	parent->getGtaVersionThrewInternet();
+}
+
+void SettingsWindow::checkLauncherUpdatesSlot() const{
+	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
+	parent->getLauncherVersion();
 }
 
 void SettingsWindow::launchGTAVMethodSlot(int state){

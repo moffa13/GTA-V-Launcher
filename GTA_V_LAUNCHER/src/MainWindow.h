@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow{
 		void closeApp();
 		bool getGTAExecutable();
 		void getGtaVersionThrewInternet();
+		void getLauncherVersion();
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
@@ -34,6 +35,8 @@ class MainWindow : public QMainWindow{
 		SettingsWindow *m_settingsWindow = nullptr;
 		Downloader *m_checkGtaVersion = nullptr;
 		Downloader *m_checkLauncherVersion = nullptr;
+		bool m_updCheckLauncher = false;
+		bool m_updCheckScriptHookV = false;
 		//QWebView *m_adView;
 		//void loadAd();
 		bool isSteamVersion() const;
@@ -51,7 +54,6 @@ class MainWindow : public QMainWindow{
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
 		void setGtaVersion();
-		void getLauncherVersion();
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp);
 		void uninstallLauncherSlot();
