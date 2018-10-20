@@ -14,6 +14,11 @@
 #include <QSettings>
 #include "Version.h"
 
+enum BUTTON_TYPE{
+	ENABLE_ALL,
+	DISABLE_ALL
+};
+
 namespace Ui{
 class ChooseModsWindow;
 }

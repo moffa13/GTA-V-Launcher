@@ -19,7 +19,7 @@ class Version
 		unsigned getPatch() const;
 		unsigned getMinor() const;
 		unsigned getMajor() const;
-		std::string getVersionStr() const;
+		std::string getVersionStr(char delimiter = '.') const;
 	private:
 		unsigned _major;
 		unsigned _minor;

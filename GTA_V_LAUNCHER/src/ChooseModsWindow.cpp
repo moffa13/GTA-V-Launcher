@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QSettings>
 #include <QAbstractButton>
+#include <QSignalMapper>
+#include <QSet>
 #include "Utilities.h"
 #include "ui_ChooseModsWindow.h"
 
@@ -26,20 +28,18 @@ void ChooseModsWindow::init(){
 	setWindowTitle(tr("Select active mods"));
 	setFixedSize(690, 500);
 
-	setStyleSheet("#ChooseModsWindow>QPushButton{"
-					"padding: 10px;"
-					"font-size: 12px;"
-				  "}"
+	setStyleSheet(
+		"#ChooseModsWindow>QPushButton{"
+			"padding: 10px;"
+			"font-size: 12px;"
+		"}"
 	);
 
 	ui->listViewEnabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->listViewDisabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	ui->enableAllButton->setText(tr("Enable all"));
-	ui->enableAllButton->setEnabled(false);
 	ui->disableAllButton->setText(tr("Disable all"));
-	ui->disableAllButton->setEnabled(false);
-
 	ui->installModButton->setText(tr("Install a mod"));
 
 	ui->setEnabledButton->setText(tr("Set enabled"));
@@ -55,12 +55,16 @@ void ChooseModsWindow::init(){
 
 	ui->resetConfigButton->setText(tr("Reset from config"));
 	ui->validateButton->setText(tr("Confirm"));
+
+	setEnableDisableAllButtons();
 }
 
 void ChooseModsWindow::connectAll(){
 	connect(ui->validateButton, SIGNAL(clicked()), this, SLOT(setModsSlot()));
+
 	connect(ui->listViewEnabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
 	connect(ui->listViewDisabled, SIGNAL(clicked(QModelIndex)), this, SLOT(setButtonUpDownSlot(QModelIndex)));
+
 	connect(ui->setEnabledButton, &QPushButton::clicked, [this](){
 		enableDisableMod(m_modele1);
 	});
@@ -73,29 +77,32 @@ void ChooseModsWindow::connectAll(){
 		m_installModWindow->exec();
 	});
 
-	connect(ui->enableAllButton, &QPushButton::clicked, [this](){
-		QStringList all = toQStringList(m_enabledModsAndVersions);
-		all.append(toQStringList(m_disabledModsAndVersions));
+	QSignalMapper *mapper = new QSignalMapper(this);
 
-		m_enabledModsAndVersions = addVersionToElements(all);
-		m_disabledModsAndVersions.clear();
+	std::function<void(int buttonType)> enable_disable_all_func = [this](int buttonType){
+		if(buttonType != ENABLE_ALL && buttonType != DISABLE_ALL) throw std::exception{};
 
-		setEnabledModsToList(m_enabledModsAndVersions);
-		setDisabledModsToList(m_disabledModsAndVersions);
-		setEnableDisableAllButtons();
-	});
-
-	connect(ui->disableAllButton, &QPushButton::clicked, [this](){
-		QStringList all = toQStringList(m_enabledModsAndVersions);
-		all.append(toQStringList(m_disabledModsAndVersions));
-
-		m_disabledModsAndVersions = addVersionToElements(MainWindow::m_gtaDirectoryStr, all);
-		m_enabledModsAndVersions.clear();
+		if(buttonType == ENABLE_ALL){
+			m_enabledModsAndVersions << m_disabledModsAndVersions;
+			m_disabledModsAndVersions.clear();
+		}else{
+			m_disabledModsAndVersions << m_enabledModsAndVersions;
+			m_enabledModsAndVersions.clear();
+		}
 
 		setEnabledModsToList(m_enabledModsAndVersions);
 		setDisabledModsToList(m_disabledModsAndVersions);
 		setEnableDisableAllButtons();
-	});
+	};
+
+	connect(ui->enableAllButton, SIGNAL(clicked()), mapper, SLOT(map()));
+	connect(ui->disableAllButton, SIGNAL(clicked()), mapper, SLOT(map()));
+
+	mapper->setMapping(ui->enableAllButton, ENABLE_ALL);
+	mapper->setMapping(ui->disableAllButton, DISABLE_ALL);
+
+	void(QSignalMapper::*mapper_sig)(int) = &QSignalMapper::mapped;
+	connect(mapper, mapper_sig, enable_disable_all_func);
 
 	connect(ui->deleteModButton, SIGNAL(clicked()), this, SLOT(deleteModSlot()));
 	connect(ui->resetConfigButton, SIGNAL(clicked()), this, SLOT(loadConfigSlot()));

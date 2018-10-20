@@ -9,7 +9,6 @@
 #include <QCloseEvent>
 #include <QNetworkReply>
 #include <Downloader.h>
-//#include <QWebView>
 
 namespace Ui{
 class MainWindow;
@@ -25,7 +24,7 @@ class MainWindow : public QMainWindow{
 		void init();
 		void closeApp();
 		bool getGTAExecutable();
-		void getGtaVersionThrewInternet();
+		void getGtaVersionThrewInternet(bool shouldUpdate);
 		void getLauncherVersion();
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
@@ -37,8 +36,7 @@ class MainWindow : public QMainWindow{
 		Downloader *m_checkLauncherVersion = nullptr;
 		bool m_updCheckLauncher = false;
 		bool m_updCheckScriptHookV = false;
-		//QWebView *m_adView;
-		//void loadAd();
+		Version m_lastOfficialGTAVersion;
 		bool isSteamVersion() const;
 		bool checkOS();
 		void setBackground();
@@ -54,15 +52,18 @@ class MainWindow : public QMainWindow{
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
 		void setGtaVersion();
+		static Version getScriptHookVVersion();
+		bool checkForUpdateCompatibility();
+		void startGTANoUpdate();
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp);
 		void uninstallLauncherSlot();
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
 		void startGtaOnlineSlot();
-		void startGtaWithModsSlot(bool offlineMode = false);
+		void startGtaWithModsSlot(bool offlineMode = false, bool checkForCompatibility = true);
 		void showChooseModsWindowSlot();
-		void downloadFinishedSlot(QByteArray resp);
+		void downloadFinishedSlot(QByteArray resp, bool askForUpdate);
 		void showSettingsWindowSlot();
 		void showPlayContextualMenuSlot(const QPoint &pos);
 };

@@ -18,8 +18,12 @@ class Downloader : public QNetworkAccessManager
 		QNetworkReply *download();
 		QNetworkReply *rep;
 		void addRawHeader(const QString &field, const QString &value);
+		void addErrorCode(int code);
+		bool isErrorCode(int code) const;
+		void removeErrorCode(int code);
 	private:
 		QNetworkRequest *m_request;
+		QSet<int> m_error_codes;
 	public slots:
 		void fileDownloadedSlot(QNetworkReply*);
 		void downloadProgressSlot(qint64 read, qint64 total);

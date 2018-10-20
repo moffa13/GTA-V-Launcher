@@ -44,8 +44,8 @@ unsigned Version::getMore() const{
 	return _more;
 }
 
-std::string Version::getVersionStr() const{
-	return std::string{std::to_string(_major)} + "." + std::to_string(_minor) + "." + std::to_string(_patch) + "." + std::to_string(_more);
+std::string Version::getVersionStr(char delimiter) const{
+	return std::string{std::to_string(_major)} + delimiter + std::to_string(_minor) + delimiter + std::to_string(_patch) + delimiter + std::to_string(_more);
 }
 
 unsigned Version::getVersionInt() const{

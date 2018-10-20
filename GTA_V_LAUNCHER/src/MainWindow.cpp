@@ -14,6 +14,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QMenu>
+#include <QThread>
 #include "Version.h"
 #include "ui_MainWindow.h"
 
@@ -33,13 +34,11 @@ MainWindow::~MainWindow(){
 void MainWindow::init(){
 
 	if(checkOS()){
-		//m_adView->hide();
 		setWindowTitle(tr("GTA V Launcher V") + qApp->applicationVersion());
 		setFavicon();
 		setBackground();
 		setButtons();
 		connectAll();
-		//loadAd();
 		show();
 		if(!getGTAExecutable()){
 			closeApp();
@@ -49,7 +48,9 @@ void MainWindow::init(){
 
 		if(Utilities::loadFromConfig("General", "shouldCheckForUpdatesWhenLauncherStarts", true).toBool()){
 			getLauncherVersion();
-			getGtaVersionThrewInternet();
+			getGtaVersionThrewInternet(true);
+		}else{
+			getGtaVersionThrewInternet(false); // Fills m_lastOfficialGTAVersion
 		}
 	}
 }
@@ -108,17 +109,87 @@ bool MainWindow::isSteamVersion() const{
  * Fetches latest gta version on Rockstar Games servers and call downloadFinishedSlot with the xml as QByteArray
  * @brief MainWindow::getGtaVersionThrewInternet
  */
-void MainWindow::getGtaVersionThrewInternet(){
+void MainWindow::getGtaVersionThrewInternet(bool shouldUpdate){
 	if(m_updCheckScriptHookV) return;
 	m_updCheckScriptHookV = true;
 
 	m_checkGtaVersion = new Downloader("http://patches.rockstargames.com/prod/gtav/versioning.xml");
-	QObject::connect(m_checkGtaVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(downloadFinishedSlot(QByteArray)));
+	QObject::connect(m_checkGtaVersion, &Downloader::downloaded, [this, shouldUpdate](QByteArray const& resp){
+		downloadFinishedSlot(resp, shouldUpdate);
+	});
 	QObject::connect(m_checkGtaVersion, &Downloader::error, [this](){
 		m_updCheckScriptHookV = false;
 		m_checkGtaVersion->deleteLater();
 	});
 	m_checkGtaVersion->download();
+}
+
+void MainWindow::startGTANoUpdate(){
+
+	QFile file{
+		QString{"%1/%2"}
+		.arg(QStandardPaths::standardLocations(QStandardPaths::TempLocation).takeFirst())
+		.arg("GTA_V_Patch_" + QString{m_lastOfficialGTAVersion.getVersionStr('_').c_str()} + ".exe.part")
+	};
+
+	file.setPermissions(QFile::ReadOther | QFile::WriteOther);
+
+	if(!file.open(QFile::WriteOnly)){
+		QMessageBox::critical(this, tr("Error"), tr("An error occured"));
+		return;
+	}
+
+	file.setPermissions(QFile::ReadOther);
+	file.close();
+
+	QMessageBox::information(
+				this,
+				tr("Information"),
+				"GTA Launcher will start, please login and wait until it tries to start updating."
+				" Then you'll see an error. After that hit cancel and wait for the game to launch");
+
+	startGtaWithModsSlot(false, false);
+
+	QThread::msleep(200);
+
+	while(Utilities::checkProcessRunning("GTAVLauncher.exe") != nullptr)
+		qApp->processEvents();
+
+
+	file.setPermissions(QFile::ReadOther | QFile::WriteOther);
+	file.remove();
+
+	startGtaWithModsSlot(true, false);
+
+}
+
+bool MainWindow::checkForUpdateCompatibility(){
+	auto scriptHookVVersion{getScriptHookVVersion()};
+
+	// No Mod loader then it's compatible with the game
+	if(scriptHookVVersion == Version{})
+		return true;
+
+	if(scriptHookVVersion < m_lastOfficialGTAVersion){
+		int resp = QMessageBox::critical(
+			this,
+			tr("Incompatible Version, start game and block updates ?"),
+			tr("GTA V recently updated so when your game will update, you probably won't be able to start it again."
+				   " First, try to update ScriptHookV by clicking Cancel then go to Settings -> Check for ScriptHookV updates. If you tried without success "
+				   "(No ScriptHookV release yet), click yes. It will start the game and will block GTA from updating."
+				   " If you still want to start the game, click No"),
+			QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel
+		);
+		if(resp == QMessageBox::Yes){
+			startGTANoUpdate();
+			return false; // Block updates
+		}else if(resp == QMessageBox::Cancel){
+			return false; // Do nothing
+		}
+		return true; // Normal exec
+	}
+	return true; // Everything is ok, normal exec
+
 }
 
 /**
@@ -244,27 +315,6 @@ bool MainWindow::getGTAExecutable(){
 	}
 }
 
-//void MainWindow::loadAd(){
-//	QString const adUrl{"https://moffa13.com/gtavlauncher.html"};
-//	Downloader *testWebsite = new Downloader(adUrl);
-//	connect(testWebsite, &Downloader::downloaded, [this, adUrl, testWebsite](){
-//		m_adView->resize(468, 60);
-//		m_adView->move(width() - 468, 0);
-//		m_adView->setUrl(QUrl(adUrl));
-//		m_adView->show();
-//		QTimer::singleShot(45000, [this](){
-//			m_adView->hide();
-//		});
-//		testWebsite->deleteLater();
-//	});
-
-//	connect(testWebsite, &Downloader::downloaded, [testWebsite](){
-//		testWebsite->deleteLater();
-//	});
-
-//	testWebsite->download();
-//}
-
 /**
  * Set the gta folder & disabledMods folder from base
  * @brief MainWindow::setRelativeDirs
@@ -379,18 +429,14 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 	QProcess m_gtaProcess;
 	bool cracked = Utilities::launcherCracked();
 	if(cracked){
-		qDebug() << "Start as cracked";
 		m_gtaProcess.setWorkingDirectory(m_gtaDirectoryStr);
 		m_gtaProcess.startDetached(m_gtaDirectoryStr + "/Launcher.exe", args);
 	}else{
-		qDebug() << "Start as official";
 		if(isSteamVersion()){
-			qDebug() << "Steam version";
 			QStringList newArgs("/c");
 			newArgs << "start steam://rungameid/271590 " + args.join(" ");
 			m_gtaProcess.startDetached("cmd", newArgs);
 		}else{
-			qDebug() << "Normal version";
 			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
 	}
@@ -424,16 +470,18 @@ void MainWindow::startGtaOnlineSlot(){
 		);
 		if(resp == QMessageBox::No) return;
 	}
+	if(!checkForUpdateCompatibility()) return;
 	QStringList args;
 	args << "-StraightIntoFreemode";
 	startGtaArgsSlot(args);
 }
 
-void MainWindow::startGtaWithModsSlot(bool offlineMode){
+void MainWindow::startGtaWithModsSlot(bool offlineMode, bool checkForCompatibility){
 	if(checkGtaAlreadyStarted()) return;
 	if(!checkNeedSteamAndOk()) return;
 	addScriptHookVDinput();
 	ChooseModsWindow::enableOldConfig();
+	if(checkForCompatibility && !checkForUpdateCompatibility()) return;
 	QStringList args;
 	if(offlineMode){
 		args << "-scOfflineOnly";
@@ -446,26 +494,32 @@ void MainWindow::showChooseModsWindowSlot(){
 	m_chooseModsWindow->exec();
 }
 
-void MainWindow::downloadFinishedSlot(QByteArray resp){
+Version MainWindow::getScriptHookVVersion(){
+	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr + "/ScriptHookV.dll");
+	Version scriptHookVVersionD = Utilities::getFileVersion(MainWindow::m_disabledModsDirectoryStr + "/ScriptHookV.dll");
+	return scriptHookVVersion.getVersionInt() != 0 ? scriptHookVVersion : scriptHookVVersionD;
+}
+
+void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate){
 	QDomDocument dom("GTAV");
 	dom.setContent(resp);
 	QDomElement versioning = dom.documentElement();
 	QDomNode versioningNode = versioning.lastChild();
 	QDomElement build = versioningNode.toElement();
 	QDomNode buildNode = build.elementsByTagName("Game").at(0);
-	Version gameVersionNow = buildNode.toElement().attribute("version", "0.0.0.0");
-	Version scriptHookVVersion = Utilities::getFileVersion(MainWindow::m_gtaDirectoryStr + "/ScriptHookV.dll");
-	Version scriptHookVVersionD = Utilities::getFileVersion(MainWindow::m_disabledModsDirectoryStr + "/ScriptHookV.dll");
-	if(scriptHookVVersion < gameVersionNow && scriptHookVVersionD < gameVersionNow){
+	m_lastOfficialGTAVersion = buildNode.toElement().attribute("version", "0.0.0.0");
+	Version scriptHookVVersion{getScriptHookVVersion()};
+	if(askForUpdate && scriptHookVVersion < m_lastOfficialGTAVersion){
 		int rep = QMessageBox::information(
-					this,
-					tr("ScriptHookV out-of-date"),
-					tr("Your ScriptHookV version is apparently out-of-date or you don't have it, would you like to update/install it (V %1) ?")
-						.arg(QString(gameVersionNow.getVersionStr().c_str())),
-					QMessageBox::Yes | QMessageBox::No
+			this,
+			tr("ScriptHookV out-of-date"),
+			tr("Your ScriptHookV version is apparently out-of-date or you don't have it, would you like to update/install it (V %1) ?")
+				.arg(QString(m_lastOfficialGTAVersion.getVersionStr().c_str())),
+			QMessageBox::Yes | QMessageBox::No
 		);
 		if(rep == QMessageBox::Yes){
-			Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{gameVersionNow.getVersionStr().c_str()} + ".zip"};
+			Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{m_lastOfficialGTAVersion.getVersionStr().c_str()} + ".zip"};
+			downloader->addErrorCode(302);
 			downloader->addRawHeader("Referer", "http://www.dev-c.com/gtav/scripthookv/");
 			connect(downloader, &Downloader::downloaded, [this, downloader](QByteArray const &resp){
 
@@ -504,7 +558,11 @@ void MainWindow::downloadFinishedSlot(QByteArray resp){
 				downloader->deleteLater();
 			});
 			connect(downloader, &Downloader::error, [this, downloader](){
-				QMessageBox::critical(this, tr("ScriptHookV Not Found"), tr("Could not find ScriptHookV in http://www.dev-c.com"));
+				QMessageBox::critical(this,
+					tr("ScriptHookV Not Found"),
+					tr("Could not find ScriptHookV in http://www.dev-c.com, maybe they still don't have released a fix for the new version."
+					   " Maybe you will encounter issues when starting the newly updated game.")
+				);
 				downloader->deleteLater();
 			});
 			downloader->download();

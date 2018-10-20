@@ -8,6 +8,7 @@
 
 Downloader::Downloader(QString url){
 	m_request = new QNetworkRequest(QUrl(url));
+	m_error_codes.insert(404);
 }
 
 Downloader::Downloader(QNetworkRequest request){
@@ -22,6 +23,18 @@ void Downloader::addRawHeader(QString const& field, QString const& value){
 	m_request->setRawHeader(field.toLocal8Bit(), value.toLocal8Bit());
 }
 
+void Downloader::addErrorCode(int code){
+	m_error_codes.insert(code);
+}
+
+bool Downloader::isErrorCode(int code) const{
+	return m_error_codes.contains(code);
+}
+
+void Downloader::removeErrorCode(int code){
+	m_error_codes.remove(code);
+}
+
 QNetworkReply* Downloader::download(){
 	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
 	QNetworkAccessManager *q = new QNetworkAccessManager(this);
@@ -34,7 +47,7 @@ QNetworkReply* Downloader::download(){
 void Downloader::fileDownloadedSlot(QNetworkReply *reply){
 	QUrl movedUrl(reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl());
 	int responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-	if(responseCode == 404){
+	if(isErrorCode(responseCode)){
 		emit error();
 	}
 
@@ -42,11 +55,10 @@ void Downloader::fileDownloadedSlot(QNetworkReply *reply){
 		QByteArray res = reply->readAll();
 		emit downloaded(res);
 		return;
+	}else if(!isErrorCode(responseCode)){
+		m_request->setUrl(movedUrl);
+		download();
 	}
-
-	m_request->setUrl(movedUrl);
-	download();
-
 }
 
 void Downloader::downloadProgressSlot(qint64 read, qint64 total){

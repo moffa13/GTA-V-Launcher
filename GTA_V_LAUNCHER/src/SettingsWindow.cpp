@@ -108,7 +108,7 @@ MainWindow *SettingsWindow::getParent() const{
 
 void SettingsWindow::checkSoftwareUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-	parent->getGtaVersionThrewInternet();
+	parent->getGtaVersionThrewInternet(true);
 }
 
 void SettingsWindow::checkLauncherUpdatesSlot() const{
@@ -118,9 +118,9 @@ void SettingsWindow::checkLauncherUpdatesSlot() const{
 
 void SettingsWindow::launchGTAVMethodSlot(int state){
 	QMap<QString, QVariant> checkBox;
-	if(state == 0){ // Unchecked
+	if(state == Qt::Unchecked){
 		state = false;
-	}else if(state == 2){ // Checked
+	}else if(state == Qt::Checked){
 		QFile f(MainWindow::m_gtaDirectoryStr + "/Launcher.exe");
 		bool exist = false;
 		state = true;
