@@ -21,9 +21,13 @@ class Downloader : public QNetworkAccessManager
 		void addErrorCode(int code);
 		bool isErrorCode(int code) const;
 		void removeErrorCode(int code);
+		QNetworkReply* head();
+		bool isHeadMode() const;
 	private:
 		QNetworkRequest *m_request;
 		QSet<int> m_error_codes;
+		bool m_headMode = false;
+		void init();
 	public slots:
 		void fileDownloadedSlot(QNetworkReply*);
 		void downloadProgressSlot(qint64 read, qint64 total);

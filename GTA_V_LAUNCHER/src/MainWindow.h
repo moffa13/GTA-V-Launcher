@@ -61,7 +61,7 @@ class MainWindow : public QMainWindow{
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
 		void startGtaOnlineSlot();
-		void startGtaWithModsSlot(bool offlineMode = false, bool checkForCompatibility = true);
+		void startGtaWithModsSlot(bool offlineMode = false, bool checkForCompatibility = true, bool addScriptHook = true);
 		void showChooseModsWindowSlot();
 		void downloadFinishedSlot(QByteArray resp, bool askForUpdate);
 		void showSettingsWindowSlot();

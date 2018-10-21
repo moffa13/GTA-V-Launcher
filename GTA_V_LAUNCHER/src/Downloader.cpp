@@ -8,11 +8,18 @@
 
 Downloader::Downloader(QString url){
 	m_request = new QNetworkRequest(QUrl(url));
-	m_error_codes.insert(404);
+	init();
 }
 
 Downloader::Downloader(QNetworkRequest request){
 	m_request = new QNetworkRequest(request);
+	init();
+}
+
+void Downloader::init(){
+	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
+	QObject::connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileDownloadedSlot(QNetworkReply*)));
+	m_error_codes.insert(404);
 }
 
 Downloader::~Downloader(){
@@ -36,12 +43,19 @@ void Downloader::removeErrorCode(int code){
 }
 
 QNetworkReply* Downloader::download(){
-	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
-	QNetworkAccessManager *q = new QNetworkAccessManager(this);
-	QObject::connect(q, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileDownloadedSlot(QNetworkReply*)));
-	rep = q->get(*m_request);
+	m_headMode = false;
+	rep = get(*m_request);
 	QObject::connect(rep, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgressSlot(qint64,qint64)));
 	return rep;
+}
+
+bool Downloader::isHeadMode() const{
+	return m_headMode;
+}
+
+QNetworkReply* Downloader::head(){
+	m_headMode = true;
+	return QNetworkAccessManager::head(*m_request);
 }
 
 void Downloader::fileDownloadedSlot(QNetworkReply *reply){
