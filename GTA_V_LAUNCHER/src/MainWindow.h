@@ -55,6 +55,7 @@ class MainWindow : public QMainWindow{
 		static Version getScriptHookVVersion();
 		bool checkForUpdateCompatibility();
 		void startGTANoUpdate();
+		void showThanksMessage();
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp);
 		void uninstallLauncherSlot();

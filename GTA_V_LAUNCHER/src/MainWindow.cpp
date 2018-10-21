@@ -40,6 +40,7 @@ void MainWindow::init(){
 		setButtons();
 		connectAll();
 		show();
+		showThanksMessage();
 		if(!getGTAExecutable()){
 			closeApp();
 		}else{
@@ -52,6 +53,13 @@ void MainWindow::init(){
 		}else{
 			getGtaVersionThrewInternet(false); // Fills m_lastOfficialGTAVersion
 		}
+	}
+}
+
+void MainWindow::showThanksMessage(){
+	if(Utilities::loadFromConfig("General", "firstTimeDownloadingLauncher", true).toBool()){
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"firstTimeDownloadingLauncher", false}});
+		QDesktopServices::openUrl(QUrl{"https://moffa13.com/"});
 	}
 }
 
