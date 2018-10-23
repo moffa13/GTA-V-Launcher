@@ -107,6 +107,12 @@ void Utilities::setToConfig(QString const &key, const QStringList &data){
 	settings->sync();
 }
 
+void Utilities::clearConfig(QString const &key){
+	auto settings = getSettings();
+	settings->remove(key);
+	settings->sync();
+}
+
 void Utilities::setToConfig(QString const &key, const QMap<QString, QVariant> &data){
 	auto settings = getSettings();
 	settings->beginGroup(key);

@@ -15,6 +15,7 @@
 #include <QStandardPaths>
 #include <QMenu>
 #include <QThread>
+#include <QPushButton>
 #include "Version.h"
 #include "ui_MainWindow.h"
 
@@ -70,6 +71,9 @@ void MainWindow::uninstallLauncherSlot(){
 		ChooseModsWindow::enableAllMods();
 		QDir{m_gtaDirectoryStr}.rmdir("disabledMods");
 		QDir{m_gtaDirectoryStr + "/installMod"}.removeRecursively();
+		Utilities::clearConfig("General");
+		Utilities::clearConfig("EnabledMods");
+		Utilities::clearConfig("DisabledMods");
 		QMessageBox::information(this, tr("Launcher uninstalled"), tr("Successfully uninstalled"), QMessageBox::Ok);
 		closeApp();
 	}
@@ -369,7 +373,11 @@ void MainWindow::setRelativeDirs(QString const& base){
 
 void MainWindow::setGtaVersion(){
 	ui->gtaVersionLabel->setAlignment(Qt::AlignRight);
-	ui->gtaVersionLabel->setText("GTA V " + QString{Utilities::getFileVersion(m_gtaDirectoryStr + "/GTA5.exe").getVersionStr().c_str()});
+	ui->gtaVersionLabel->setText("GTA V " + QString{getGtaVersion().getVersionStr().c_str()});
+}
+
+Version MainWindow::getGtaVersion() const{
+	return Utilities::getFileVersion(m_gtaDirectoryStr + "/GTA5.exe");
 }
 
 void MainWindow::setFavicon(){
@@ -550,31 +558,57 @@ void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate){
 	QDomNode versioningNode = versioning.lastChild();
 	QDomElement build = versioningNode.toElement();
 	QDomNode buildNode = build.elementsByTagName("Game").at(0);
+	// Last version on GTA's servers
 	m_lastOfficialGTAVersion = buildNode.toElement().attribute("version", "0.0.0.0");
 	Version scriptHookVVersion{getScriptHookVVersion()};
+
+	// ScriptHookV is outdated compared to last GTA version on Rockstar servers
+	// Not necessarily from current gta version
 	if(askForUpdate && scriptHookVVersion < m_lastOfficialGTAVersion){
 
-		Downloader *downloader = new Downloader{"http://www.dev-c.com/files/ScriptHookV_" + QString{m_lastOfficialGTAVersion.getVersionStr().c_str()} + ".zip"};
-		downloader->addErrorCode(302);
-		downloader->addRawHeader("Referer", "http://www.dev-c.com/gtav/scripthookv/");
+		QString lastOfficialScriptHookVUrl = QString{"http://www.dev-c.com/files/ScriptHookV_%1.zip"}.arg(QString{m_lastOfficialGTAVersion.getVersionStr().c_str()});
+		QString currentGtaScriptHookVUrl = QString{"http://www.dev-c.com/files/ScriptHookV_%1.zip"}.arg(QString{getGtaVersion().getVersionStr().c_str()});
 
-		connect(downloader, &Downloader::downloaded, [this, downloader](QByteArray const &resp){
+		Downloader *downloader = new Downloader{lastOfficialScriptHookVUrl};
+		downloader->addErrorCode(302); // Server does not respond with a normal 404
+		downloader->addRawHeader("Referer", "http://www.dev-c.com/gtav/scripthookv/"); // We need this referer in order to access the file
+
+		connect(downloader, &Downloader::downloaded, [this, downloader, scriptHookVVersion, lastOfficialScriptHookVUrl](QByteArray const &resp){
 
 			// First try to check if we get a 302
 			// If we reach here, it means the file is available
 			if(downloader->isHeadMode()){
-				int rep = QMessageBox::information(
-					this,
-					tr("ScriptHookV out-of-date"),
-					tr("Your ScriptHookV version is apparently out-of-date or you don't have it, would you like to update/install it (V %1) ?")
-						.arg(QString(m_lastOfficialGTAVersion.getVersionStr().c_str())),
-					QMessageBox::Yes | QMessageBox::No
-				);
-				if(rep == QMessageBox::Yes)
+				if(downloader->getUrl() == lastOfficialScriptHookVUrl){
+					Utilities::setToConfig("General", QMap<QString, QVariant>{{"lastGtaScriptHookVUnavailableWarning", true}});
+					int rep;
+					if(scriptHookVVersion.getVersionInt() == 0){ // ScriptHookV is not present
+						rep = QMessageBox::information(
+							this,
+							tr("ScriptHookV is missing"),
+							tr("To be able to run your mods, you need ScriptHookV. Would you like to install it (V %1) ?")
+								.arg(QString(m_lastOfficialGTAVersion.getVersionStr().c_str())),
+							QMessageBox::Yes | QMessageBox::No
+						);
+					}else{
+						rep = QMessageBox::information(
+							this,
+							tr("ScriptHookV out-of-date"),
+							tr("Your ScriptHookV version is apparently out-of-date, would you like to update it (V %1) ?")
+								.arg(QString(m_lastOfficialGTAVersion.getVersionStr().c_str())),
+							QMessageBox::Yes | QMessageBox::No
+						);
+					}
+					if(rep == QMessageBox::Yes){
+						downloader->download();
+						return;
+					}
+				}else{
 					downloader->download();
-				else
-					downloader->deleteLater();
-				return;
+					return;
+				}
+
+
+				downloader->deleteLater();
 			}
 
 			while(checkGtaAlreadyStarted(false)){
@@ -611,13 +645,30 @@ void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate){
 			QMessageBox::information(this, tr("Update"), tr("ScriptHookV has successfully been updated/installed !"), QMessageBox::Ok);
 			downloader->deleteLater();
 		});
-		connect(downloader, &Downloader::error, [this, downloader](){
+		connect(downloader, &Downloader::error, [this, downloader, scriptHookVVersion, currentGtaScriptHookVUrl](){
 			if(downloader->isHeadMode()){
-				QMessageBox::critical(this,
-					tr("ScriptHookV Not Found"),
-					tr("Could not find ScriptHookV in http://www.dev-c.com, maybe they still don't have released a fix for the new version."
-					   " Maybe you will encounter issues when starting the newly updated game.")
-				);
+
+				if(Utilities::loadFromConfig("General", "lastGtaScriptHookVUnavailableWarning", true).toBool() || scriptHookVVersion.getVersionInt() == 0){
+					QMessageBox::critical(this,
+						tr("ScriptHookV Not Found"),
+						tr("Could not find ScriptHookV in http://www.dev-c.com, maybe they still don't have released a fix for the new version."
+						   " Maybe you will encounter issues when starting the newly updated game.")
+					);
+					Utilities::setToConfig("General", QMap<QString, QVariant>{{"lastGtaScriptHookVUnavailableWarning", false}});
+				}
+
+				if(scriptHookVVersion.getVersionInt() == 0){
+					int resp = QMessageBox::critical(this,
+						tr("ScriptHookV Not Found"),
+						tr("Would you like to download the %1 version of ScriptHookV instead ?").arg(QString{getGtaVersion().getVersionStr().c_str()}),
+						QMessageBox::Yes | QMessageBox::No
+					);
+					if(resp == QMessageBox::Yes){
+						downloader->setUrl(currentGtaScriptHookVUrl);
+						downloader->head();
+						return;
+					}
+				}
 			}else{
 				QMessageBox::critical(this,
 					tr("Error downloading ScriptHookV"),

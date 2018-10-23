@@ -16,6 +16,14 @@ Downloader::Downloader(QNetworkRequest request){
 	init();
 }
 
+void Downloader::setUrl(QString const& url){
+	m_request->setUrl(QUrl(url));
+}
+
+QString Downloader::getUrl() const{
+	return m_request->url().toString();
+}
+
 void Downloader::init(){
 	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
 	QObject::connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileDownloadedSlot(QNetworkReply*)));

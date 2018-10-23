@@ -21,5 +21,6 @@ class Utilities
 		static QStringList removeValues(QMap<QString, QVariant> const &map);
 		static bool launcherCracked();
 		static bool copy(const QString &from, const QString &to);
+		static void clearConfig(const QString &key);
 };
 #endif // UTILITIES_H

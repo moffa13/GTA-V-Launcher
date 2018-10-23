@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow{
 		bool checkForUpdateCompatibility();
 		void startGTANoUpdate();
 		void showThanksMessage();
+		Version getGtaVersion() const;
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp);
 		void uninstallLauncherSlot();

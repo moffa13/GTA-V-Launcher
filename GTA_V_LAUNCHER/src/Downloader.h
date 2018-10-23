@@ -23,6 +23,8 @@ class Downloader : public QNetworkAccessManager
 		void removeErrorCode(int code);
 		QNetworkReply* head();
 		bool isHeadMode() const;
+		void setUrl(const QString &url);
+		QString getUrl() const;
 	private:
 		QNetworkRequest *m_request;
 		QSet<int> m_error_codes;
