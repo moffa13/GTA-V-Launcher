@@ -1,1 +1,1 @@
-start /b /wait "" "C:\Qt-5.11.1-static-x64\bin\lupdate.exe" ..\GTA_V_LAUNCHER.pro
+start /b /wait "" "C:\qt-5.11-static-x64-msvc2017\bin\lupdate.exe" ..\GTA_V_LAUNCHER.pro

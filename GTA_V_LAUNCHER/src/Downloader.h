@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QSet>
 #include <QNetworkReply>
 #include <QUrl>
 

@@ -48,12 +48,16 @@ V [1.0.8]
 - Added button in settings to uninstall the launcher
 - Added some ui infos (gta version, gta current directory)
 
-V 1.0.9
+V [1.0.9]
 - Fixed bugs (crash installing a mod, no version in mod list ...)
 - Fixed bug in ScripthookV auto update
 - Added option to disable updates auto check in settings
 - Added warning if you overwrite an existing mod
 - If you run an outdated game version, the launcher will block updates from Rockstar
 
+V 1.0.10
+
+
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
+[1.0.9]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.9
