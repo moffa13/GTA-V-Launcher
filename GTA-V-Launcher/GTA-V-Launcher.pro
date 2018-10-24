@@ -4,7 +4,7 @@ CONFIG += c++11
 QMAKE_CXXFLAGS += -MD
 QMAKE_CXXFLAGS_RELEASE = -O2
 
-RC_FILE = GTA_V_LAUNCHER.rc
+RC_FILE = GTA-V-Launcher.rc
 
 TRANSLATIONS = translates/fr.ts
 
@@ -41,7 +41,7 @@ HEADERS += \
 	src/SelfDeleteDialog.h
 
 RESOURCES += \
-	GTA_V_LAUNCHER.qrc
+	GTA-V-Launcher.qrc
 
 
 VERSION = 1.0.10

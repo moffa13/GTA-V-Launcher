@@ -5,7 +5,7 @@
     <file>images/upArrow.png</file>
     <file>images/favicon.png</file>
     <file>translates/fr.qm</file>
-	<file alias="unzip.exe">../share/unzip.exe</file>
-	<file alias="unrar.exe">../share/UnRAR.exe</file>
+	<file alias="unzip.exe">third-party/unzip.exe</file>
+	<file alias="unrar.exe">third-party/UnRAR.exe</file>
 </qresource>
 </RCC>
