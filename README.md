@@ -56,6 +56,7 @@ V [1.0.9]
 - If you run an outdated game version, the launcher will block updates from Rockstar
 
 V 1.0.10
+- Missing translations
 
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7

@@ -134,11 +134,26 @@ bool ChooseModsWindow::addMod(QString const& file){
 		if(fi.fileName() == element->first){ // Already exists
 			int resp;
 			if(newElement.second.getVersionInt() == 0 || newElement.second == element->second){
-				resp = QMessageBox::information(this, "Erase", "Do you want to overwrite the old mod with the same name ?", QMessageBox::Yes | QMessageBox::No);
+				resp = QMessageBox::information(
+					this,
+					tr("Erase"),
+					tr("Do you want to overwrite the old mod with the same name (%1) ?").arg(QString{newElement.second.getVersionStr().c_str()}),
+					QMessageBox::Yes | QMessageBox::No
+				);
 			}else if(newElement.second > element->second){
-				resp = QMessageBox::information(this, "Erase", "Do you want to overwrite the old mod with a lower version ?", QMessageBox::Yes | QMessageBox::No);
+				resp = QMessageBox::information(
+					this,
+					tr("Erase"),
+					tr("Do you want to overwrite the old mod with this newer version (%1 V %2) ?").arg(newElement.first).arg(QString{newElement.second.getVersionStr().c_str()}),
+					QMessageBox::Yes | QMessageBox::No
+				);
 			}else{
-				resp = QMessageBox::information(this, "Erase", "You already have a more recent version of this mod, do you want to overwrite anyway ?", QMessageBox::Yes | QMessageBox::No);
+				resp = QMessageBox::information(
+					this,
+					tr("Erase"),
+					tr("You already have a more recent version of this mod (%1 V %2), do you want to overwrite anyway ?").arg(element->first).arg(QString{element->second.getVersionStr().c_str()}),
+					QMessageBox::Yes | QMessageBox::No
+				);
 			}
 
 			if(resp == QMessageBox::Yes){
