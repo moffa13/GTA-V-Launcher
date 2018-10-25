@@ -9,6 +9,10 @@ Then, you can delete the Launcher directory.
 
 If you downloaded 1.0.7, there is a bug with steam version. To quick fix this, create an empty PlayGTAV.exe file in your GTAV directory then start the launcher
 
+Every released version is digitally signed with a certificate given to bigcoding.com. 
+Its fingerprint is 1ead2bb682d89753d68789e02e6b8e63da7571dc
+From 1.0.10, Issuer name is moffa13.com. and the fingerprint is 13dff05f4e35015240ea02a10379252041372da3
+
 Changelog :
 
 V 1.0.3
@@ -57,6 +61,7 @@ V [1.0.9]
 
 V 1.0.10
 - Missing translations
+- Changed executable signature to moffa13.com
 
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
