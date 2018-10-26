@@ -24,8 +24,8 @@ class MainWindow : public QMainWindow{
 		void init();
 		void closeApp();
 		bool getGTAExecutable();
-		void getGtaVersionThrewInternet(bool shouldUpdate);
-		void getLauncherVersion();
+		void getGtaVersionThrewInternet(bool shouldUpdate, bool warnUpToDate = false);
+		void getLauncherVersion(bool warnUpToDate = false);
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
@@ -58,14 +58,14 @@ class MainWindow : public QMainWindow{
 		void showThanksMessage();
 		Version getGtaVersion() const;
 	public slots:
-		void gotLauncherVersionSlot(QByteArray resp);
+		void gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate);
 		void uninstallLauncherSlot();
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
 		void startGtaOnlineSlot();
 		void startGtaWithModsSlot(bool offlineMode = false, bool checkForCompatibility = true, bool addScriptHook = true);
 		void showChooseModsWindowSlot();
-		void downloadFinishedSlot(QByteArray resp, bool askForUpdate);
+		void downloadFinishedSlot(QByteArray resp, bool askForUpdate, bool warnUpToDate);
 		void showSettingsWindowSlot();
 		void showPlayContextualMenuSlot(const QPoint &pos);
 };

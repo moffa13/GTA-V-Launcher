@@ -108,12 +108,12 @@ MainWindow *SettingsWindow::getParent() const{
 
 void SettingsWindow::checkSoftwareUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-	parent->getGtaVersionThrewInternet(true);
+	parent->getGtaVersionThrewInternet(true, true);
 }
 
 void SettingsWindow::checkLauncherUpdatesSlot() const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-	parent->getLauncherVersion();
+	parent->getLauncherVersion(true);
 }
 
 void SettingsWindow::launchGTAVMethodSlot(int state){

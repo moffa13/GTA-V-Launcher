@@ -121,13 +121,13 @@ bool MainWindow::isSteamVersion() const{
  * Fetches latest gta version on Rockstar Games servers and call downloadFinishedSlot with the xml as QByteArray
  * @brief MainWindow::getGtaVersionThrewInternet
  */
-void MainWindow::getGtaVersionThrewInternet(bool shouldUpdate){
+void MainWindow::getGtaVersionThrewInternet(bool shouldUpdate, bool warnUpToDate){
 	if(m_updCheckScriptHookV) return;
 	m_updCheckScriptHookV = true;
 
 	m_checkGtaVersion = new Downloader("http://patches.rockstargames.com/prod/gtav/versioning.xml");
-	QObject::connect(m_checkGtaVersion, &Downloader::downloaded, [this, shouldUpdate](QByteArray const& resp){
-		downloadFinishedSlot(resp, shouldUpdate);
+	QObject::connect(m_checkGtaVersion, &Downloader::downloaded, [this, shouldUpdate, warnUpToDate](QByteArray const& resp){
+		downloadFinishedSlot(resp, shouldUpdate, warnUpToDate);
 	});
 	QObject::connect(m_checkGtaVersion, &Downloader::error, [this](){
 		m_updCheckScriptHookV = false;
@@ -239,12 +239,14 @@ bool MainWindow::checkForUpdateCompatibility(){
  * Fetches latest launcher version on gta5-mods.com and call gotLauncherVersionSlot with the html as QByteArray
  * @brief MainWindow::getGtaVersionThrewInternet
  */
-void MainWindow::getLauncherVersion(){
+void MainWindow::getLauncherVersion(bool warnUpToDate){
 	if(m_updCheckLauncher) return;
 	m_updCheckLauncher = true;
 
 	m_checkLauncherVersion = new Downloader("https://www.gta5-mods.com/tools/gta-v-launcher");
-	QObject::connect(m_checkLauncherVersion, SIGNAL(downloaded(QByteArray)), this, SLOT(gotLauncherVersionSlot(QByteArray)));
+	QObject::connect(m_checkLauncherVersion, &Downloader::downloaded, [this, warnUpToDate](QByteArray const& resp){
+		gotLauncherVersionSlot(resp, warnUpToDate);
+	});
 	QObject::connect(m_checkLauncherVersion, &Downloader::error, [this](){
 		m_updCheckLauncher = false;
 		m_checkLauncherVersion->deleteLater();
@@ -252,7 +254,7 @@ void MainWindow::getLauncherVersion(){
 	m_checkLauncherVersion->download();
 }
 
-void MainWindow::gotLauncherVersionSlot(QByteArray resp){
+void MainWindow::gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate){
 	QRegExp version{QRegExp::escape("<span class=\"version\">") + "([0-9]\\.[0-9]\\.[0-9])" + QRegExp::escape("</span>")};
 	version.indexIn(resp);
 	Version internet{version.cap(1)};
@@ -268,6 +270,8 @@ void MainWindow::gotLauncherVersionSlot(QByteArray resp){
 		if(resp == QMessageBox::Yes){
 			QDesktopServices::openUrl(QUrl{"https://www.gta5-mods.com/tools/gta-v-launcher"});
 		}
+	}else if(warnUpToDate){
+		QMessageBox::information(this, tr("Up-to-date"), tr("You have the latest version of the launcher (V %1)").arg(qApp->applicationVersion()));
 	}
 
 	m_updCheckLauncher = false;
@@ -551,7 +555,7 @@ Version MainWindow::getScriptHookVVersion(){
 	return scriptHookVVersion.getVersionInt() != 0 ? scriptHookVVersion : scriptHookVVersionD;
 }
 
-void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate){
+void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate, bool warnUpToDate){
 	QDomDocument dom("GTAV");
 	dom.setContent(resp);
 	QDomElement versioning = dom.documentElement();
@@ -679,6 +683,12 @@ void MainWindow::downloadFinishedSlot(QByteArray resp, bool askForUpdate){
 		});
 		downloader->head();
 
+	}else if(warnUpToDate){
+		QMessageBox::information(
+			this,
+			tr("Up-to-date"),
+			tr("You have the latest version of ScriptHookV (V %1)").arg(QString{scriptHookVVersion.getVersionStr().c_str()})
+		);
 	}
 	m_updCheckScriptHookV = false;
 	m_checkGtaVersion->deleteLater();
