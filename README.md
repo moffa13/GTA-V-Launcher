@@ -62,6 +62,7 @@ V [1.0.9]
 V 1.0.10
 - Missing translations
 - Changed executable signature to moffa13.com
+- Fixed anti-conflicts system
 
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7

@@ -1,6 +1,5 @@
 #include "ChooseModsWindow.h"
 #include "MainWindow.h"
-#include <QFont>
 #include <QApplication>
 #include <QMessageBox>
 #include <QDir>
@@ -311,7 +310,7 @@ void ChooseModsWindow::noConflicts(QStringList &enableMods, QStringList &disable
 	QSet<QString> disabledModsSet = disabledMods.toSet();
 
 	QSet<QString> enabledModsSub = enabledModsSet - disabledModsSet;
-	QSet<QString> c1 = enabledModsSet - enabledModsSub;
+	QSet<QString> c1 = enabledModsSet - enabledModsSub; // Conflicts
 	noConflicts(enableMods, disabledMods, c1);
 }
 
@@ -319,20 +318,20 @@ void ChooseModsWindow::noConflicts(QStringList &enableMods, QStringList &disable
 	foreach(const QString &file, conflicts){
 		QMessageBox msg;
 		msg.setWindowTitle(tr("Conflict"));
-		msg.setText(tr("There is a conflict with ") + file);
+		msg.setText(tr("There is a conflict with %1 from your enabled & disabled mods. Which one do you want to keep ?").arg(file));
 		QAbstractButton *keepEnabled = msg.addButton(tr("Keep mod in enabled mods"), QMessageBox::YesRole);
 		msg.addButton(tr("Keep mod in disabled mods"), QMessageBox::NoRole);
 		msg.setIcon(QMessageBox::Warning);
 		msg.exec();
-		const QString *deletedPath;
+		QString deletedPath;
 		if(msg.clickedButton() == keepEnabled){
-			deletedPath = &MainWindow::m_disabledModsDirectoryStr;
+			deletedPath = MainWindow::m_disabledModsDirectoryStr;
 			disabledMods.removeOne(file);
 		}else{
-			deletedPath = &MainWindow::m_gtaDirectoryStr;
+			deletedPath = basePathFromModType(file);
 			enableMods.removeOne(file);
 		}
-		QFile::remove(*deletedPath + "/" + file);
+		QFile::remove(deletedPath + "/" + file);
 	}
 }
 
