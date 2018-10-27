@@ -1,4 +1,5 @@
 #include "Downloader.h"
+#include <QSslSocket>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -25,6 +26,7 @@ QString Downloader::getUrl() const{
 }
 
 void Downloader::init(){
+	assert(QSslSocket::supportsSsl());
 	m_request->setHeader(QNetworkRequest::UserAgentHeader, "GTA V Launcher by Moffa13");
 	QObject::connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(fileDownloadedSlot(QNetworkReply*)));
 	m_error_codes.insert(404);

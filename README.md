@@ -64,6 +64,7 @@ V 1.0.10
 - Changed executable signature to moffa13.com
 - Fixed anti-conflicts system
 - Explicit message when manually checking for updates
+- Fixed launcher update check not working (ssl not supported)
 
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
