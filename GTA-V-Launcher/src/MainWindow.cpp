@@ -58,8 +58,9 @@ void MainWindow::init(){
 }
 
 void MainWindow::showThanksMessage(){
-	if(Utilities::loadFromConfig("General", "firstTimeDownloadingLauncher", true).toBool()){
-		Utilities::setToConfig("General", QMap<QString, QVariant>{{"firstTimeDownloadingLauncher", false}});
+	int currVersion = static_cast<int>(Version{qApp->applicationVersion()}.getVersionInt());
+	if(Utilities::loadFromConfig("General", "lastVersionLauncher", 0).toInt() < currVersion){
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"lastVersionLauncher", currVersion}});
 		QDesktopServices::openUrl(QUrl{"https://moffa13.com/"});
 	}
 }
@@ -255,6 +256,9 @@ void MainWindow::getLauncherVersion(bool warnUpToDate){
 }
 
 void MainWindow::gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate){
+	if(resp.isEmpty()){
+		qCritical() << "Error launcher update website returned empty response";
+	}
 	QRegExp version{QRegExp::escape("<span class=\"version\">") + "([0-9]\\.[0-9]\\.[0-9])" + QRegExp::escape("</span>")};
 	version.indexIn(resp);
 	Version internet{version.cap(1)};
