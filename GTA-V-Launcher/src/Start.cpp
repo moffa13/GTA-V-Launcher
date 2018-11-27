@@ -2,12 +2,16 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLibraryInfo>
-#include <QtWebView/QtWebView>
+#include <QSsl>
 #include <QDebug>
 
 
 int main(int argc, char *argv[]){
 	QApplication app(argc, argv);
+
+	qDebug() << "Support SSL:  " << QSslSocket::supportsSsl()
+			<< "\nLib Version String: " << QSslSocket::sslLibraryVersionString()
+			<< "\nLib Build Version String: " << QSslSocket::sslLibraryBuildVersionString();
 
 	QString locale = QLocale::system().name().section("_", 0, 0);
 

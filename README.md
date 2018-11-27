@@ -59,7 +59,7 @@ V [1.0.9]
 - Added warning if you overwrite an existing mod
 - If you run an outdated game version, the launcher will block updates from Rockstar
 
-V 1.0.10
+V [1.0.10]
 - Missing translations
 - Changed executable signature to moffa13.com
 - Fixed anti-conflicts system
@@ -70,3 +70,4 @@ V 1.0.10
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
 [1.0.9]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.9
+[1.0.10]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.10

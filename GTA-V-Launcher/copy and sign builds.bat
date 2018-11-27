@@ -4,7 +4,7 @@ mkdir bundle
 
 set pth=bundle\GTA V Launcher.exe
 
-copy "build\build-GTA-V-Launcher-5_11_2_x64_static-Release\release\GTA-V-Launcher.exe" "%pth%"
+copy "build\build-GTA-V-Launcher-5_12_x64_static_openssl-Release\release\GTA-V-Launcher.exe" "%pth%"
 
 third-party\upx.exe --best "%pth%"
 
