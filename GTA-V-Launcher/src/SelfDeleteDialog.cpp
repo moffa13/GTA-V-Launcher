@@ -4,5 +4,6 @@ SelfDeleteDialog::SelfDeleteDialog(QWidget *parent, Qt::WindowFlags f) : QDialog
 
 void SelfDeleteDialog::hideEvent(QHideEvent *e){
 	e->accept();
+	emit hidden();
 	deleteLater();
 }

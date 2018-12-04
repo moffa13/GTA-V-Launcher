@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "SelfDeleteDialog.h"
+#include "ThreadedProgressBar.h"
 #include <QGroupBox>
 #include <QPushButton>
 #include <QHBoxLayout>
@@ -22,6 +23,7 @@ class SettingsWindow : public SelfDeleteDialog
 		void setButtons();
 		void connectAll();
 		MainWindow *getParent() const;
+		ThreadedProgressBar *m_filesCheckProgress;
 		QGroupBox *m_scriptHookVGroupBox;
 		QPushButton *m_checkForLauncherUpdates;
 		QPushButton *m_checkForUpdatesSoftware;
@@ -29,6 +31,7 @@ class SettingsWindow : public SelfDeleteDialog
 		QPushButton *m_changeGTAVGameDirectory;
 		QPushButton *m_forceGTAQuitButton;
 		QPushButton *m_uninstallLauncher;
+		QPushButton *m_checkFilesIntegrity;
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
 		QCheckBox *m_exitLauncherAfterGameStart;
@@ -40,7 +43,7 @@ class SettingsWindow : public SelfDeleteDialog
 		void forceKillGTASlot() const;
 		void launchGTAVMethodSlot(int state);
 	private slots:
-		void checkSoftwareUpdatesSlot() const;
+		void checkSoftwareUpdatesSlot(bool warnUpToDate) const;
 		void checkLauncherUpdatesSlot() const;
 };
 

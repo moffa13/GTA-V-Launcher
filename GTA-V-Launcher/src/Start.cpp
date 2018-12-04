@@ -4,6 +4,8 @@
 #include <QLibraryInfo>
 #include <QSsl>
 #include <QDebug>
+#include <openssl/evp.h>
+#include "MD5Hasher.h"
 
 
 int main(int argc, char *argv[]){
@@ -12,6 +14,9 @@ int main(int argc, char *argv[]){
 	qDebug() << "Support SSL:  " << QSslSocket::supportsSsl()
 			<< "\nLib Version String: " << QSslSocket::sslLibraryVersionString()
 			<< "\nLib Build Version String: " << QSslSocket::sslLibraryBuildVersionString();
+
+	OpenSSL_add_all_algorithms();
+	ERR_load_BIO_strings();
 
 	QString locale = QLocale::system().name().section("_", 0, 0);
 

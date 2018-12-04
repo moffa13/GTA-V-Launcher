@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include "GTAFilesChecker.h"
+#include "ThreadedProgressBar.h"
 #include "Utilities.h"
 
 SettingsWindow::SettingsWindow(QWidget *parent) : SelfDeleteDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint){
@@ -34,6 +36,7 @@ void SettingsWindow::setButtons(){
 	m_openGTAVGameDirectory->setToolTip(MainWindow::m_gtaDirectoryStr);
 
 	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"), this);
+	m_checkFilesIntegrity = new QPushButton(tr("Check GTA V Files Integrity"), this);
 	m_uninstallLauncher = new QPushButton(tr("Uninstall this launcher"), this);
 
 
@@ -57,6 +60,7 @@ void SettingsWindow::setButtons(){
 	m_scripthookVLayout->addWidget(m_openGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_changeGTAVGameDirectory);
 	m_scripthookVLayout->addWidget(m_forceGTAQuitButton);
+	m_scripthookVLayout->addWidget(m_checkFilesIntegrity);
 	m_scripthookVLayout->addWidget(m_uninstallLauncher);
 
 	m_scriptHookVGroupBox->setLayout(m_scripthookVLayout);
@@ -76,7 +80,7 @@ void SettingsWindow::changeGTAVGameDirectorySlot() const{
 	if(!parent->getGTAExecutable()){
 		parent->closeApp();
 	}else
-		checkSoftwareUpdatesSlot();
+		checkSoftwareUpdatesSlot(false);
 }
 
 void SettingsWindow::forceKillGTASlot() const{
@@ -86,7 +90,9 @@ void SettingsWindow::forceKillGTASlot() const{
 
 void SettingsWindow::connectAll(){
 	QObject::connect(m_checkForLauncherUpdates, SIGNAL(clicked(bool)), this, SLOT(checkLauncherUpdatesSlot()));
-	QObject::connect(m_checkForUpdatesSoftware, SIGNAL(clicked(bool)), this, SLOT(checkSoftwareUpdatesSlot()));
+	QObject::connect(m_checkForUpdatesSoftware, &QPushButton::clicked, this, [this](){
+		checkSoftwareUpdatesSlot(true);
+	});
 	connect(m_forceGTAQuitButton, SIGNAL(clicked(bool)), this, SLOT(forceKillGTASlot()));
 	connect(m_openGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(openGTAVGameDirectorySlot()));
 	connect(m_changeGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(changeGTAVGameDirectorySlot()));
@@ -99,6 +105,32 @@ void SettingsWindow::connectAll(){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldCheckForUpdatesWhenLauncherStarts", state}});
 	});
 
+	connect(m_checkFilesIntegrity, &QPushButton::clicked, [this](){
+		GTAFilesChecker *checker = new GTAFilesChecker{MainWindow::m_gtaDirectoryStr};
+		m_filesCheckProgress = new ThreadedProgressBar{this};
+		m_filesCheckProgress->setWindowTitle(tr("Checking GTA V FIles ..."));
+		m_filesCheckProgress->setMax(checker->getSize());
+		m_filesCheckProgress->setFixedSize(QSize(250, 60));
+		m_filesCheckProgress->show();
+		connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker](){
+			checker->stop();
+			checker->deleteLater();
+		});
+
+		connect(checker, &GTAFilesChecker::bytesProcessing, [this](quint64 value){
+			m_filesCheckProgress->add(value);
+		});
+		connect(checker, &GTAFilesChecker::fileProcessing, [this](QString const& file){
+			m_filesCheckProgress->setLabel(file);
+		});
+		connect(checker, &GTAFilesChecker::success, [this, checker](){
+			m_filesCheckProgress->hide();
+			QMessageBox::information(this, tr("Success"), tr("File checker returned no error."));
+			checker->deleteLater();
+		});
+		checker->check();
+	});
+
 	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));
 }
 
@@ -106,9 +138,9 @@ MainWindow *SettingsWindow::getParent() const{
 	return qobject_cast<MainWindow*>(parentWidget());
 }
 
-void SettingsWindow::checkSoftwareUpdatesSlot() const{
+void SettingsWindow::checkSoftwareUpdatesSlot(bool warnUpToDate) const{
 	MainWindow *parent = qobject_cast<MainWindow*>(this->parentWidget());
-	parent->getGtaVersionThrewInternet(true, true);
+	parent->getGtaVersionThrewInternet(true, warnUpToDate);
 }
 
 void SettingsWindow::checkLauncherUpdatesSlot() const{

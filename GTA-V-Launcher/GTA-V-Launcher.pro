@@ -1,4 +1,4 @@
-QT += widgets network xml
+QT += widgets network xml concurrent
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -MD
@@ -8,11 +8,11 @@ RC_FILE = GTA-V-Launcher.rc
 
 TRANSLATIONS = translates/fr.ts
 
-INCLUDEPATH += src ../../libs
+INCLUDEPATH += src include
 
 VPATH += src ../../libs
 
-LIBS += -lVersion
+LIBS += -Lsrc/lib/openssl -llibcrypto -llibssl -lVersion
 
 SOURCES += \
 	Start.cpp \
@@ -25,7 +25,10 @@ SOURCES += \
 	InstallModWindow.cpp \
 	QCheckableFileSystemModel.cpp \
 	QFileSystemModelDirectorySortProxy.cpp \
-	src/SelfDeleteDialog.cpp
+	src/SelfDeleteDialog.cpp \
+	src/MD5Hasher.cpp \
+    src/GTAFilesChecker.cpp \
+    src/ThreadedProgressBar.cpp
 
 HEADERS += \
 	Window.h \
@@ -38,7 +41,10 @@ HEADERS += \
 	InstallModWindow.h \
 	QCheckableFileSystemModel.h \
 	QFileSystemModelDirectorySortProxy.h \
-	src/SelfDeleteDialog.h
+	src/SelfDeleteDialog.h \
+	src/MD5Hasher.h \
+    src/GTAFilesChecker.h \
+    src/ThreadedProgressBar.h
 
 RESOURCES += \
 	GTA-V-Launcher.qrc
