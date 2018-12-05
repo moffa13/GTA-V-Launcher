@@ -1,6 +1,5 @@
 #include "MD5Hasher.h"
 
-
 #include <QtConcurrent>
 #include <QFuture>
 #include <sstream>
@@ -56,7 +55,7 @@ void MD5Hasher::addFiles(const QList<QString> &files, QString const& base){
 	}
 }
 
-void MD5Hasher::process(){
+void MD5Hasher::process() const{
 
 	if(_files.isEmpty()) return;
 
@@ -70,7 +69,7 @@ void MD5Hasher::process(){
 
 }
 
-QPair<QString, QString> MD5Hasher::hash(QFile* file){
+QPair<QString, QString> MD5Hasher::hash(QFile* file) const{
 
 	if(!isFinished()) emit fileProcessing(file->fileName());
 

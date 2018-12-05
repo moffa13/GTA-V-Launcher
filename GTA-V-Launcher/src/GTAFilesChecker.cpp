@@ -174,7 +174,7 @@ GTAFilesChecker::GTAFilesChecker(QString base) : _base{std::move(base)}{
 	_hasher.addFiles(s_hashes.keys(), _base);
 }
 
-void GTAFilesChecker::check(){
+void GTAFilesChecker::check() const{
 	_hasher.process();
 }
 

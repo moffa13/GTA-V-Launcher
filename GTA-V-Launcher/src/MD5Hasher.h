@@ -5,7 +5,6 @@
 #include <QObject>
 #include <QList>
 #include <QString>
-#include <QStringList>
 #include <QFutureWatcher>
 #include <QMutex>
 
@@ -22,17 +21,17 @@ class MD5Hasher : public QObject
 		inline qint64 getSize() const { return _size; }
 		void addFile(QString const& file);
 		void addFiles(QList<QString> const& files, QString const& base);
-		void process();
+		void process() const;
 	private:
+		QFutureWatcher<QPair<QString, QString>> *_md5FutureWatcher;
 		QList<QFile*> _files;
 		qint64 _size = 0;
 		bool _isStopped = false;
-		QFutureWatcher<QPair<QString, QString>> *_md5FutureWatcher;
-		QPair<QString, QString> hash(QFile* file);
+		QPair<QString, QString> hash(QFile* file) const;
 		void init();
 	Q_SIGNALS:
-		void fileProcessing(QString const& file);
-		void bytesProcessing(qint64 bytes);
-		void finished(QList<QPair<QString, QString>> const& result);
+		void fileProcessing(QString const& file) const;
+		void bytesProcessing(qint64 bytes) const;
+		void finished(QList<QPair<QString, QString>> const& result) const;
 };
 #endif // MD5HASHER_H
