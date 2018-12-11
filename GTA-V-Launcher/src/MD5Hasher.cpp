@@ -7,7 +7,7 @@
 #include <iomanip>
 #include "openssl/md5.h"
 
-#define BUFFER_SIZE 268'435'456
+#define BUFFER_SIZE 4'194'240
 
 QMutex MD5Hasher::s_finishedMutex;
 
