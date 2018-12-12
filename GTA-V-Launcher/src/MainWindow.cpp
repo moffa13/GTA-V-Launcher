@@ -139,39 +139,26 @@ void MainWindow::getGtaVersionThrewInternet(bool shouldUpdate, bool warnUpToDate
 
 void MainWindow::startGTANoUpdate(){
 
-	QFile file{
-		QString{"%1/%2"}
-		.arg(QStandardPaths::standardLocations(QStandardPaths::TempLocation).takeFirst())
-		.arg("GTA_V_Patch_" + QString{m_lastOfficialGTAVersion.getVersionStr('_').c_str()} + ".exe.part")
-	};
-
-	file.setPermissions(QFile::ReadOther | QFile::WriteOther);
-
-	if(!file.open(QFile::WriteOnly)){
-		QMessageBox::critical(this, tr("Error"), tr("An error occured"));
-		return;
-	}
-
-	file.setPermissions(QFile::ReadOther);
-	file.close();
-
-	QMessageBox::information(
-		this,
-		tr("Information"),
-		tr("GTA Launcher will start, please login and wait until it tries to start updating."
-			" Then you'll see an error. After that hit cancel and wait for the game to launch")
-	);
-
 	startGtaWithModsSlot(false, false);
 
-	QThread::msleep(200);
+	while(Utilities::checkProcessRunning("GTAVLauncher.exe") == nullptr)
+		qApp->processEvents();
+
+	QFile file{
+		QString{"%1/%2"}
+		.arg(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).takeFirst())
+		.arg("Rockstar Games/Social Club/Profiles/signintransfer.dat")
+	};
+
+	while(!file.exists())
+		qApp->processEvents();
+
+	QThread::msleep(12000);
+
+	system("taskkill /F /IM GTAVLauncher.exe");
 
 	while(Utilities::checkProcessRunning("GTAVLauncher.exe") != nullptr)
 		qApp->processEvents();
-
-
-	file.setPermissions(QFile::ReadOther | QFile::WriteOther);
-	file.remove();
 
 	startGtaWithModsSlot(true, false);
 

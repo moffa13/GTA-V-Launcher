@@ -7,6 +7,8 @@
 #include <QSettings>
 #include <QFile>
 
+
+
 Version Utilities::getFileVersion(const QString &filename){
 
 	DWORD dwHandle;
