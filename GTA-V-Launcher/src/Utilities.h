@@ -11,6 +11,7 @@ class Utilities
 {
 	public:
 		Utilities();
+		static void killProcess(const char *filename);
 		static Version getFileVersion(const QString &filename);
 		static QString checkProcessRunning(const QString &name);
 		static std::unique_ptr<QSettings> getSettings();

@@ -66,8 +66,12 @@ V [1.0.10]
 - Explicit message when manually checking for updates
 - Fixed launcher update check not working (ssl not supported)
 
+V [1.0.11]
+- Fixed anti-update system now working ?
+
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
 [1.0.9]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.9
 [1.0.10]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.10
+[1.0.11]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.11
