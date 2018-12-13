@@ -246,7 +246,7 @@ void MainWindow::gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate){
 	if(resp.isEmpty()){
 		qCritical() << "Error launcher update website returned empty response";
 	}
-	QRegExp version{QRegExp::escape("<span class=\"version\">") + "([0-9]\\.[0-9]\\.[0-9])" + QRegExp::escape("</span>")};
+	QRegExp version{"<span class=\"version\">([0-9]+\\.[0-9]+\\.[0-9]+)<\\/span>"};
 	version.indexIn(resp);
 	Version internet{version.cap(1)};
 	if(internet > qApp->applicationVersion()){

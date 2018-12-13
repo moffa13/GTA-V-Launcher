@@ -27,8 +27,8 @@ SOURCES += \
 	QFileSystemModelDirectorySortProxy.cpp \
 	src/SelfDeleteDialog.cpp \
 	src/MD5Hasher.cpp \
-    src/GTAFilesChecker.cpp \
-    src/ThreadedProgressBar.cpp
+	src/GTAFilesChecker.cpp \
+	src/ThreadedProgressBar.cpp
 
 HEADERS += \
 	Window.h \
@@ -43,15 +43,15 @@ HEADERS += \
 	QFileSystemModelDirectorySortProxy.h \
 	src/SelfDeleteDialog.h \
 	src/MD5Hasher.h \
-    src/GTAFilesChecker.h \
-    src/ThreadedProgressBar.h
+	src/GTAFilesChecker.h \
+	src/ThreadedProgressBar.h
 
 RESOURCES += \
 	GTA-V-Launcher.qrc
 
 
-VERSION = 1.0.12
-DEFINES += APP_VERSION_COMMA=1,0,12
+VERSION = 1.0.10
+DEFINES += APP_VERSION_COMMA=1,0,10
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 FORMS += \
