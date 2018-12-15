@@ -30,7 +30,8 @@ SOURCES += \
 	src/SelfDeleteDialog.cpp \
 	src/MD5Hasher.cpp \
 	src/GTAFilesChecker.cpp \
-	src/ThreadedProgressBar.cpp
+	src/ThreadedProgressBar.cpp \
+	src/TranslatorAliases.cpp
 
 HEADERS += \
 	Window.h \
@@ -46,7 +47,7 @@ HEADERS += \
 	src/SelfDeleteDialog.h \
 	src/MD5Hasher.h \
 	src/GTAFilesChecker.h \
-	src/ThreadedProgressBar.h
+	src/ThreadedProgressBar.h \
 	src/TranslatorAliases.h
 
 RESOURCES += \
