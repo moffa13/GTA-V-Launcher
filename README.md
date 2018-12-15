@@ -69,9 +69,13 @@ V [1.0.10]
 V [1.0.11]
 - Fixed anti-update system now working ?
 
+V [1.0.12]
+- Added support for pt_BR (Brazilian Portuguese) language. Thanks to @Krazy-Monkey
+- Translated missing translations
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
 [1.0.9]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.9
 [1.0.10]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.10
 [1.0.11]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.11
+[1.0.12]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.11

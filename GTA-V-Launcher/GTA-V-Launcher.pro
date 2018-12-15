@@ -6,7 +6,9 @@ QMAKE_CXXFLAGS_RELEASE = -O2
 
 RC_FILE = GTA-V-Launcher.rc
 
-TRANSLATIONS = translates/fr.ts
+TRANSLATIONS = \
+translates/fr.ts \
+translates/pt_BR.ts
 
 INCLUDEPATH += src ../../libs
 
@@ -25,7 +27,8 @@ SOURCES += \
 	InstallModWindow.cpp \
 	QCheckableFileSystemModel.cpp \
 	QFileSystemModelDirectorySortProxy.cpp \
-	src/SelfDeleteDialog.cpp
+	src/SelfDeleteDialog.cpp \
+    src/TranslatorAliases.cpp
 
 HEADERS += \
 	Window.h \
@@ -38,7 +41,8 @@ HEADERS += \
 	InstallModWindow.h \
 	QCheckableFileSystemModel.h \
 	QFileSystemModelDirectorySortProxy.h \
-	src/SelfDeleteDialog.h
+	src/SelfDeleteDialog.h \
+    src/TranslatorAliases.h
 
 RESOURCES += \
 	GTA-V-Launcher.qrc
