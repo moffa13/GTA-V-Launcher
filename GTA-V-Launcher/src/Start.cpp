@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include "TranslatorAliases.h"
 #include <QSsl>
 #include <QDebug>
 #include <openssl/evp.h>
@@ -16,13 +17,14 @@ int main(int argc, char *argv[]){
 			<< "\nLib Version String: " << QSslSocket::sslLibraryVersionString()
 			<< "\nLib Build Version String: " << QSslSocket::sslLibraryBuildVersionString();
 
+
 	OpenSSL_add_all_algorithms();
 	ERR_load_BIO_strings();
 
-	QString locale = QLocale::system().name().section("_", 0, 0);
+	QString locale = TranslatorAliases::getQM(QLocale::system().name());
 
 	QTranslator translator;
-	translator.load(":/translates/" + locale);
+	translator.load(QString{":/translates/%1"}.arg(locale));
 
 	QTranslator translator2;
 	translator2.load("qt_" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));

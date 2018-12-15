@@ -6,7 +6,9 @@ QMAKE_CXXFLAGS_RELEASE = -O2
 
 RC_FILE = GTA-V-Launcher.rc
 
-TRANSLATIONS = translates/fr.ts
+TRANSLATIONS = \
+translates/fr.ts \
+translates/pt_BR.ts
 
 INCLUDEPATH += src include
 
@@ -45,6 +47,7 @@ HEADERS += \
 	src/MD5Hasher.h \
 	src/GTAFilesChecker.h \
 	src/ThreadedProgressBar.h
+	src/TranslatorAliases.h
 
 RESOURCES += \
 	GTA-V-Launcher.qrc
