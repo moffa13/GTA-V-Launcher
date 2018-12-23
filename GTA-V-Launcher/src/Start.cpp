@@ -21,16 +21,7 @@ int main(int argc, char *argv[]){
 	OpenSSL_add_all_algorithms();
 	ERR_load_BIO_strings();
 
-	QString locale = TranslatorAliases::getQM(QLocale::system().name());
-
-	QTranslator translator;
-	translator.load(QString{":/translates/%1"}.arg(locale));
-
-	QTranslator translator2;
-	translator2.load("qt_" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-
-	qApp->installTranslator(&translator2);
-	qApp->installTranslator(&translator);
+	TranslatorAliases::loadSavedLanguage();
 
 	app.setApplicationVersion(APP_VERSION);
 

@@ -13,18 +13,22 @@ class GTAFilesChecker : public QObject
 
 	public:
 		GTAFilesChecker(QString base);
+		~GTAFilesChecker();
 		static const QHash<QString, QString> s_hashes;
-		inline qint64 getSize() const { return _hasher.getSize(); }
+		inline qint64 getSize() const { return _hasher->getSize(); }
 		void check() const;
-		inline void stop() { _hasher.stop(); }
+		void stop();
+		QStringList getErrors() const;
+		bool deleteCorrupted() const;
 	private:
 		QString const _base;
-		MD5Hasher _hasher;
+		QStringList _md5Errors;
+		MD5Hasher *_hasher;
 	Q_SIGNALS:
 		void fileProcessing(QString const& file) const;
 		void bytesProcessing(qint64 bytes) const;
-		void error(QString const& file) const;
-		void success();
+		void error() const;
+		void success() const;
 	private Q_SLOTS:
 		void process(QList<QPair<QString, QString>> const& result);
 

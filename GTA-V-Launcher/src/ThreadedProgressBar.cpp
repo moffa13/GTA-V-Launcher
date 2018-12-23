@@ -4,8 +4,7 @@
 
 QMutex ThreadedProgressBar::s_mutex;
 
-ThreadedProgressBar::ThreadedProgressBar(QWidget *parent) : SelfDeleteDialog(parent)
-{
+ThreadedProgressBar::ThreadedProgressBar(QWidget *parent) : SelfDeleteDialog(parent){
 	setLayout(&_layout);
 	_layout.addWidget(&_label);
 	_layout.addWidget(&_progressBar);
@@ -28,6 +27,10 @@ void ThreadedProgressBar::add(quint64 value){
 	int ratio = static_cast<int>(1000 / (static_cast<float>(_max) / _current));
 
 	_progressBar.setValue(ratio);
+}
+
+void ThreadedProgressBar::retranslateUi(){
+	// Nothing to translate
 }
 
 

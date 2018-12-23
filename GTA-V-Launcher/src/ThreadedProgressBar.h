@@ -23,6 +23,8 @@ class ThreadedProgressBar : public SelfDeleteDialog
 		QLabel _label;
 		QProgressBar _progressBar;
 		static QMutex s_mutex;
+	protected:
+		virtual void retranslateUi() override;
 };
 
 #endif // THREADEDPROGRESSBAR_H

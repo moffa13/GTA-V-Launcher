@@ -27,11 +27,14 @@ class MD5Hasher : public QObject
 		QList<QFile*> _files;
 		qint64 _size = 0;
 		bool _isStopped = false;
+		bool _shouldDelete = false;
 		QPair<QString, QString> hash(QFile* file) const;
 		void init();
 	Q_SIGNALS:
 		void fileProcessing(QString const& file) const;
 		void bytesProcessing(qint64 bytes) const;
 		void finished(QList<QPair<QString, QString>> const& result) const;
+	public Q_SLOTS:
+		void deleteLater();
 };
 #endif // MD5HASHER_H

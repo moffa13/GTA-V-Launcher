@@ -77,6 +77,8 @@ class ChooseModsWindow : public SelfDeleteDialog{
 		void setConfigSlot();
 		void setButtonUpDownSlot(QModelIndex index);
 		void deleteModSlot();
+	protected:
+		virtual void retranslateUi() override;
 };
 
 #endif // CHOOSEMODSWINDOW_H

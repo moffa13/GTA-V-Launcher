@@ -35,7 +35,8 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Play GTA V Online
+ (Mods disabled)</string>
    </property>
   </widget>
   <widget class="QPushButton" name="playMods">
@@ -48,7 +49,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Play GTA V</string>
    </property>
   </widget>
   <widget class="QPushButton" name="chooseMods">
@@ -61,7 +62,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Choose mods</string>
    </property>
   </widget>
   <widget class="QLabel" name="byLabel">
@@ -74,7 +75,7 @@
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Made By Moffa13 @ moffa13.com</string>
    </property>
   </widget>
   <widget class="QPushButton" name="openOptionsButton">
@@ -87,7 +88,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>Settings</string>
    </property>
   </widget>
   <widget class="QLabel" name="gtaVersionLabel">

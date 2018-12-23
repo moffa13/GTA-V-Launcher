@@ -12,6 +12,8 @@ class SelfDeleteDialog : public QDialog
 		SelfDeleteDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 	protected:
 		void hideEvent(QHideEvent *event) override;
+		void changeEvent(QEvent *event) override;
+		virtual void retranslateUi() = 0;
 	Q_SIGNALS:
 		void hidden();
 };

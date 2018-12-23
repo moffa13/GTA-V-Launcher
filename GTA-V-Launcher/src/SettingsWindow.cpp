@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include "GTAFilesChecker.h"
+#include "TranslatorAliases.h"
 #include "ThreadedProgressBar.h"
 #include "Utilities.h"
 
@@ -14,30 +15,49 @@ SettingsWindow::SettingsWindow(QWidget *parent) : SelfDeleteDialog(parent, Qt::W
 }
 
 void SettingsWindow::init(){
-	setWindowTitle(tr("Settings"));
 	setFixedSize(sizeHint());
 }
 
 void SettingsWindow::setButtons(){
-	m_scriptHookVGroupBox = new QGroupBox("GTA V Launcher", this);
+
+	m_languageLabel = new QLabel(this);
+	m_chooseLanguage = new QComboBox(this);
+	m_languageLayout = new QHBoxLayout;
+	m_chooseLanguage->addItem(QString(), "default");
+	auto languages = TranslatorAliases::getAvailableLanguages();
+	for(auto const& language : languages){
+		QPixmap icon = QIcon{QString{":/translates/flags/%1.png"}.arg(language.second)}.pixmap(QSize{16, 12});
+		m_chooseLanguage->addItem(icon, language.first, language.second);
+
+	}
+
+	m_chooseLanguage->setCurrentIndex(m_chooseLanguage->findData(TranslatorAliases::getLoadedLanguage()));
+
+	m_languageLayout->addWidget(m_languageLabel);
+	m_languageLayout->addWidget(m_chooseLanguage, 1);
+
+
+	m_scriptHookVGroupBox = new QGroupBox(this);
 	m_scripthookVLayout = new QVBoxLayout(m_scriptHookVGroupBox);
 
-	m_checkForLauncherUpdates = new QPushButton(tr("Check for launcher updates"), this);
+	m_checkForLauncherUpdates = new QPushButton(this);
 
-	m_checkForUpdatesSoftware = new QPushButton(tr("Check for ScriptHookV updates"), this);
-	m_startCrackedCheckBox = new QCheckBox(tr("Launch from crack"), this);
-	m_exitLauncherAfterGameStart = new QCheckBox(tr("Exit launcher after game starts"), this);
+	m_checkForUpdatesSoftware = new QPushButton(this);
+	m_startCrackedCheckBox = new QCheckBox(this);
+	m_exitLauncherAfterGameStart = new QCheckBox(this);
 
-	m_checkForUpdatesWhenLauncherStarts = new QCheckBox(tr("Check for updates when launcher starts"), this);
+	m_checkForUpdatesWhenLauncherStarts = new QCheckBox(this);
 
-	m_forceGTAQuitButton = new QPushButton(tr("Force kill GTA V Process"), this);
+	m_forceGTAQuitButton = new QPushButton(this);
 
-	m_openGTAVGameDirectory = new QPushButton(tr("Open GTA V Game Directory"), this);
+	m_openGTAVGameDirectory = new QPushButton(this);
 	m_openGTAVGameDirectory->setToolTip(MainWindow::m_gtaDirectoryStr);
 
-	m_changeGTAVGameDirectory = new QPushButton(tr("Change GTA V Game Directory"), this);
-	m_checkFilesIntegrity = new QPushButton(tr("Check GTA V Files Integrity"), this);
-	m_uninstallLauncher = new QPushButton(tr("Uninstall this launcher"), this);
+	m_changeGTAVGameDirectory = new QPushButton(this);
+	m_checkFilesIntegrity = new QPushButton(this);
+	m_uninstallLauncher = new QPushButton(this);
+
+	retranslateUi();
 
 
 	bool cracked = Utilities::launcherCracked();
@@ -55,6 +75,7 @@ void SettingsWindow::setButtons(){
 	m_scripthookVLayout->addWidget(m_startCrackedCheckBox);
 	m_scripthookVLayout->addWidget(m_exitLauncherAfterGameStart);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesWhenLauncherStarts);
+	m_scripthookVLayout->addLayout(m_languageLayout);
 	m_scripthookVLayout->addWidget(m_checkForLauncherUpdates);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesSoftware);
 	m_scripthookVLayout->addWidget(m_openGTAVGameDirectory);
@@ -68,6 +89,23 @@ void SettingsWindow::setButtons(){
 	m_categoriesLayout = new QVBoxLayout(this);
 	m_categoriesLayout->addWidget(m_scriptHookVGroupBox);
 	setLayout(m_categoriesLayout);
+}
+
+void SettingsWindow::retranslateUi(){
+	setWindowTitle(tr("Settings"));
+	m_languageLabel->setText(tr("Language : "));
+	m_chooseLanguage->setItemText(0, tr("Default system's language"));
+	m_scriptHookVGroupBox->setTitle("GTA V Launcher");
+	m_checkForLauncherUpdates->setText(tr("Check for launcher updates"));
+	m_checkForUpdatesSoftware->setText(tr("Check for ScriptHookV updates"));
+	m_startCrackedCheckBox->setText(tr("Launch from crack"));
+	m_exitLauncherAfterGameStart->setText(tr("Exit launcher after game starts"));
+	m_checkForUpdatesWhenLauncherStarts->setText(tr("Check for updates when launcher starts"));
+	m_forceGTAQuitButton->setText(tr("Force kill GTA V Process"));
+	m_openGTAVGameDirectory->setText(tr("Open GTA V Game Directory"));
+	m_changeGTAVGameDirectory->setText(tr("Change GTA V Game Directory"));
+	m_checkFilesIntegrity->setText(tr("Check GTA V Files Integrity"));
+	m_uninstallLauncher->setText(tr("Uninstall this launcher"));
 }
 
 void SettingsWindow::openGTAVGameDirectorySlot() const{
@@ -108,27 +146,55 @@ void SettingsWindow::connectAll(){
 	connect(m_checkFilesIntegrity, &QPushButton::clicked, [this](){
 		GTAFilesChecker *checker = new GTAFilesChecker{MainWindow::m_gtaDirectoryStr};
 		m_filesCheckProgress = new ThreadedProgressBar{this};
-		m_filesCheckProgress->setWindowTitle(tr("Checking GTA V FIles ..."));
+		m_filesCheckProgress->setWindowTitle(tr("Checking GTA V Files ..."));
 		m_filesCheckProgress->setMax(checker->getSize());
 		m_filesCheckProgress->setFixedSize(QSize(250, 60));
 		m_filesCheckProgress->show();
-		connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker](){
+		connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker, this](){
+			m_filesCheckProgress = nullptr;
 			checker->stop();
 			checker->deleteLater();
 		});
 
 		connect(checker, &GTAFilesChecker::bytesProcessing, [this](quint64 value){
-			m_filesCheckProgress->add(value);
+			if(m_filesCheckProgress != nullptr)
+				m_filesCheckProgress->add(value);
 		});
 		connect(checker, &GTAFilesChecker::fileProcessing, [this](QString const& file){
-			m_filesCheckProgress->setLabel(file);
+			if(m_filesCheckProgress != nullptr)
+				m_filesCheckProgress->setLabel(file);
 		});
 		connect(checker, &GTAFilesChecker::success, [this, checker](){
 			m_filesCheckProgress->hide();
 			QMessageBox::information(this, tr("Success"), tr("File checker returned no error."));
 			checker->deleteLater();
 		});
+		connect(checker, &GTAFilesChecker::error, [this, checker](){
+			m_filesCheckProgress->hide();
+			QMessageBox::critical(this, tr("Checksum error"), tr("There is an error with these files : %1").arg(checker->getErrors().join(", ")));
+			int response = QMessageBox::question(
+						this,
+						tr("Delete corrupted files ?"),
+						tr("Do you want to delete the corrupted files so they will be downloaded at the next start of GTA V ?"),
+						QMessageBox::Yes | QMessageBox::No
+			);
+			if(response == QMessageBox::Yes){
+				if(checker->deleteCorrupted()){
+					QMessageBox::information(this, tr("Success"), tr("Files have been deleted !"));
+				}else{
+					QMessageBox::critical(this, tr("Error"), tr("Error deleting corrupted files"));
+				}
+			}
+			checker->deleteLater();
+		});
 		checker->check();
+	});
+
+	connect(m_chooseLanguage, QOverload<int>::of(&QComboBox::activated), [this](int index){
+		if(index == 0)
+			TranslatorAliases::loadSystemLanguage();
+		else
+			TranslatorAliases::loadLanguage(m_chooseLanguage->currentData().toString(), false);
 	});
 
 	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));

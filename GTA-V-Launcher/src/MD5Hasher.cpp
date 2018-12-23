@@ -7,7 +7,7 @@
 #include <iomanip>
 #include "openssl/md5.h"
 
-#define BUFFER_SIZE 4'194'240
+#define BUFFER_SIZE 10'000'000
 
 QMutex MD5Hasher::s_finishedMutex;
 
@@ -33,11 +33,13 @@ void MD5Hasher::stop(){
 void MD5Hasher::init(){
 	_md5FutureWatcher = new QFutureWatcher<QPair<QString, QString>>;
 	connect(_md5FutureWatcher, &QFutureWatcher<QPair<QString, QString>>::finished, [this](){
-		if(!_md5FutureWatcher->isFinished())
-			return;
-		_files.clear();
-		_size = 0;
-		emit finished(_md5FutureWatcher->future().results());
+		if(!_md5FutureWatcher->isCanceled()){
+			_files.clear();
+			_size = 0;
+			emit finished(_md5FutureWatcher->future().results());
+		}
+		if(_shouldDelete)
+			QObject::deleteLater();
 	});
 }
 
@@ -55,15 +57,24 @@ void MD5Hasher::addFiles(const QList<QString> &files, QString const& base){
 	}
 }
 
+void MD5Hasher::deleteLater(){
+	if(_md5FutureWatcher->isStarted() && !_md5FutureWatcher->isFinished())
+		_shouldDelete = true;
+	else
+		QObject::deleteLater();
+}
+
 void MD5Hasher::process() const{
 
 	if(_files.isEmpty()) return;
 
 	std::function<QPair<QString, QString>(QFile* file)> func = [this](QFile* file) -> QPair<QString, QString> {
+		if(isFinished()) return QPair<QString, QString>("", "");
 		return hash(file);
 	};
 
 
+	QThreadPool::globalInstance()->setMaxThreadCount(3);
 	QFuture<QPair<QString, QString>> future = QtConcurrent::mapped(_files, func);
 	_md5FutureWatcher->setFuture(future);
 
@@ -71,7 +82,7 @@ void MD5Hasher::process() const{
 
 QPair<QString, QString> MD5Hasher::hash(QFile* file) const{
 
-	if(!isFinished()) emit fileProcessing(file->fileName());
+	emit fileProcessing(file->fileName());
 
 	if(!file->open(QFile::ReadOnly)) return QPair<QString, QString>(file->fileName(), "");
 
@@ -80,33 +91,25 @@ QPair<QString, QString> MD5Hasher::hash(QFile* file) const{
 	char *data = new char[BUFFER_SIZE];
 	memset(data, 0, BUFFER_SIZE);
 	qint64 toRead = file->size();
-	bool finished = false;
-	while(!finished && toRead > 0){
+	while(toRead > 0){
 		auto readLength = file->read(data, BUFFER_SIZE);
 		toRead -= readLength;
 		MD5_Update(&ctx, data, readLength);
 		memset(data, 0, BUFFER_SIZE);
-		finished = isFinished();
-		if(!finished) emit bytesProcessing(readLength);
+		emit bytesProcessing(readLength);
 	}
 
-	if(!finished){
-		unsigned char* md5 = new unsigned char[16];
-		MD5_Final(md5, &ctx);
-		file->close();
+	unsigned char* md5 = new unsigned char[16];
+	MD5_Final(md5, &ctx);
+	file->close();
 
-		std::stringstream ss;
-		for(int i = 0; i < 16; ++i){
-			ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(md5[i]);
-		}
-		delete[] md5;
-		delete[] data;
-
-		return QPair<QString, QString>(file->fileName(), QString{ss.str().c_str()});
+	std::stringstream ss;
+	for(int i = 0; i < 16; ++i){
+		ss << std::setfill('0') << std::setw(2) << std::hex << static_cast<int>(md5[i]);
 	}
-
+	delete[] md5;
 	delete[] data;
 
-	return  QPair<QString, QString>("", "");
+	return QPair<QString, QString>(file->fileName(), QString{ss.str().c_str()});
 
 }

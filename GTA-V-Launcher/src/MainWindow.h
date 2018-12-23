@@ -57,6 +57,7 @@ class MainWindow : public QMainWindow{
 		void startGTANoUpdate();
 		void showThanksMessage();
 		Version getGtaVersion() const;
+		void setTitle();
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate);
 		void uninstallLauncherSlot();
@@ -68,6 +69,8 @@ class MainWindow : public QMainWindow{
 		void downloadFinishedSlot(QByteArray resp, bool askForUpdate, bool warnUpToDate);
 		void showSettingsWindowSlot();
 		void showPlayContextualMenuSlot(const QPoint &pos);
+	protected:
+		void changeEvent(QEvent *event) override;
 };
 
 #endif // MAINWINDOW_H

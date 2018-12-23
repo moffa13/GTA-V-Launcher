@@ -18,11 +18,7 @@ InstallModWindow::InstallModWindow(QString const& installDir, QString const& mod
 	_installDir{installDir}
 {
 	ui->setupUi(this);
-
-	setWindowTitle(tr("Install a mod (BETA)"));
 	ui->modFileEdit->setPlaceholderText("C:\\Users\\GTAV\\Downloads\\mod.zip");
-	ui->selectFileButton->setText(tr("Select a mod file (*.asi, *.dll, *.zip, *.rar)"));
-	ui->validateButton->setText(tr("Confirm"));
 
 	connect(ui->selectFileButton, &QPushButton::clicked, [this](){
 		ui->modFileEdit->clear();
@@ -162,6 +158,10 @@ void InstallModWindow::addMod(){
 
 	QMessageBox::information(this, tr("Success"), tr("Your mod has been installed with success"), QMessageBox::Ok);
 	hide();
+}
+
+void InstallModWindow::retranslateUi(){
+	ui->retranslateUi(this);
 }
 
 void InstallModWindow::copyDir(const QDir &from, const QDir &to){

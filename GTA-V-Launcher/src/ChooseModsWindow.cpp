@@ -24,7 +24,6 @@ ChooseModsWindow::~ChooseModsWindow(){
 
 void ChooseModsWindow::init(){
 
-	setWindowTitle(tr("Select active mods"));
 	setFixedSize(690, 500);
 
 	setStyleSheet(
@@ -37,23 +36,13 @@ void ChooseModsWindow::init(){
 	ui->listViewEnabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->listViewDisabled->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-	ui->enableAllButton->setText(tr("Enable all"));
-	ui->disableAllButton->setText(tr("Disable all"));
-	ui->installModButton->setText(tr("Install a mod"));
-
-	ui->setEnabledButton->setText(tr("Set enabled"));
 	ui->setEnabledButton->setIcon(QIcon(":/images/upArrow.png"));
 	ui->setEnabledButton->setEnabled(false);
 
-	ui->deleteModButton->setText(tr("Delete mod"));
 	ui->deleteModButton->setEnabled(false);
 
-	ui->setDisabledButton->setText(tr("Set disabled"));
 	ui->setDisabledButton->setIcon(QIcon(":/images/downArrow.png"));
 	ui->setDisabledButton->setEnabled(false);
-
-	ui->resetConfigButton->setText(tr("Reset from config"));
-	ui->validateButton->setText(tr("Confirm"));
 
 	setEnableDisableAllButtons();
 }
@@ -521,6 +510,10 @@ void ChooseModsWindow::deleteModSlot(){
 		}
 		setEnableDisableAllButtons();
 	}
+}
+
+void ChooseModsWindow::retranslateUi(){
+	ui->retranslateUi(this);
 }
 
 void ChooseModsWindow::deleteMod(QString const& filename){

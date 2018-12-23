@@ -9,6 +9,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QComboBox>
 
 class MainWindow;
 
@@ -37,6 +38,9 @@ class SettingsWindow : public SelfDeleteDialog
 		QCheckBox *m_exitLauncherAfterGameStart;
 		QCheckBox *m_checkForUpdatesWhenLauncherStarts;
 		QVBoxLayout *m_categoriesLayout;
+		QComboBox *m_chooseLanguage;
+		QLabel *m_languageLabel;
+		QHBoxLayout *m_languageLayout;
 	public slots:
 		void openGTAVGameDirectorySlot() const;
 		void changeGTAVGameDirectorySlot() const;
@@ -45,6 +49,8 @@ class SettingsWindow : public SelfDeleteDialog
 	private slots:
 		void checkSoftwareUpdatesSlot(bool warnUpToDate) const;
 		void checkLauncherUpdatesSlot() const;
+	protected:
+		virtual void retranslateUi() override;
 };
 
 #endif // SETTINGSWINDOW_H

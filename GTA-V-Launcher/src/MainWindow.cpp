@@ -17,13 +17,13 @@
 #include <QThread>
 #include <QPushButton>
 #include "Version.h"
+#include "TranslatorAliases.h"
 #include "ui_MainWindow.h"
-
 
 QString MainWindow::m_gtaDirectoryStr = "";
 QString MainWindow::m_disabledModsDirectoryStr = "";
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow{parent}, ui(new Ui::MainWindow)/*, m_adView(new QWebEngineView(this))*/ {
+MainWindow::MainWindow(QWidget* parent) : QMainWindow{parent}, ui(new Ui::MainWindow) {
 	Q_UNUSED(parent);
 	ui->setupUi(this);
 }
@@ -35,7 +35,7 @@ MainWindow::~MainWindow(){
 void MainWindow::init(){
 
 	if(checkOS()){
-		setWindowTitle(tr("GTA V Launcher V") + qApp->applicationVersion());
+		setTitle();
 		setFavicon();
 		setBackground();
 		setButtons();
@@ -54,6 +54,20 @@ void MainWindow::init(){
 		}else{
 			getGtaVersionThrewInternet(false); // Fills m_lastOfficialGTAVersion
 		}
+	}
+}
+
+void MainWindow::setTitle(){
+	setWindowTitle(tr("GTA V Launcher V") + qApp->applicationVersion());
+}
+
+void MainWindow::changeEvent(QEvent *event){
+	if(event->type() == QEvent::LanguageChange){
+		ui->retranslateUi(this);
+		setGtaVersion();
+		setTitle();
+	} else if(event->type() == QEvent::LocaleChange && TranslatorAliases::getLoadedLanguage() == "default"){
+		TranslatorAliases::loadSystemLanguage();
 	}
 }
 
@@ -395,18 +409,14 @@ void MainWindow::setButtons(){
 				"}");
 
 
-	ui->playOnline->setText(tr("Play GTA V Online\n (Mods disabled)"));
 	ui->playOnline->setStyleSheet(css);
 	ui->playOnline->update();
 
-	ui->playMods->setText(tr("Play GTA V"));
 	ui->playMods->setStyleSheet(css);
 	ui->playMods->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	ui->chooseMods->setText(tr("Choose mods"));
 	ui->chooseMods->setStyleSheet(css);
 
-	ui->byLabel->setText(tr("Made By Moffa13 @ moffa13.com"));
 	QPalette byPalette = ui->byLabel->palette();
 	byPalette.setColor(QPalette::WindowText, QColor(Qt::white));
 	ui->byLabel->setFont(QFont("Arial", 10));

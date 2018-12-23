@@ -44,6 +44,8 @@ class InstallModWindow : public SelfDeleteDialog
 		void addMod();
 	Q_SIGNALS:
 		void modAdded(QString const& name) const;
+	protected:
+		virtual void retranslateUi() override;
 	private:
 		Ui::InstallModWindow *ui;
 		QDir const _modsDir;

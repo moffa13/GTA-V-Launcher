@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>ChooseModsWindow</string>
+   <string>Select active mods</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -26,14 +26,14 @@
          <item>
           <widget class="QPushButton" name="setEnabledButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Set enabled</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="enableAllButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Enable all</string>
            </property>
           </widget>
          </item>
@@ -42,14 +42,14 @@
        <item>
         <widget class="QPushButton" name="installModButton">
          <property name="text">
-          <string>PushButton</string>
+          <string>Install a mod</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="deleteModButton">
          <property name="text">
-          <string>PushButton</string>
+          <string>Delete mod</string>
          </property>
         </widget>
        </item>
@@ -58,14 +58,14 @@
          <item>
           <widget class="QPushButton" name="disableAllButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Disable all</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="setDisabledButton">
            <property name="text">
-            <string>PushButton</string>
+            <string>Set disabled</string>
            </property>
           </widget>
          </item>
@@ -102,14 +102,14 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>PushButton</string>
+        <string>Reset from config</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="validateButton">
        <property name="text">
-        <string>PushButton</string>
+        <string>Confirm</string>
        </property>
       </widget>
      </item>

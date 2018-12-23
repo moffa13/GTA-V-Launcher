@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Install a mod (BETA)</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
@@ -24,7 +24,7 @@
        <item>
         <widget class="QPushButton" name="selectFileButton">
          <property name="text">
-          <string>PushButton</string>
+          <string>Select a mod file (*.asi, *.dll, *.zip, *.rar)</string>
          </property>
         </widget>
        </item>
@@ -57,7 +57,7 @@
      <item>
       <widget class="QPushButton" name="validateButton">
        <property name="text">
-        <string>PushButton</string>
+        <string>Confirm</string>
        </property>
       </widget>
      </item>
