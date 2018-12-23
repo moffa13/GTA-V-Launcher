@@ -14,7 +14,7 @@ INCLUDEPATH += src include
 
 VPATH += src ../../libs
 
-LIBS += -Lsrc/lib/openssl -llibcrypto -llibssl -lVersion
+LIBS += -Llib/openssl -llibcrypto -llibssl -lVersion
 
 SOURCES += \
 	Start.cpp \

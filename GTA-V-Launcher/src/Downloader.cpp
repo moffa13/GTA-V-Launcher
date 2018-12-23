@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QTimer>
+#include <cassert>
 
 Downloader::Downloader(QString url){
 	m_request = new QNetworkRequest(QUrl(url));

@@ -4,6 +4,7 @@
 #include <QString>
 #include <QHash>
 #include <QTranslator>
+#include <memory>
 
 
 class TranslatorAliases
