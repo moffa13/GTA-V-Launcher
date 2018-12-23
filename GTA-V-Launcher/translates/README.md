@@ -1,7 +1,9 @@
 # Adding a new language
 
 Go to **GTA-V-Launcher/translates**, run update.bat and copy **fr.ts** to your language code (in IETF language tag).
+
 A list can be found here : [http://www.lingoes.net/en/translator/langcode.htm]
+
 For example, if you want to translate it in german, you will call the file **de_XX.ts**
 where **XX** (uppercase) is the place where the language is spoken. 
 You can decide either if you want to specify it or not. If not, simply call it **de.ts**
