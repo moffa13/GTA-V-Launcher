@@ -73,6 +73,7 @@ V [1.0.12]
 - Added integrity file checker
 - Added support for pt_BR (Brazilian Portuguese) language. Thanks to @Krazy-Monkey
 - Added a menu to change to your favorite language
+- Added a button to restore GTA V to its original state (mods deleted, ...)
 - Fixed launcher's update checker
 - Translated missing translations
 - Error in mod installer, rar files with header 52 61 72 21 1A 07 01 not supported

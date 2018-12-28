@@ -11,11 +11,6 @@
 SettingsWindow::SettingsWindow(QWidget *parent) : SelfDeleteDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint){
 	setButtons();
 	connectAll();
-	init();
-}
-
-void SettingsWindow::init(){
-	setFixedSize(sizeHint());
 }
 
 void SettingsWindow::setButtons(){
@@ -36,28 +31,20 @@ void SettingsWindow::setButtons(){
 	m_languageLayout->addWidget(m_languageLabel);
 	m_languageLayout->addWidget(m_chooseLanguage, 1);
 
-
 	m_scriptHookVGroupBox = new QGroupBox(this);
 	m_scripthookVLayout = new QVBoxLayout(m_scriptHookVGroupBox);
-
 	m_checkForLauncherUpdates = new QPushButton(this);
-
+	m_deleteAllMods = new QPushButton(this);
 	m_checkForUpdatesSoftware = new QPushButton(this);
 	m_startCrackedCheckBox = new QCheckBox(this);
 	m_exitLauncherAfterGameStart = new QCheckBox(this);
-
 	m_checkForUpdatesWhenLauncherStarts = new QCheckBox(this);
-
 	m_forceGTAQuitButton = new QPushButton(this);
-
 	m_openGTAVGameDirectory = new QPushButton(this);
 	m_openGTAVGameDirectory->setToolTip(MainWindow::m_gtaDirectoryStr);
-
 	m_changeGTAVGameDirectory = new QPushButton(this);
 	m_checkFilesIntegrity = new QPushButton(this);
 	m_uninstallLauncher = new QPushButton(this);
-
-	retranslateUi();
 
 
 	bool cracked = Utilities::launcherCracked();
@@ -83,12 +70,14 @@ void SettingsWindow::setButtons(){
 	m_scripthookVLayout->addWidget(m_forceGTAQuitButton);
 	m_scripthookVLayout->addWidget(m_checkFilesIntegrity);
 	m_scripthookVLayout->addWidget(m_uninstallLauncher);
+	m_scripthookVLayout->addWidget(m_deleteAllMods);
 
 	m_scriptHookVGroupBox->setLayout(m_scripthookVLayout);
 
 	m_categoriesLayout = new QVBoxLayout(this);
 	m_categoriesLayout->addWidget(m_scriptHookVGroupBox);
 	setLayout(m_categoriesLayout);
+	retranslateUi();
 }
 
 void SettingsWindow::retranslateUi(){
@@ -106,6 +95,9 @@ void SettingsWindow::retranslateUi(){
 	m_changeGTAVGameDirectory->setText(tr("Change GTA V Game Directory"));
 	m_checkFilesIntegrity->setText(tr("Check GTA V Files Integrity"));
 	m_uninstallLauncher->setText(tr("Uninstall this launcher"));
+	m_deleteAllMods->setText(tr("Delete all GTA V mods and clean install"));
+	adjustSize();
+	setFixedSize(sizeHint());
 }
 
 void SettingsWindow::openGTAVGameDirectorySlot() const{
@@ -143,35 +135,98 @@ void SettingsWindow::connectAll(){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldCheckForUpdatesWhenLauncherStarts", state}});
 	});
 
-	connect(m_checkFilesIntegrity, &QPushButton::clicked, [this](){
-		GTAFilesChecker *checker = new GTAFilesChecker{MainWindow::m_gtaDirectoryStr};
-		m_filesCheckProgress = new ThreadedProgressBar{this};
-		m_filesCheckProgress->setWindowTitle(tr("Checking GTA V Files ..."));
-		m_filesCheckProgress->setMax(checker->getSize());
-		m_filesCheckProgress->setFixedSize(QSize(250, 60));
-		m_filesCheckProgress->show();
-		connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker, this](){
-			m_filesCheckProgress = nullptr;
-			checker->stop();
-			checker->deleteLater();
-		});
+	connect(m_checkFilesIntegrity, &QPushButton::clicked, this, &SettingsWindow::checkFilesIntegritySlot);
 
-		connect(checker, &GTAFilesChecker::bytesProcessing, [this](quint64 value){
-			if(m_filesCheckProgress != nullptr)
-				m_filesCheckProgress->add(value);
-		});
-		connect(checker, &GTAFilesChecker::fileProcessing, [this](QString const& file){
-			if(m_filesCheckProgress != nullptr)
-				m_filesCheckProgress->setLabel(file);
-		});
-		connect(checker, &GTAFilesChecker::success, [this, checker](){
-			m_filesCheckProgress->hide();
-			QMessageBox::information(this, tr("Success"), tr("File checker returned no error."));
-			checker->deleteLater();
-		});
-		connect(checker, &GTAFilesChecker::error, [this, checker](){
-			m_filesCheckProgress->hide();
-			QMessageBox::critical(this, tr("Checksum error"), tr("There is an error with these files : %1").arg(checker->getErrors().join(", ")));
+	connect(m_chooseLanguage, QOverload<int>::of(&QComboBox::activated), [this](int index){
+		if(index == 0)
+			TranslatorAliases::loadSystemLanguage();
+		else
+			TranslatorAliases::loadLanguage(m_chooseLanguage->currentData().toString(), false);
+	});
+
+	connect(m_deleteAllMods, &QPushButton::clicked, [this](){
+		int resp = QMessageBox::warning(
+			this,
+			tr("Warning"),
+			tr("Are you sure that you do want to remove every mods and restore GTA V to a clean state ? This will also uninstall the launcher."),
+			QMessageBox::Yes | QMessageBox::No
+		);
+		if(resp == QMessageBox::Yes){
+
+			while(getParent()->checkGtaAlreadyStarted(false)){
+				int rep = QMessageBox::information(this, tr("Cleaning"), tr("Please close GTA V in order to restore your installation."), QMessageBox::Ok | QMessageBox::No);
+				if(rep == QMessageBox::No){
+					return;
+				}
+			}
+			GTAFilesChecker checker{MainWindow::m_gtaDirectoryStr};
+			bool noError = checker.rootRemoveAllUnofficialFiles();
+			if(!noError){
+				int resp = QMessageBox::critical(
+					this,
+					tr("Error"),
+					tr("There was an error while removing some files, would you like to continue ?"),
+					QMessageBox::Yes | QMessageBox::No
+				);
+				if(resp == QMessageBox::No){
+					return;
+				}
+			}
+			QMessageBox::information(this, tr("Success"), tr("All mods have been removed, now checking integrity."));
+
+			auto conn = std::make_shared<QMetaObject::Connection>();
+			auto conn2 = std::make_shared<QMetaObject::Connection>();
+			*conn = connect(this, &SettingsWindow::finishedIntegrityCheck, [this, conn](){
+				QObject::disconnect(*conn);
+				getParent()->uninstallLauncherSlot(true, false);
+			});
+			// If integrity check is canceled, do not uninstall launcher next time you do an integrity check
+			*conn2 = connect(this, &SettingsWindow::integrityCheckAborted, [this, conn, conn2](){
+				QObject::disconnect(*conn);
+				QObject::disconnect(*conn2);
+			});
+
+
+			checkFilesIntegritySlot();
+		}
+
+	});
+
+	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));
+}
+
+void SettingsWindow::checkFilesIntegritySlot(){
+	GTAFilesChecker *checker = new GTAFilesChecker{MainWindow::m_gtaDirectoryStr};
+	m_filesCheckProgress = new ThreadedProgressBar{this};
+	m_filesCheckProgress->setWindowTitle(tr("Checking GTA V Files ..."));
+	m_filesCheckProgress->setMax(checker->getSize());
+	m_filesCheckProgress->setFixedSize(QSize(250, 60));
+	m_filesCheckProgress->show();
+	connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker, this](){
+		m_filesCheckProgress = nullptr;
+		Q_EMIT integrityCheckAborted();
+		checker->stop();
+		checker->deleteLater();
+	});
+
+	connect(checker, &GTAFilesChecker::bytesProcessing, [this](quint64 value){
+		if(m_filesCheckProgress != nullptr)
+			m_filesCheckProgress->add(value);
+	});
+	connect(checker, &GTAFilesChecker::fileProcessing, [this](QString const& file){
+		if(m_filesCheckProgress != nullptr)
+			m_filesCheckProgress->setLabel(file);
+	});
+	connect(checker, &GTAFilesChecker::success, [this, checker](){
+		m_filesCheckProgress->hide();
+		QMessageBox::information(this, tr("Success"), tr("File checker returned no error."));
+		Q_EMIT finishedIntegrityCheck();
+		checker->deleteLater();
+	});
+	connect(checker, &GTAFilesChecker::error, [this, checker](){
+		m_filesCheckProgress->hide();
+		QMessageBox::critical(this, tr("Checksum error"), tr("There is an error with these files : %1").arg(checker->getErrors().join(", ")));
+		if(checker->hasRealCorruptedFiles()){
 			int response = QMessageBox::question(
 						this,
 						tr("Delete corrupted files ?"),
@@ -185,19 +240,11 @@ void SettingsWindow::connectAll(){
 					QMessageBox::critical(this, tr("Error"), tr("Error deleting corrupted files"));
 				}
 			}
-			checker->deleteLater();
-		});
-		checker->check();
+		}
+		Q_EMIT finishedIntegrityCheck();
+		checker->deleteLater();
 	});
-
-	connect(m_chooseLanguage, QOverload<int>::of(&QComboBox::activated), [this](int index){
-		if(index == 0)
-			TranslatorAliases::loadSystemLanguage();
-		else
-			TranslatorAliases::loadLanguage(m_chooseLanguage->currentData().toString(), false);
-	});
-
-	connect(m_uninstallLauncher, SIGNAL(clicked(bool)), getParent(), SLOT(uninstallLauncherSlot()));
+	checker->check();
 }
 
 MainWindow *SettingsWindow::getParent() const{

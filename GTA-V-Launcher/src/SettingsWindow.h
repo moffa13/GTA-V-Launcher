@@ -20,7 +20,6 @@ class SettingsWindow : public SelfDeleteDialog
 	public:
 		explicit SettingsWindow(QWidget *parent = nullptr);
 	private:
-		void init();
 		void setButtons();
 		void connectAll();
 		MainWindow *getParent() const;
@@ -33,6 +32,7 @@ class SettingsWindow : public SelfDeleteDialog
 		QPushButton *m_forceGTAQuitButton;
 		QPushButton *m_uninstallLauncher;
 		QPushButton *m_checkFilesIntegrity;
+		QPushButton *m_deleteAllMods;
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
 		QCheckBox *m_exitLauncherAfterGameStart;
@@ -49,6 +49,10 @@ class SettingsWindow : public SelfDeleteDialog
 	private slots:
 		void checkSoftwareUpdatesSlot(bool warnUpToDate) const;
 		void checkLauncherUpdatesSlot() const;
+		void checkFilesIntegritySlot();
+	Q_SIGNALS:
+		void finishedIntegrityCheck() const;
+		void integrityCheckAborted() const;
 	protected:
 		virtual void retranslateUi() override;
 };

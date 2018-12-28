@@ -1,7 +1,9 @@
 #include "GTAFilesChecker.h"
+#include <QDir>
 
 const QHash<QString, QString> GTAFilesChecker::s_hashes = {
 	{"bink2w64.dll", "3722f03c488093cb2631b5412d4f12d9"},
+	{"commandline.txt", "na"},
 	{"common.rpf", "bbe724acef5f9fcfd85a38c4e35e2f00"},
 	{"d3dcompiler_46.dll", "7ea872c2f9803cfb4223098b85e70cc0"},
 	{"d3dcsx_46.dll", "8355e491fa90ca00045be22bb556b213"},
@@ -9,7 +11,12 @@ const QHash<QString, QString> GTAFilesChecker::s_hashes = {
 	{"GFSDK_TXAA.win64.dll", "167385d13443035ff68643b2c0c59a4d"},
 	{"GFSDK_TXAA_AlphaResolve.win64.dll", "ea04393624856f44854cace25b50ce3c"},
 	{"GPUPerfAPIDX11-x64.dll", "121044fe4ae47114dfccd15e399df399"},
+	{"GTA5.exe", "na"},
+	{"GTAVLanguageSelect.exe", "na"},
+	{"GTAVLauncher.exe", "na"},
 	{"NvPmApi.Core.win64.dll", "2041025c15e6ff893dcbb5ed63fdb2f8"},
+	{"PlayGTAV.exe", "na"},
+	{"version.txt", "na"},
 	{"x64a.rpf", "683610e269ba60c5fcc7a9f6d1a8bfd5"},
 	{"x64b.rpf", "70af24cd4fe2c8ee58edb902f018a558"},
 	{"x64c.rpf", "2a0f6f1c35ad567fe8e56b9c9cc4e4c6"},
@@ -102,6 +109,7 @@ const QHash<QString, QString> GTAFilesChecker::s_hashes = {
 	{"x64/data/errorcodes/russian.txt", "a27add49d85dfe94ca71c718e7387e25"},
 	{"x64/data/errorcodes/spanish.txt", "59f970b96d482fe0b34bff8a4edeb61d"},
 	{"x64/metadata.dat", "ebf8ef82a7bc0fbbbf0560922333d99b"},
+	{"update/update.rpf", "na"},
 	{"update/x64/data/errorcodes/american.txt", "7ebf0ad90a2cdde27e0388ec70a2cdda"},
 	{"update/x64/data/errorcodes/chinese.txt", "17757a647d006750be5a8d213bacf342"},
 	{"update/x64/data/errorcodes/french.txt", "8b8746a40a84a0127bef0971b1a87e0f"},
@@ -181,6 +189,19 @@ GTAFilesChecker::~GTAFilesChecker(){
 	_hasher->deleteLater();
 }
 
+bool GTAFilesChecker::rootRemoveAllUnofficialFiles(){
+	QStringList files(QDir(_base).entryList(QStringList() << "*", QDir::Files | QDir::Hidden | QDir::NoSymLinks));
+	for(QHash<QString, QString>::const_iterator it{s_hashes.constBegin()}; it != s_hashes.constEnd(); ++it){
+		if(it.key().contains("/")) continue;
+		files.removeOne(it.key());
+	}
+	bool ok = true;
+	ok &= QDir(QString("%1/%2").arg(_base).arg("mods")).removeRecursively();
+	ok &= QDir(QString("%1/%2").arg(_base).arg("disabledMods")).removeRecursively();
+	ok &= deleteListRelative(files);
+	return ok;
+}
+
 void GTAFilesChecker::check() const{
 	_hasher->process();
 }
@@ -195,25 +216,40 @@ QStringList GTAFilesChecker::getErrors() const{
 }
 
 bool GTAFilesChecker::deleteCorrupted() const{
-	if(_md5Errors.isEmpty()) return true;
+	return deleteListRelative(_md5Errors);
+}
+
+bool GTAFilesChecker::deleteListRelative(QStringList const& list) const{
+	if(list.isEmpty()) return true;
 	bool deleteOk = true;
-	for(auto const& file : _md5Errors){
-		deleteOk &= QFile(QString("%1/%2").arg(_base).arg(file)).remove();
+	for(auto const& file : list){
+		QFile f(QString("%1/%2").arg(_base).arg(file));
+		if(!f.exists()) continue;
+		f.setPermissions(QFile::ReadOther | QFile::WriteOther);
+		deleteOk &= f.remove();
 	}
 	return deleteOk;
 }
 
+bool GTAFilesChecker::hasRealCorruptedFiles() const{
+	return _existCount != 0;
+}
+
 void GTAFilesChecker::process(const QList<QPair<QString, QString>> &result){
+
 	if(_hasher->isFinished()) return; // If it has been canceled, do not process
 	_md5Errors.clear();
+	_existCount = 0;
 
 	bool isError = false;
 
 	for(QList<QPair<QString, QString>>::const_iterator it = result.constBegin(); it != result.constEnd(); ++it){
 		QString const relFile = it->first.mid(_base.length() + 1);
-		if(s_hashes[relFile] != it->second){
+		QString hash{s_hashes[relFile]};
+		if(hash != "na" && hash != it->second){
 			_md5Errors << relFile;
 			isError = true;
+			if(!it->second.isEmpty()) _existCount++; // Could be a problem because we can have an empty file.
 			qDebug() << relFile << "error md5 " << it->second << " should be " << s_hashes[relFile];
 		}
 	}

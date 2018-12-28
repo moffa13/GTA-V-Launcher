@@ -20,10 +20,14 @@ class GTAFilesChecker : public QObject
 		void stop();
 		QStringList getErrors() const;
 		bool deleteCorrupted() const;
+		bool rootRemoveAllUnofficialFiles();
+		bool hasRealCorruptedFiles() const;
 	private:
 		QString const _base;
 		QStringList _md5Errors;
+		quint32 _existCount = 0;
 		MD5Hasher *_hasher;
+		bool deleteListRelative(const QStringList &list) const;
 	Q_SIGNALS:
 		void fileProcessing(QString const& file) const;
 		void bytesProcessing(qint64 bytes) const;

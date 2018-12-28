@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow{
 		bool getGTAExecutable();
 		void getGtaVersionThrewInternet(bool shouldUpdate, bool warnUpToDate = false);
 		void getLauncherVersion(bool warnUpToDate = false);
+		bool checkGtaAlreadyStarted(bool showMessage = true);
 		static QString m_gtaDirectoryStr;
 		static QString m_disabledModsDirectoryStr;
 		static bool m_launcherCracked;
@@ -47,7 +48,6 @@ class MainWindow : public QMainWindow{
 		bool removeScriptHookVDinput(bool permanent = false);
 		void addScriptHookVDinput();
 		bool checkNeedSteamAndOk();
-		bool checkGtaAlreadyStarted(bool showMessage = true);
 		Ui::MainWindow* ui;
 		QString findGamePath();
 		void setRelativeDirs(const QString &base);
@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow{
 		void setTitle();
 	public slots:
 		void gotLauncherVersionSlot(QByteArray resp, bool warnUpToDate);
-		void uninstallLauncherSlot();
+		void uninstallLauncherSlot(bool shouldCloseApp = true, bool confirmation = true);
 		void closeAppSlot();
 		void startGtaArgsSlot(QStringList args = QStringList());
 		void startGtaOnlineSlot();

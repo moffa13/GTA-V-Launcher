@@ -79,8 +79,9 @@ void MainWindow::showThanksMessage(){
 	}
 }
 
-void MainWindow::uninstallLauncherSlot(){
-	int resp = QMessageBox::question(this, tr("Uninstall"), tr("Are you sure you do want to uninstall this launcher ? This will re-enable all your mods"));
+void MainWindow::uninstallLauncherSlot(bool shouldCloseApp, bool confirmation){
+	int resp = confirmation ? QMessageBox::question(this, tr("Uninstall"), tr("Are you sure you do want to uninstall this launcher ? This will re-enable all your mods"))
+							: QMessageBox::Yes;
 	if(resp == QMessageBox::Yes){
 		addScriptHookVDinput();
 		ChooseModsWindow::enableAllMods();
@@ -90,7 +91,7 @@ void MainWindow::uninstallLauncherSlot(){
 		Utilities::clearConfig("EnabledMods");
 		Utilities::clearConfig("DisabledMods");
 		QMessageBox::information(this, tr("Launcher uninstalled"), tr("Successfully uninstalled"), QMessageBox::Ok);
-		closeApp();
+		if(shouldCloseApp) closeApp();
 	}
 }
 
