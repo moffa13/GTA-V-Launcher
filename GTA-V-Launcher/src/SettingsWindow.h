@@ -35,6 +35,7 @@ class SettingsWindow : public SelfDeleteDialog
 		QPushButton *m_deleteAllMods;
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
+		QCheckBox *m_gtaHighPriority;
 		QCheckBox *m_exitLauncherAfterGameStart;
 		QCheckBox *m_checkForUpdatesWhenLauncherStarts;
 		QVBoxLayout *m_categoriesLayout;
@@ -44,7 +45,7 @@ class SettingsWindow : public SelfDeleteDialog
 	public slots:
 		void openGTAVGameDirectorySlot() const;
 		void changeGTAVGameDirectorySlot() const;
-		void forceKillGTASlot() const;
+		static void forceKillGTASlot();
 		void launchGTAVMethodSlot(int state);
 	private slots:
 		void checkSoftwareUpdatesSlot(bool warnUpToDate) const;

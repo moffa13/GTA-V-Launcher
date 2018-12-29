@@ -16,12 +16,13 @@ class MD5Hasher : public QObject
 		MD5Hasher();
 		~MD5Hasher();
 		static QMutex s_finishedMutex;
-		bool isFinished() const;
+		bool isStopped() const;
 		void stop();
 		inline qint64 getSize() const { return _size; }
 		void addFile(QString const& file);
 		void addFiles(QList<QString> const& files, QString const& base);
 		void process() const;
+		bool isRunning() const;
 	private:
 		QFutureWatcher<QPair<QString, QString>> *_md5FutureWatcher;
 		QList<QFile*> _files;

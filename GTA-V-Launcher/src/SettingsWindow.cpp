@@ -35,6 +35,7 @@ void SettingsWindow::setButtons(){
 	m_scripthookVLayout = new QVBoxLayout(m_scriptHookVGroupBox);
 	m_checkForLauncherUpdates = new QPushButton(this);
 	m_deleteAllMods = new QPushButton(this);
+	m_gtaHighPriority = new QCheckBox(this);
 	m_checkForUpdatesSoftware = new QPushButton(this);
 	m_startCrackedCheckBox = new QCheckBox(this);
 	m_exitLauncherAfterGameStart = new QCheckBox(this);
@@ -59,9 +60,14 @@ void SettingsWindow::setButtons(){
 	m_checkForUpdatesWhenLauncherStarts->setChecked(shouldCheckForUpdatesWhenLauncherStarts);
 	m_checkForUpdatesWhenLauncherStarts->setCheckState(shouldCheckForUpdatesWhenLauncherStarts ? Qt::Checked : Qt::Unchecked);
 
+	bool shouldSetGTAProcessAsHighPriority = Utilities::loadFromConfig("General", "shouldSetGTAProcessAsHighPriority", true).toBool();
+	m_gtaHighPriority->setChecked(shouldSetGTAProcessAsHighPriority);
+	m_gtaHighPriority->setCheckState(shouldSetGTAProcessAsHighPriority ? Qt::Checked : Qt::Unchecked);
+
 	m_scripthookVLayout->addWidget(m_startCrackedCheckBox);
 	m_scripthookVLayout->addWidget(m_exitLauncherAfterGameStart);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesWhenLauncherStarts);
+	m_scripthookVLayout->addWidget(m_gtaHighPriority);
 	m_scripthookVLayout->addLayout(m_languageLayout);
 	m_scripthookVLayout->addWidget(m_checkForLauncherUpdates);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesSoftware);
@@ -88,6 +94,7 @@ void SettingsWindow::retranslateUi(){
 	m_checkForLauncherUpdates->setText(tr("Check for launcher updates"));
 	m_checkForUpdatesSoftware->setText(tr("Check for ScriptHookV updates"));
 	m_startCrackedCheckBox->setText(tr("Launch from crack"));
+	m_gtaHighPriority->setText(tr("Start GTA V with high process priority"));
 	m_exitLauncherAfterGameStart->setText(tr("Exit launcher after game starts"));
 	m_checkForUpdatesWhenLauncherStarts->setText(tr("Check for updates when launcher starts"));
 	m_forceGTAQuitButton->setText(tr("Force kill GTA V Process"));
@@ -113,7 +120,7 @@ void SettingsWindow::changeGTAVGameDirectorySlot() const{
 		checkSoftwareUpdatesSlot(false);
 }
 
-void SettingsWindow::forceKillGTASlot() const{
+void SettingsWindow::forceKillGTASlot(){
 	QProcess::execute("taskkill /im GTA5.exe /f");
 	QProcess::execute("taskkill /im GTAVLauncher.exe /f");
 }
@@ -133,6 +140,9 @@ void SettingsWindow::connectAll(){
 	});
 	connect(m_checkForUpdatesWhenLauncherStarts, &QCheckBox::stateChanged, [](int state){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldCheckForUpdatesWhenLauncherStarts", state}});
+	});
+	connect(m_gtaHighPriority, &QCheckBox::stateChanged, [](int state){
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldSetGTAProcessAsHighPriority", state}});
 	});
 
 	connect(m_checkFilesIntegrity, &QPushButton::clicked, this, &SettingsWindow::checkFilesIntegritySlot);
@@ -176,12 +186,13 @@ void SettingsWindow::connectAll(){
 
 			auto conn = std::make_shared<QMetaObject::Connection>();
 			auto conn2 = std::make_shared<QMetaObject::Connection>();
-			*conn = connect(this, &SettingsWindow::finishedIntegrityCheck, [this, conn](){
+			*conn = connect(this, &SettingsWindow::finishedIntegrityCheck, [this, conn, conn2](){
 				QObject::disconnect(*conn);
+				QObject::disconnect(*conn2);
 				getParent()->uninstallLauncherSlot(true, false);
 			});
 			// If integrity check is canceled, do not uninstall launcher next time you do an integrity check
-			*conn2 = connect(this, &SettingsWindow::integrityCheckAborted, [this, conn, conn2](){
+			*conn2 = connect(this, &SettingsWindow::integrityCheckAborted, [conn, conn2](){
 				QObject::disconnect(*conn);
 				QObject::disconnect(*conn2);
 			});
@@ -204,8 +215,10 @@ void SettingsWindow::checkFilesIntegritySlot(){
 	m_filesCheckProgress->show();
 	connect(m_filesCheckProgress, &ThreadedProgressBar::hidden, [checker, this](){
 		m_filesCheckProgress = nullptr;
-		Q_EMIT integrityCheckAborted();
-		checker->stop();
+		if(checker->isRunning()){
+			Q_EMIT integrityCheckAborted();
+			checker->stop();
+		}
 		checker->deleteLater();
 	});
 

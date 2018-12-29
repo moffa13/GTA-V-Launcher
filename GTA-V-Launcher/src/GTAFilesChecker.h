@@ -16,6 +16,7 @@ class GTAFilesChecker : public QObject
 		~GTAFilesChecker();
 		static const QHash<QString, QString> s_hashes;
 		inline qint64 getSize() const { return _hasher->getSize(); }
+		inline bool isRunning() const { return _hasher->isRunning(); }
 		void check() const;
 		void stop();
 		QStringList getErrors() const;

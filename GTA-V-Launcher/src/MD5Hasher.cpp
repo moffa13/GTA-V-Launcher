@@ -7,7 +7,7 @@
 #include <iomanip>
 #include "openssl/md5.h"
 
-#define BUFFER_SIZE 10'000'000
+#define BUFFER_SIZE 20'000'000
 
 QMutex MD5Hasher::s_finishedMutex;
 
@@ -19,7 +19,7 @@ MD5Hasher::~MD5Hasher(){
 	_md5FutureWatcher->deleteLater();
 }
 
-bool MD5Hasher::isFinished() const{
+bool MD5Hasher::isStopped() const{
 	QMutexLocker locker{&s_finishedMutex};
 	return _isStopped;
 }
@@ -28,6 +28,10 @@ void MD5Hasher::stop(){
 	QMutexLocker locker{&s_finishedMutex};
 	_isStopped = true;
 	_md5FutureWatcher->cancel();
+}
+
+bool MD5Hasher::isRunning() const{
+	return _md5FutureWatcher->isRunning();
 }
 
 void MD5Hasher::init(){
@@ -69,12 +73,12 @@ void MD5Hasher::process() const{
 	if(_files.isEmpty()) return;
 
 	std::function<QPair<QString, QString>(QFile* file)> func = [this](QFile* file) -> QPair<QString, QString> {
-		if(isFinished()) return QPair<QString, QString>("", "");
+		if(isStopped()) return QPair<QString, QString>("", "");
 		return hash(file);
 	};
 
 
-	QThreadPool::globalInstance()->setMaxThreadCount(3);
+	//QThreadPool::globalInstance()->setMaxThreadCount(3);
 	QFuture<QPair<QString, QString>> future = QtConcurrent::mapped(_files, func);
 	_md5FutureWatcher->setFuture(future);
 

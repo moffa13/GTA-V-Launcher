@@ -53,6 +53,7 @@ class MainWindow : public QMainWindow{
 		void setRelativeDirs(const QString &base);
 		void setGtaVersion();
 		static Version getScriptHookVVersion();
+		static void setGTAHighPriority();
 		bool checkForUpdateCompatibility();
 		void startGTANoUpdate();
 		void showThanksMessage();

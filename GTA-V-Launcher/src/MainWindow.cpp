@@ -480,6 +480,10 @@ void MainWindow::closeAppSlot(){
 	qApp->exit(0);
 }
 
+void MainWindow::setGTAHighPriority(){
+	Utilities::setProcessPriority("GTA5.exe", 0x80); // 0x80 for high priority
+}
+
 void MainWindow::startGtaArgsSlot(QStringList args){
 	QProcess m_gtaProcess;
 	bool cracked = Utilities::launcherCracked();
@@ -494,6 +498,11 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 		}else{
 			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
+	}
+	if(Utilities::loadFromConfig("General", "shouldSetGTAProcessAsHighPriority", true).toBool()){
+		while(Utilities::checkProcessRunning("GTA5.exe") == nullptr)
+			QApplication::processEvents();
+		setGTAHighPriority();
 	}
 	if(Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart", true).toBool()){
 		closeApp();

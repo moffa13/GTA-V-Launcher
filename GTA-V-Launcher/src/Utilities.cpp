@@ -1,5 +1,4 @@
 #include "Utilities.h"
-#include "Windows.h"
 #include "TlHelp32.h"
 #include "Psapi.h"
 #include "Winbase.h"
@@ -38,6 +37,23 @@ Version Utilities::getFileVersion(const QString &filename){
 	version += QString::number((lpBuffer->dwFileVersionLS) & 0xffff);
 
 	return version;
+}
+
+bool Utilities::setProcessPriority(QString const& process, DWORD  dwPriorityClass){
+	PROCESSENTRY32 entry;
+	entry.dwSize = sizeof(PROCESSENTRY32);
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
+	if (Process32First(snapshot, &entry) == TRUE){
+		while (Process32Next(snapshot, &entry) == TRUE){
+			if (std::wstring(entry.szExeFile) == process.toStdWString()){
+				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+				BOOL response = SetPriorityClass(hProcess, dwPriorityClass);
+				CloseHandle(hProcess);
+				return response;
+			}
+		}
+	}
+	CloseHandle(snapshot);
 }
 
 QString Utilities::checkProcessRunning(QString const &name){

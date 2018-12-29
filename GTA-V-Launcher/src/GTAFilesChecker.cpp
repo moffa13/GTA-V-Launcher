@@ -197,6 +197,7 @@ bool GTAFilesChecker::rootRemoveAllUnofficialFiles(){
 	}
 	bool ok = true;
 	ok &= QDir(QString("%1/%2").arg(_base).arg("mods")).removeRecursively();
+	ok &= QDir(QString("%1/%2").arg(_base).arg("scripts")).removeRecursively();
 	ok &= QDir(QString("%1/%2").arg(_base).arg("disabledMods")).removeRecursively();
 	ok &= deleteListRelative(files);
 	return ok;
@@ -237,7 +238,7 @@ bool GTAFilesChecker::hasRealCorruptedFiles() const{
 
 void GTAFilesChecker::process(const QList<QPair<QString, QString>> &result){
 
-	if(_hasher->isFinished()) return; // If it has been canceled, do not process
+	if(_hasher->isStopped()) return; // If it has been canceled, do not process
 	_md5Errors.clear();
 	_existCount = 0;
 
