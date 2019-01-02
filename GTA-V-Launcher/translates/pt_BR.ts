@@ -42,7 +42,8 @@
     <message>
         <location filename="../src/ChooseModsWindow.cpp" line="310"/>
         <source>There is a conflict with %1 from your enabled &amp; disabled mods. Which one do you want to keep ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Há um conflito com %1 from your enabled &amp; disabled mods. Qual deles você deseja manter
+ ?</translation>
     </message>
     <message>
         <location filename="../src/ChooseModsWindow.ui" line="105"/>
@@ -59,22 +60,22 @@
         <location filename="../src/ChooseModsWindow.cpp" line="134"/>
         <location filename="../src/ChooseModsWindow.cpp" line="141"/>
         <source>Erase</source>
-        <translation type="unfinished"></translation>
+        <translation>apagar</translation>
     </message>
     <message>
         <location filename="../src/ChooseModsWindow.cpp" line="128"/>
         <source>Do you want to overwrite the old mod with the same name (%1) ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deseja substituir o mod antigo com o mesmo nome (%1) ?</translation>
     </message>
     <message>
         <location filename="../src/ChooseModsWindow.cpp" line="135"/>
         <source>Do you want to overwrite the old mod with this newer version (%1 V %2) ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deseja substituir o mod antigo com esta versão mais recente (%1 V %2) ?</translation>
     </message>
     <message>
         <location filename="../src/ChooseModsWindow.cpp" line="142"/>
         <source>You already have a more recent version of this mod (%1 V %2), do you want to overwrite anyway ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você já possui uma versão mais recente deste mod (%1 V %2), você deseja substituir mesmo assim ?</translation>
     </message>
     <message>
         <location filename="../src/ChooseModsWindow.cpp" line="309"/>
@@ -252,7 +253,7 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/MainWindow.cpp" line="279"/>
         <source>You have the latest version of the launcher (V %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Você possui a última versão do launcher (V %1)</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="320"/>
@@ -353,7 +354,7 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/MainWindow.cpp" line="691"/>
         <source>You have the latest version of ScriptHookV (V %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Você possui a última versão do ScriptHookV (V %1)</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.cpp" line="269"/>
@@ -397,12 +398,12 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/MainWindow.ui" line="26"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formato</translation>
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="104"/>
         <source>GTA V</source>
-        <translation></translation>
+        <translation>GTA V</translation>
     </message>
 </context>
 <context>
@@ -415,12 +416,12 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="96"/>
         <source>Language : </source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma : </translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="97"/>
         <source>Default system&apos;s language</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma padrão do sistema</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="99"/>
@@ -465,7 +466,7 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="107"/>
         <source>Check GTA V Files Integrity</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificar a integridade dos arquivos do GTA V</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="108"/>
@@ -475,53 +476,53 @@ bloquear atualizações ?</translation>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="149"/>
         <source>Checking GTA V Files ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificando os arquivos do GTA V ...</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="169"/>
         <location filename="../src/SettingsWindow.cpp" line="183"/>
         <source>Success</source>
-        <translation type="unfinished">Sucesso</translation>
+        <translation>Sucesso</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="169"/>
         <source>File checker returned no error.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verificador de arquivos não retornou nenhum erro.</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="174"/>
         <source>Checksum error</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de checksum</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="174"/>
         <source>There is an error with these files : %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Há um erro com estes arquivos : %1</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="177"/>
         <source>Delete corrupted files ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Excluir arquivos corrompidos ?</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="178"/>
         <source>Do you want to delete the corrupted files so they will be downloaded at the next start of GTA V ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Você deseja excluir os arquivos corrompidos para que eles sejam baixados na próxima vez que o GTA V iniciar ?</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="183"/>
         <source>Files have been deleted !</source>
-        <translation type="unfinished"></translation>
+        <translation>Os arquivos foram excluídos !</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="185"/>
         <source>Error</source>
-        <translation type="unfinished">Erro</translation>
+        <translation>Erro</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="185"/>
         <source>Error deleting corrupted files</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao excluir arquivos corrompidos</translation>
     </message>
     <message>
         <location filename="../src/SettingsWindow.cpp" line="228"/>

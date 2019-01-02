@@ -54,6 +54,7 @@ bool Utilities::setProcessPriority(QString const& process, DWORD  dwPriorityClas
 		}
 	}
 	CloseHandle(snapshot);
+	return false;
 }
 
 QString Utilities::checkProcessRunning(QString const &name){

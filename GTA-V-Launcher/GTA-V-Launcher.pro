@@ -1,7 +1,7 @@
 QT += widgets network xml concurrent
 
 CONFIG += c++11
-QMAKE_CXXFLAGS += -MD
+QMAKE_CXXFLAGS += -MT
 QMAKE_CXXFLAGS_RELEASE = -O2
 
 RC_FILE = GTA-V-Launcher.rc
@@ -14,7 +14,7 @@ INCLUDEPATH += src include
 
 VPATH += src ../../libs
 
-LIBS += -Llib/openssl -llibcrypto -llibssl -lVersion
+LIBS += -Llib\openssl -llibcrypto -llibssl -lVersion
 
 SOURCES += \
 	Start.cpp \
