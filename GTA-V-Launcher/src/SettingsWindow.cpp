@@ -38,6 +38,7 @@ void SettingsWindow::setButtons(){
 	m_gtaHighPriority = new QCheckBox(this);
 	m_checkForUpdatesSoftware = new QPushButton(this);
 	m_startCrackedCheckBox = new QCheckBox(this);
+	m_disableFirewallForGTA = new QCheckBox(this);
 	m_exitLauncherAfterGameStart = new QCheckBox(this);
 	m_checkForUpdatesWhenLauncherStarts = new QCheckBox(this);
 	m_forceGTAQuitButton = new QPushButton(this);
@@ -64,8 +65,13 @@ void SettingsWindow::setButtons(){
 	m_gtaHighPriority->setChecked(shouldSetGTAProcessAsHighPriority);
 	m_gtaHighPriority->setCheckState(shouldSetGTAProcessAsHighPriority ? Qt::Checked : Qt::Unchecked);
 
+	bool shouldDisableWindowsFirewall = Utilities::loadFromConfig("General", "shouldDisableWindowsFirewall", false).toBool();
+	m_disableFirewallForGTA->setChecked(shouldDisableWindowsFirewall);
+	m_disableFirewallForGTA->setCheckState(shouldDisableWindowsFirewall ? Qt::Checked : Qt::Unchecked);
+
 	m_scripthookVLayout->addWidget(m_startCrackedCheckBox);
 	m_scripthookVLayout->addWidget(m_exitLauncherAfterGameStart);
+	m_scripthookVLayout->addWidget(m_disableFirewallForGTA);
 	m_scripthookVLayout->addWidget(m_checkForUpdatesWhenLauncherStarts);
 	m_scripthookVLayout->addWidget(m_gtaHighPriority);
 	m_scripthookVLayout->addLayout(m_languageLayout);
@@ -94,6 +100,7 @@ void SettingsWindow::retranslateUi(){
 	m_checkForLauncherUpdates->setText(tr("Check for launcher updates"));
 	m_checkForUpdatesSoftware->setText(tr("Check for ScriptHookV updates"));
 	m_startCrackedCheckBox->setText(tr("Launch from crack"));
+	m_disableFirewallForGTA->setText(tr("Disable windows real-time protection\n when playing GTA (removes FPS drop)"));
 	m_gtaHighPriority->setText(tr("Start GTA V with high process priority"));
 	m_exitLauncherAfterGameStart->setText(tr("Exit launcher after game starts"));
 	m_checkForUpdatesWhenLauncherStarts->setText(tr("Check for updates when launcher starts"));
@@ -135,6 +142,11 @@ void SettingsWindow::connectAll(){
 	connect(m_changeGTAVGameDirectory, SIGNAL(clicked(bool)), this, SLOT(changeGTAVGameDirectorySlot()));
 
 	connect(m_startCrackedCheckBox, SIGNAL(stateChanged(int)), this, SLOT(launchGTAVMethodSlot(int)));
+
+	connect(m_disableFirewallForGTA, &QCheckBox::stateChanged, [](int state){
+		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldDisableWindowsFirewall", state}});
+	});
+
 	connect(m_exitLauncherAfterGameStart, &QCheckBox::stateChanged, [](int state){
 		Utilities::setToConfig("General", QMap<QString, QVariant>{{"shouldExitLauncherAfterGameStart", state}});
 	});

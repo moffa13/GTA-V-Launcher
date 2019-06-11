@@ -499,10 +499,25 @@ void MainWindow::startGtaArgsSlot(QStringList args){
 			m_gtaProcess.startDetached(m_gtaDirectoryStr + "/GTAVLauncher.exe", args);
 		}
 	}
+
+	if(Utilities::loadFromConfig("General", "shouldDisableWindowsFirewall", false).toBool()){
+		if(Utilities::startedAsAdmin()){
+			QProcess::execute("PowerShell Set-MpPreference -DisableRealtimeMonitoring 1");
+		}else{
+			QMessageBox::critical(this, tr("Administrator"), tr("Start this launcher as admin to enable this option"));
+		}
+	}
+
+	showMinimized(); // Hide window
+
 	if(Utilities::loadFromConfig("General", "shouldSetGTAProcessAsHighPriority", true).toBool()){
-		while(Utilities::checkProcessRunning("GTA5.exe") == nullptr)
+		while(Utilities::checkProcessRunning("GTAVLauncher.exe") != nullptr){
 			QApplication::processEvents();
-		setGTAHighPriority();
+		}
+		QThread::msleep(3000); // At this time, launcher is closed, wait for gta main process
+		if(Utilities::checkProcessRunning("GTA5.exe") != nullptr){
+			setGTAHighPriority();
+		}
 	}
 	if(Utilities::loadFromConfig("General", "shouldExitLauncherAfterGameStart", true).toBool()){
 		closeApp();

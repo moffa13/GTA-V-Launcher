@@ -57,6 +57,22 @@ bool Utilities::setProcessPriority(QString const& process, DWORD  dwPriorityClas
 	return false;
 }
 
+bool Utilities::startedAsAdmin(){
+	bool fRet = FALSE;
+	HANDLE hToken = nullptr;
+	if(OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
+		TOKEN_ELEVATION Elevation;
+		DWORD cbSize = sizeof(TOKEN_ELEVATION);
+		if(GetTokenInformation(hToken, TokenElevation, &Elevation, sizeof(Elevation), &cbSize)){
+			fRet = Elevation.TokenIsElevated;
+		}
+	}
+	if(hToken) {
+		CloseHandle(hToken);
+	}
+	return fRet;
+}
+
 QString Utilities::checkProcessRunning(QString const &name){
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
