@@ -469,7 +469,7 @@ void MainWindow::addScriptHookVDinput(){
 }
 
 bool MainWindow::checkNeedSteamAndOk(){
-	bool ok = !isSteamVersion() || Utilities::checkProcessRunning("Steam.exe") != nullptr;
+	bool ok = !isSteamVersion() || Utilities::checkProcessRunning("steam.exe") != nullptr;
 	if(!ok){
 		QMessageBox::critical(this, tr("Error"), tr("Please start steam, log in and try again"));
 	}
