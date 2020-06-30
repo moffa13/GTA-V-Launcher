@@ -81,6 +81,7 @@ V [1.0.12]
 
 V 1.0.13
 - Added support for ru (Russian) language. Thanks to @vanja-san
+- Fixed a bug which thinks steam is not running
 
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
