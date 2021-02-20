@@ -8,7 +8,8 @@ RC_FILE = GTA-V-Launcher.rc
 
 TRANSLATIONS = \
 translates/fr.ts \
-translates/pt_BR.ts
+translates/pt_BR.ts \
+translates/ru.ts
 
 INCLUDEPATH += src include
 
@@ -54,8 +55,8 @@ RESOURCES += \
 	GTA-V-Launcher.qrc
 
 
-VERSION = 1.0.12
-DEFINES += APP_VERSION_COMMA=1,0,12
+VERSION = 1.0.14
+DEFINES += APP_VERSION_COMMA=1,0,14
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 FORMS += \

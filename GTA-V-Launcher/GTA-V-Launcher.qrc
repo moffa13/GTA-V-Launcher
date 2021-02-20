@@ -5,11 +5,13 @@
         <file>images/upArrow.png</file>
         <file>images/favicon.png</file>
         <file>translates/fr.qm</file>
+		<file>translates/ru.qm</file>
         <file>translates/pt_BR.qm</file>
         <file alias="unzip.exe">third-party/unzip.exe</file>
         <file alias="unrar.exe">third-party/UnRAR.exe</file>
         <file>translates/flags/en.png</file>
         <file>translates/flags/fr.png</file>
         <file>translates/flags/pt_BR.png</file>
+		<file>translates/flags/ru.png</file>
     </qresource>
 </RCC>

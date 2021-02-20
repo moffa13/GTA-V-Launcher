@@ -79,9 +79,14 @@ V [1.0.12]
 - Translated missing translations
 - Error in mod installer, rar files with header 52 61 72 21 1A 07 01 not supported
 
+V [1.0.13]
+- Added support for ru (Russian) language. Thanks to @vanja-san
+- Fixed a bug which thinks steam is not running
+
 [1.0.7]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.7
 [1.0.8]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.8
 [1.0.9]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.9
 [1.0.10]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.10
 [1.0.11]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.11
 [1.0.12]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.12
+[1.0.13]: https://github.com/moffa13/GTA-V-Launcher/releases/tag/1.0.13

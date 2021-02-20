@@ -159,15 +159,15 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/MainWindow.cpp" line="289"/>
-        <location filename="../src/MainWindow.cpp" line="473"/>
-        <location filename="../src/MainWindow.cpp" line="512"/>
-        <location filename="../src/MainWindow.cpp" line="521"/>
+        <location filename="../src/MainWindow.cpp" line="290"/>
+        <location filename="../src/MainWindow.cpp" line="474"/>
+        <location filename="../src/MainWindow.cpp" line="537"/>
+        <location filename="../src/MainWindow.cpp" line="546"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="289"/>
+        <location filename="../src/MainWindow.cpp" line="290"/>
         <source>This launcher is actually just made for windows</source>
         <translation>Ce launcher est actuellement fait pour Windows uniquement</translation>
     </message>
@@ -204,77 +204,77 @@
         <translation>Êtes-vous sûr de vouloir désinstaller le launcher ? Cela va réactiver tous vos mods</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="92"/>
+        <location filename="../src/MainWindow.cpp" line="93"/>
         <source>Launcher uninstalled</source>
         <translation>Launcher désinstallé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="92"/>
+        <location filename="../src/MainWindow.cpp" line="93"/>
         <source>Successfully uninstalled</source>
         <translation>Le launcher a bien été désinstallé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="193"/>
+        <location filename="../src/MainWindow.cpp" line="194"/>
         <source>Incompatible Version, start game and block updates ?</source>
         <translation>Version incompatible, lancer le jeu et bloquer les mises à jour ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="194"/>
+        <location filename="../src/MainWindow.cpp" line="195"/>
         <source>GTA V recently updated so when your game will update, you probably won&apos;t be able to start it again. First, try to update ScriptHookV by clicking Cancel then go to Settings -&gt; Check for ScriptHookV updates. If you tried without success (No ScriptHookV release yet), click yes. It will start the game and will block GTA from updating. If you still want to start the game, click No</source>
         <translation>GTA V a récemment été mis à jour donc, lorsque le jeu sera mis à jour, vous ne pourrez sûrement plus le lancer. Essayez d&apos;abord de mettre à jour ScriptHookV en cliquant sur Annuler et en allant ensuite dans Paramètres -&gt; Rechercher les mises à jour de ScriptHookV. Si vous avez déjà essayé, sans succès (Pas encore de mise à jour de ScriptHookV), cliquez sur Oui. Cela va lancer le jeu et bloquera les mises à jour de GTA. Si vous voulez quand même lancer le jeu, cliquez sur Non</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="209"/>
+        <location filename="../src/MainWindow.cpp" line="210"/>
         <source>Incompatible Version</source>
         <translation>Version Incompatible</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="210"/>
+        <location filename="../src/MainWindow.cpp" line="211"/>
         <source>GTA V recently updated so when your game will update, you probably won&apos;t be able to start it again using mods. To avoid this, please start steam in offline mode then click ok</source>
         <translation>GTA V a récemment été mis à jour. Donc, lorsque vous lancerez le jeu, vous ne pourrez sûrement plus le lancer avec des mods. Pour éviter cela, veuillez lancer Steam en mode hors ligne et cliquez sur Ok</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="222"/>
+        <location filename="../src/MainWindow.cpp" line="223"/>
         <source>Incompatible Version, start game without mods ?</source>
         <translation>Version incompatible, lancer le jeu sans les mods ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="223"/>
+        <location filename="../src/MainWindow.cpp" line="224"/>
         <source>GTA V recently updated so as your game. You probably won&apos;t be able to start it again using mods. Would you want to start the game without mods ?</source>
         <translation>GTA V a récemment été mis à jour ainsi que votre jeu. Vous ne pourrez probablement plus le lancer avec vos mods. Voulez vous lancer le jeu sans les mods ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="270"/>
+        <location filename="../src/MainWindow.cpp" line="271"/>
         <source>There is a newer update of the launcher (V %1), would you like to be redirected to the website ?</source>
         <translation>Il y a une nouvelle version du launcher (V %1), voulez-vous être redirigé vers le site ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="279"/>
+        <location filename="../src/MainWindow.cpp" line="280"/>
         <source>You have the latest version of the launcher (V %1)</source>
         <translation>Vous possédez la dernière version du launcher (V %1)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="320"/>
+        <location filename="../src/MainWindow.cpp" line="321"/>
         <source>Found GTA V</source>
         <translation>Répertoire de GTA V trouvé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="321"/>
+        <location filename="../src/MainWindow.cpp" line="322"/>
         <source>We found GTA V in &quot;%1&quot;, is this the right path ?</source>
         <translation>Nous avons trouvé un GTA V dans %1, est-ce le bon dossier ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="347"/>
+        <location filename="../src/MainWindow.cpp" line="348"/>
         <source>Select your GTA V Path</source>
         <translation>Sélectionner le dossier contenant GTA V</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="355"/>
+        <location filename="../src/MainWindow.cpp" line="356"/>
         <source>Wrong path</source>
         <translation>Mauvais chemin</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="356"/>
+        <location filename="../src/MainWindow.cpp" line="357"/>
         <source>This does not seem to be your GTA V folder, please select another one</source>
         <translation>Il ne semble pas que ça soit un répertoire contenant GTA V, veuillez en sélectionner un autre</translation>
     </message>
@@ -285,111 +285,121 @@
     </message>
     <message>
         <location filename="../src/MainWindow.ui" line="91"/>
-        <location filename="../src/MainWindow.cpp" line="425"/>
+        <location filename="../src/MainWindow.cpp" line="426"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="473"/>
+        <location filename="../src/MainWindow.cpp" line="474"/>
         <source>Please start steam, log in and try again</source>
         <translation>Lancez steam, connectez-vous et essayez à nouveau</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="506"/>
+        <location filename="../src/MainWindow.cpp" line="507"/>
+        <source>Administrator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="507"/>
+        <source>Start this launcher as admin to enable this option</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/MainWindow.cpp" line="531"/>
         <source>GTA V Running</source>
         <translation>GTA V Lancé</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="506"/>
+        <location filename="../src/MainWindow.cpp" line="531"/>
         <source>GTA V is already running</source>
         <translation>GTA V est déjà en cours d&apos;exécution</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="512"/>
+        <location filename="../src/MainWindow.cpp" line="537"/>
         <source>You are using a cracked version, online mode is not available</source>
         <translation>Vous utilisez une version crackée, le mode en ligne n&apos;est donc pas disponible</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="522"/>
+        <location filename="../src/MainWindow.cpp" line="547"/>
         <source>Could not remove ScriptHookV, this might be dangerous in online mode, would you still like to play ?</source>
         <translation>Impossible de supprimer ScriptHookV, il peut être dangereux en online, voulez-vous quand même jouer ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="592"/>
+        <location filename="../src/MainWindow.cpp" line="617"/>
         <source>ScriptHookV is missing</source>
         <translation>ScriptHookV est manquant</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="593"/>
+        <location filename="../src/MainWindow.cpp" line="618"/>
         <source>To be able to run your mods, you need ScriptHookV. Would you like to install it (V %1) ?</source>
         <translation>Pour pouvoir lancer vos mods, il vous faut ScriptHookV. Voulez vous l&apos;installer (V %1) ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="600"/>
+        <location filename="../src/MainWindow.cpp" line="625"/>
         <source>ScriptHookV out-of-date</source>
         <translation>ScriptHookV n&apos;est plus à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="659"/>
+        <location filename="../src/MainWindow.cpp" line="684"/>
         <source>Could not find ScriptHookV in http://www.dev-c.com, maybe they still don&apos;t have released a fix for the new version. Maybe you will encounter issues when starting the newly updated game.</source>
         <translation>Impossible de trouver ScriptHookV sur http://www.dev-c.com, ils n&apos;ont peut-être pas encore sorti de mise à jour pour la nouvelle version. Vous aurez peut-être des problème en lançant la nouvelle mise à jour du jeu.</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="668"/>
+        <location filename="../src/MainWindow.cpp" line="693"/>
         <source>Would you like to download the %1 version of ScriptHookV instead ?</source>
         <translation>Voulez-vous télécharger la version %1 de ScriptHookV ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="679"/>
+        <location filename="../src/MainWindow.cpp" line="704"/>
         <source>Error downloading ScriptHookV</source>
         <translation>Error lors du téléchargement de ScriptHookV</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="680"/>
+        <location filename="../src/MainWindow.cpp" line="705"/>
         <source>An Error occured while downloading ScriptHookV, please retry</source>
         <translation>Une erreur est survenue pendant le téléchargement de ScriptHookV, veuillez réessayer</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="691"/>
+        <location filename="../src/MainWindow.cpp" line="716"/>
         <source>You have the latest version of ScriptHookV (V %1)</source>
         <translation>Vous possédez la dernière version de ScriptHookV (V %1)</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="269"/>
-        <location filename="../src/MainWindow.cpp" line="620"/>
-        <location filename="../src/MainWindow.cpp" line="650"/>
+        <location filename="../src/MainWindow.cpp" line="270"/>
+        <location filename="../src/MainWindow.cpp" line="645"/>
+        <location filename="../src/MainWindow.cpp" line="675"/>
         <source>Update</source>
         <translation>Mise à jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="601"/>
+        <location filename="../src/MainWindow.cpp" line="626"/>
         <source>Your ScriptHookV version is apparently out-of-date, would you like to update it (V %1) ?</source>
         <translation>Votre version de ScriptHookV est obsolète, voulez-vous le mettre à jour (V %1) ?</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="620"/>
+        <location filename="../src/MainWindow.cpp" line="645"/>
         <source>Please close GTA V in order to update ScriptHookV</source>
         <translation>Veuillez quitter GTA V pour procéder à la mise à jour de ScriptHookV</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="650"/>
+        <location filename="../src/MainWindow.cpp" line="675"/>
         <source>ScriptHookV has successfully been updated/installed !</source>
         <translation>ScriptHookV a bien été mis à jour/installé !</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="658"/>
-        <location filename="../src/MainWindow.cpp" line="667"/>
+        <location filename="../src/MainWindow.cpp" line="683"/>
+        <location filename="../src/MainWindow.cpp" line="692"/>
         <source>ScriptHookV Not Found</source>
         <translation>ScriptHookV introuvable</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="279"/>
-        <location filename="../src/MainWindow.cpp" line="690"/>
+        <location filename="../src/MainWindow.cpp" line="280"/>
+        <location filename="../src/MainWindow.cpp" line="715"/>
         <source>Up-to-date</source>
         <translation>À jour</translation>
     </message>
     <message>
-        <location filename="../src/MainWindow.cpp" line="706"/>
+        <location filename="../src/MainWindow.cpp" line="731"/>
         <source>Play offline</source>
         <translation>Jouer hors-ligne</translation>
     </message>
@@ -407,123 +417,171 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="95"/>
+        <location filename="../src/SettingsWindow.cpp" line="96"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="96"/>
+        <location filename="../src/SettingsWindow.cpp" line="97"/>
         <source>Language : </source>
         <translation>Langue : </translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="97"/>
+        <location filename="../src/SettingsWindow.cpp" line="98"/>
         <source>Default system&apos;s language</source>
         <translation>Language par défaut du système</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="99"/>
+        <location filename="../src/SettingsWindow.cpp" line="100"/>
         <source>Check for launcher updates</source>
         <translation>Rechercher les mises à jour du launcher</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="100"/>
+        <location filename="../src/SettingsWindow.cpp" line="101"/>
         <source>Check for ScriptHookV updates</source>
         <translation>Rechercher les mises à jour de ScriptHookV</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="101"/>
+        <location filename="../src/SettingsWindow.cpp" line="102"/>
         <source>Launch from crack</source>
         <translation>Utiliser le crack</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="102"/>
+        <location filename="../src/SettingsWindow.cpp" line="103"/>
+        <source>Disable windows real-time protection
+ when playing GTA (removes FPS drop)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="104"/>
+        <source>Start GTA V with high process priority</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="105"/>
         <source>Exit launcher after game starts</source>
         <translation>Quitter le launcher après avoir lancé le jeu</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="103"/>
+        <location filename="../src/SettingsWindow.cpp" line="106"/>
         <source>Check for updates when launcher starts</source>
         <translation>Rechercher des mises à jour au lancement du launcher</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="104"/>
+        <location filename="../src/SettingsWindow.cpp" line="107"/>
         <source>Force kill GTA V Process</source>
         <translation>Forcer à quitter le processus GTA V</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="105"/>
+        <location filename="../src/SettingsWindow.cpp" line="108"/>
         <source>Open GTA V Game Directory</source>
         <translation>Ouvrir le dossier de GTA V</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="106"/>
+        <location filename="../src/SettingsWindow.cpp" line="109"/>
         <source>Change GTA V Game Directory</source>
         <translation>Changer le répertoire de GTA V</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="107"/>
+        <location filename="../src/SettingsWindow.cpp" line="110"/>
         <source>Check GTA V Files Integrity</source>
         <translation>Vérifier l&apos;intégrité des fichiers de GTA V</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="108"/>
+        <location filename="../src/SettingsWindow.cpp" line="111"/>
         <source>Uninstall this launcher</source>
         <translation>Désinstaller le launcher</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="149"/>
+        <location filename="../src/SettingsWindow.cpp" line="112"/>
+        <source>Delete all GTA V mods and clean install</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="172"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="173"/>
+        <source>Are you sure that you do want to remove every mods and restore GTA V to a clean state ? This will also uninstall the launcher.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="179"/>
+        <source>Cleaning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="179"/>
+        <source>Please close GTA V in order to restore your installation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="190"/>
+        <source>There was an error while removing some files, would you like to continue ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="197"/>
+        <source>All mods have been removed, now checking integrity.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/SettingsWindow.cpp" line="224"/>
         <source>Checking GTA V Files ...</source>
         <translation>Vérification des fichiers de GTA V ...</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="169"/>
-        <location filename="../src/SettingsWindow.cpp" line="183"/>
+        <location filename="../src/SettingsWindow.cpp" line="197"/>
+        <location filename="../src/SettingsWindow.cpp" line="247"/>
+        <location filename="../src/SettingsWindow.cpp" line="263"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="169"/>
+        <location filename="../src/SettingsWindow.cpp" line="247"/>
         <source>File checker returned no error.</source>
         <translation>La vérification n&apos;a retourné aucune erreur.</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="174"/>
+        <location filename="../src/SettingsWindow.cpp" line="253"/>
         <source>Checksum error</source>
         <translation>Erreur de checksum</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="174"/>
+        <location filename="../src/SettingsWindow.cpp" line="253"/>
         <source>There is an error with these files : %1</source>
         <translation>Il y a une erreur avec ces fichiers : %1</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="177"/>
+        <location filename="../src/SettingsWindow.cpp" line="257"/>
         <source>Delete corrupted files ?</source>
         <translation>Supprimer les fichiers corrompus ?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="178"/>
+        <location filename="../src/SettingsWindow.cpp" line="258"/>
         <source>Do you want to delete the corrupted files so they will be downloaded at the next start of GTA V ?</source>
         <translation>Voulez-vous supprimer les fichiers corrumpus qui seront téléchargés au prochain lancement de GTA V ?</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="183"/>
+        <location filename="../src/SettingsWindow.cpp" line="263"/>
         <source>Files have been deleted !</source>
         <translation>Les fichiers ont été supprimés !</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="185"/>
+        <location filename="../src/SettingsWindow.cpp" line="189"/>
+        <location filename="../src/SettingsWindow.cpp" line="265"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="185"/>
+        <location filename="../src/SettingsWindow.cpp" line="265"/>
         <source>Error deleting corrupted files</source>
         <translation>Erreur de suppression des fichiers corrompus</translation>
     </message>
     <message>
-        <location filename="../src/SettingsWindow.cpp" line="228"/>
+        <location filename="../src/SettingsWindow.cpp" line="300"/>
         <source>Can&apos;t find 3DM Launcher, please be sure that the file is in the GTA V root folder and is named &quot;Launcher.exe&quot;Also, make sure that &quot;3dmgame.dll&quot; and &quot;3dmgame.ini&quot; are present</source>
         <translation>Impossible de trouver le launcher &quot;3DM&quot;, vérifiez que le fichier se trouve à la racine du jeu et est bien appelé &quot;Launcher.exe&quot;. Vérifiez aussi que les fichiers &quot;3dmgame.dll&quot; et &quot;3dmgame.ini&quot; sont présents</translation>
     </message>

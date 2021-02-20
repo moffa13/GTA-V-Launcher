@@ -17,7 +17,8 @@ QHash<QString, QString> const TranslatorAliases::_aliases = {
 QList<QPair<QString, QString>> const TranslatorAliases::_trFilesToString = {
 	{"English", "en"},
 	{"Français", "fr"},
-	{"Português (Brasil)", "pt_BR"}
+	{"Português (Brasil)", "pt_BR"},
+	{"русский", "ru"}
 };
 
 std::unique_ptr<QTranslator> TranslatorAliases::_translator;

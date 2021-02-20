@@ -35,6 +35,7 @@ class SettingsWindow : public SelfDeleteDialog
 		QPushButton *m_deleteAllMods;
 		QVBoxLayout *m_scripthookVLayout;
 		QCheckBox *m_startCrackedCheckBox;
+		QCheckBox *m_disableFirewallForGTA;
 		QCheckBox *m_gtaHighPriority;
 		QCheckBox *m_exitLauncherAfterGameStart;
 		QCheckBox *m_checkForUpdatesWhenLauncherStarts;

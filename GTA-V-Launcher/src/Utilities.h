@@ -24,5 +24,6 @@ class Utilities
 		static bool copy(const QString &from, const QString &to);
 		static void clearConfig(const QString &key);
 		static bool setProcessPriority(const QString &process, DWORD dwPriorityClass);
+		static bool startedAsAdmin();
 };
 #endif // UTILITIES_H
