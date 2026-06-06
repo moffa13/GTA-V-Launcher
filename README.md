@@ -1,6 +1,6 @@
 # GTA-V-Launcher
 
-
+wyrqurw
 READ THIS IF YOU HAVE UPDATED FROM 1.0.6 to 1.0.7. The mods you disabled won't appear anymore due to folder change.
 To resolve this, go to your game directory (you can do this by launching the new version of this launcher then, settings > Open GTA V Game Directory)
 Then go to Launcher\disabledMods. Copy all the files in this directory then go back to the game directory and paste those here.
